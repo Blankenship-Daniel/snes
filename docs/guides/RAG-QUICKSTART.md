@@ -236,8 +236,8 @@ Claude (with relevant context!)
 
 - **RAG Pipeline**: `tools/neo4j_rag.py`
 - **Hook Integration**: `.claude/hooks/user_prompt_submit.py`
-- **Full Docs**: `docs/rag-integration.md`
-- **Neo4j Guide**: `docs/neo4j-knowledge-graph.md`
+- **Full Docs**: `../rag-integration.md`
+- **Neo4j Guide**: `../neo4j-knowledge-graph.md`
 
 ## What's Next?
 
@@ -270,9 +270,9 @@ python3 tools/neo4j_query_examples.py --interactive
 
 ## Resources
 
-- **Complete RAG docs**: `docs/rag-integration.md`
-- **Neo4j setup**: `docs/neo4j-knowledge-graph.md`
-- **Schema diagram**: `docs/neo4j-schema-diagram.md`
+- **Complete RAG docs**: `../rag-integration.md`
+- **Neo4j setup**: `../neo4j-knowledge-graph.md`
+- **Schema diagram**: `../neo4j-schema-diagram.md`
 - **Neo4j Browser**: http://localhost:7474
 
 ---

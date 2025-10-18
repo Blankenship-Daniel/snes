@@ -347,8 +347,8 @@ npx codex-cli "What is this repo?" --context .
 - 📚 [RAG Integration Guide](docs/rag-integration.md)
 - 📚 [Learning Extraction Guide](docs/learning-extraction.md)
 - 📚 [Neo4j Knowledge Graph Guide](docs/neo4j-knowledge-graph.md)
-- 🚀 [RAG Quick Start](RAG-QUICKSTART.md)
-- 🚀 [Neo4j Quick Start](NEO4J-QUICKSTART.md)
+- 🚀 [RAG Quick Start](guides/RAG-QUICKSTART.md)
+- 🚀 [Neo4j Quick Start](guides/NEO4J-QUICKSTART.md)
 
 ## Summary
 

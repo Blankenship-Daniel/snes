@@ -44,11 +44,11 @@ tools/setup-rag.sh                 # RAG setup wizard
 
 ### Documentation
 ```
-docs/neo4j-knowledge-graph.md      # Complete Neo4j guide
-docs/neo4j-schema-diagram.md       # Schema reference
-docs/rag-integration.md            # RAG integration guide
-NEO4J-QUICKSTART.md                # Neo4j quick reference
-RAG-QUICKSTART.md                  # RAG quick reference
+neo4j-knowledge-graph.md           # Complete Neo4j guide
+neo4j-schema-diagram.md            # Schema reference
+rag-integration.md                 # RAG integration guide
+guides/NEO4J-QUICKSTART.md         # Neo4j quick reference
+guides/RAG-QUICKSTART.md           # RAG quick reference
 ```
 
 ### Claude Code Hooks
@@ -223,10 +223,10 @@ print(f"Found {len(results['knowledge'])} knowledge items")
 
 ### Documentation (Read in Order)
 
-1. **RAG-QUICKSTART.md** - Start here!
-2. **docs/rag-integration.md** - Deep dive into RAG
-3. **NEO4J-QUICKSTART.md** - Neo4j basics
-4. **docs/neo4j-knowledge-graph.md** - Complete Neo4j guide
+1. **guides/RAG-QUICKSTART.md** - Start here!
+2. **rag-integration.md** - Deep dive into RAG
+3. **guides/NEO4J-QUICKSTART.md** - Neo4j basics
+4. **neo4j-knowledge-graph.md** - Complete Neo4j guide
 
 ### Example Queries
 
@@ -387,14 +387,14 @@ All should show ✅ status!
 2. **Explore the graph**: Open http://localhost:7474
 3. **Add your knowledge**: Store your learnings
 4. **Customize keywords**: Edit `tools/neo4j_rag.py`
-5. **Read the docs**: `docs/rag-integration.md`
+5. **Read the docs**: `rag-integration.md`
 
 ## 🆘 Support
 
 ### Documentation
-- **RAG-QUICKSTART.md** - Quick reference
-- **docs/rag-integration.md** - Complete guide
-- **docs/neo4j-knowledge-graph.md** - Neo4j details
+- **guides/RAG-QUICKSTART.md** - Quick reference
+- **rag-integration.md** - Complete guide
+- **neo4j-knowledge-graph.md** - Neo4j details
 
 ### Troubleshooting
 1. Check Neo4j: `./tools/neo4j-docker.sh status`

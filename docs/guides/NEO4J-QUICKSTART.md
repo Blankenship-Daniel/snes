@@ -163,8 +163,8 @@ python3 tools/neo4j_populate.py \
 
 ## 📚 Documentation
 
-- **Complete Guide**: `docs/neo4j-knowledge-graph.md`
-- **Schema Reference**: `docs/neo4j-schema-diagram.md`
+- **Complete Guide**: `../neo4j-knowledge-graph.md`
+- **Schema Reference**: `../neo4j-schema-diagram.md`
 - **Tool README**: `tools/README-neo4j.md`
 
 ## 🎯 Use Cases
@@ -231,7 +231,7 @@ python3 tools/neo4j_populate.py --uri bolt://localhost:7687 --password snes-grap
 
 1. **Explore in Browser**: Visit http://localhost:7474 and run the example queries
 2. **Try Interactive Mode**: `python3 tools/neo4j_query_examples.py --interactive`
-3. **Read the Docs**: Check out `docs/neo4j-knowledge-graph.md` for advanced usage
+3. **Read the Docs**: Check out `../neo4j-knowledge-graph.md` for advanced usage
 4. **Integrate with AI**: Use graph queries in your MCP servers or agents
 5. **Add Your Data**: Customize the graph with your own mods and knowledge
 

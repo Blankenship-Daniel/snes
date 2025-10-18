@@ -229,7 +229,7 @@ python3 tools/neo4j_query_examples.py --interactive
 open http://localhost:7474
 ```
 
-Stores project structure, mods, SNES hardware, and domain knowledge. See `NEO4J-QUICKSTART.md`
+Stores project structure, mods, SNES hardware, and domain knowledge. See `docs/guides/NEO4J-QUICKSTART.md`
 
 ### TypeScript CLI (Coming Soon)
 ```bash

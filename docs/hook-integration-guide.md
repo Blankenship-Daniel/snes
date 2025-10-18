@@ -820,8 +820,8 @@ grep "Metrics" .claude/logs/hook-*.log | \
 - [Neo4j Knowledge Graph Guide](./neo4j-knowledge-graph.md)
 - [RAG Integration Guide](./rag-integration.md)
 - [Learning Extraction Guide](./learning-extraction.md)
-- [Neo4j Quick Start](../NEO4J-QUICKSTART.md)
-- [RAG Quick Start](../RAG-QUICKSTART.md)
+- [Neo4j Quick Start](./guides/NEO4J-QUICKSTART.md)
+- [RAG Quick Start](./guides/RAG-QUICKSTART.md)
 
 ## Support
 
