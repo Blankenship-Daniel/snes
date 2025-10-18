@@ -35,6 +35,13 @@ Thank you for helping improve Zelda 3 Modder. This repo ships a fast, script‑d
   - If `docs/releases/<tag>.md` exists, it will be used as the body.
   - Otherwise, auto-generated release notes are enabled.
 
+### Release Notes Workflow
+- Accumulate changes in `docs/releases/next.md` as you work.
+- When ready to cut a release:
+  - `bash tools/cut-release-notes.sh vX.Y.Z` (copies `next.md` to `vX.Y.Z.md` and resets `next.md`)
+  - Update `package.json` version (or use `npm run release:version:*`)
+  - Tag and push (`git tag -a vX.Y.Z -m "…" && git push origin vX.Y.Z`)
+
 ## Tests and Evidence
 - Include a short terminal excerpt showing:
   - `./validate-mods.sh` summary with pass/fail counts
