@@ -13,7 +13,7 @@ jobs:
 
       - name: Bash syntax check
         run: |
-          bash -n zelda3-modder-demo.sh validate-mods.sh ultimate-runtime-validation.sh
+          bash -n scripts/zelda3-modder-demo.sh scripts/validate-mods.sh scripts/ultimate-runtime-validation.sh
           # tools are optional; only check if present
           if [ -f tools/SHIP-NOW.sh ]; then bash -n tools/SHIP-NOW.sh; fi
           if [ -f tools/restore_agent_context.sh ]; then bash -n tools/restore_agent_context.sh; fi
@@ -30,14 +30,13 @@ jobs:
 
       - name: Validate mods (skipped if base ROM absent)
         if: hashFiles('zelda3.smc') != ''
-        run: ./validate-mods.sh
+        run: ./scripts/validate-mods.sh
 
       - name: Ultimate runtime validation (skipped if base ROM or bsnes absent)
         if: hashFiles('zelda3.smc') != ''
         run: |
           if command -v bsnes >/dev/null 2>&1; then
-            OUTPUT_DIR=out ./ultimate-runtime-validation.sh
+            OUTPUT_DIR=out ./scripts/ultimate-runtime-validation.sh
           else
             echo "bsnes not available on runner; skipping runtime validation"
           fi
-

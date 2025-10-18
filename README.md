@@ -36,16 +36,16 @@ zelda3-modder ultimate zelda3.smc
 
 ```bash
 # Basic usage
-./zelda3-modder-demo.sh <mod-name>
+./scripts/zelda3-modder-demo.sh <mod-name>
 
 # List available mods
-./zelda3-modder-demo.sh list
+./scripts/zelda3-modder-demo.sh list
 
 # Examples - all complete in 0 seconds!
-./zelda3-modder-demo.sh infinite-magic
-./zelda3-modder-demo.sh 2x-speed  
-./zelda3-modder-demo.sh max-hearts
-./zelda3-modder-demo.sh ultimate
+./scripts/zelda3-modder-demo.sh infinite-magic
+./scripts/zelda3-modder-demo.sh 2x-speed  
+./scripts/zelda3-modder-demo.sh max-hearts
+./scripts/zelda3-modder-demo.sh ultimate
 ```
 
 ### Output Directory
@@ -54,10 +54,10 @@ You can direct outputs to a folder:
 
 ```bash
 # via env var
-OUTPUT_DIR=out ./zelda3-modder-demo.sh infinite-magic
+OUTPUT_DIR=out ./scripts/zelda3-modder-demo.sh infinite-magic
 
 # or with a flag
-./zelda3-modder-demo.sh -o out team-solution
+./scripts/zelda3-modder-demo.sh -o out team-solution
 ```
 
 Validation scripts also respect `OUTPUT_DIR` and will scan both `OUTPUT_DIR` and the repo root.
@@ -65,7 +65,7 @@ Validation scripts also respect `OUTPUT_DIR` and will scan both `OUTPUT_DIR` and
 ### Validation
 ```bash
 # Verify your mods actually work
-./validate-mods.sh
+./scripts/validate-mods.sh
 # Shows binary proof of modifications
 ```
 
@@ -81,15 +81,15 @@ Emulator path
 # Quick local checks for sources used by MCP servers
 npm run mcp:health
 # Optional log file
-bash ./mcp-healthcheck.sh --log logs/mcp-healthcheck.log
+bash ./scripts/mcp-healthcheck.sh --log logs/mcp-healthcheck.log
 
 # Skip components and emit JSON summary
-bash ./mcp-healthcheck.sh \
+bash ./scripts/mcp-healthcheck.sh \
   --skip-mister \
   --json logs/mcp-health.json
 
 # Print JSON to stdout (for CI tooling consumption)
-bash ./mcp-healthcheck.sh --json - | jq
+bash ./scripts/mcp-healthcheck.sh --json - | jq
 ```
 Note: When using `--json -`, human-readable logs are written to stderr and the JSON summary is written to stdout. This makes it safe to pipe into tools like `jq`.
 
@@ -115,6 +115,14 @@ Notes
 - Use subfolders in `docs/` as needed (for example, `docs/releases/`, `docs/guides/`, `docs/reports/`).
  - Start here: `docs/guides/index.md` for a curated list of guides.
 
+## 🤝 Contributing
+
+- Read the contributor guide: `docs/CONTRIBUTING.md`
+- Required: run `npm run lint:paths` to ensure no absolute user paths are committed.
+- Optional: enable the pre-commit hook to enforce the path linter locally:
+  - `git config core.hooksPath .githooks && chmod +x .githooks/pre-commit`
+- See path policy in `AGENTS.md` under “Absolute Paths Policy”.
+
 ## 🎭 Available Mods
 
 ### MAGIC & POWER
@@ -135,15 +143,15 @@ Notes
 
 ```bash
 # Create infinite magic ROM
-./zelda3-modder-demo.sh infinite-magic
+./scripts/zelda3-modder-demo.sh infinite-magic
 # Output: zelda3-infinite-magic-20250818.smc
 
 # Create speedrun-ready ROM
-./zelda3-modder-demo.sh team-solution  
+./scripts/zelda3-modder-demo.sh team-solution  
 # Output: zelda3-team-solution-20250818.smc
 
 # Go completely overpowered
-./zelda3-modder-demo.sh ultimate
+./scripts/zelda3-modder-demo.sh ultimate
 # Output: zelda3-ultimate-20250818.smc
 ```
 
@@ -178,14 +186,14 @@ Our system understands multiple ways to request mods:
 
 ```bash
 # These all work for infinite magic:
-./zelda3-modder-demo.sh infinite-magic
-./zelda3-modder-demo.sh unlimited-magic  
-./zelda3-modder-demo.sh never-run-out-of-magic
+./scripts/zelda3-modder-demo.sh infinite-magic
+./scripts/zelda3-modder-demo.sh unlimited-magic  
+./scripts/zelda3-modder-demo.sh never-run-out-of-magic
 
 # These all work for max health:
-./zelda3-modder-demo.sh max-hearts
-./zelda3-modder-demo.sh full-health
-./zelda3-modder-demo.sh 20-hearts
+./scripts/zelda3-modder-demo.sh max-hearts
+./scripts/zelda3-modder-demo.sh full-health
+./scripts/zelda3-modder-demo.sh 20-hearts
 ```
 
 ## 🎮 Play Your Mods

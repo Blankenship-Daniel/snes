@@ -17,9 +17,9 @@ This repo ships a fast, script‑driven SNES modding workflow for Zelda 3. Keep 
 - `package.json` — npm scripts that wrap the shell tooling.
 
 ## Build, Test, and Development Commands
-- `npm start` or `./zelda3-modder-demo.sh <mod>` — generate a mod (e.g., `infinite-magic`, `2x-speed`).
-- `npm test` or `./validate-mods.sh` — validate ROM size/differences vs `zelda3.smc`.
-- `./ultimate-runtime-validation.sh` — run bsnes for stability, memory, and input checks.
+- `npm start` or `./scripts/zelda3-modder-demo.sh <mod>` — generate a mod (e.g., `infinite-magic`, `2x-speed`).
+- `npm test` or `./scripts/validate-mods.sh` — validate ROM size/differences vs `zelda3.smc`.
+- `./scripts/ultimate-runtime-validation.sh` — run bsnes for stability, memory, and input checks.
 Prereqs: `bsnes`, `bc`, `xxd`, `cmp`, `timeout` available on PATH; place `zelda3.smc` in repo root.
 
 ## Coding Style & Naming Conventions
@@ -42,3 +42,18 @@ Prereqs: `bsnes`, `bc`, `xxd`, `cmp`, `timeout` available on PATH; place `zelda3
 - Never commit proprietary ROMs or keys; `.smc` outputs are ephemeral.
 - Prefer scriptable, deterministic steps; document external deps and versions.
 - Cross‑platform: keep Bash POSIX‑friendly where possible; gate platform‑specific code.
+
+## Absolute Paths Policy
+- Do not commit user-specific absolute paths (e.g., `/Users/<name>`, `C:\Users\<name>`, `/mnt/c/Users/<name>`).
+- Prefer repo‑relative paths, environment variables, or CLI arguments.
+- Run the path linter locally before opening a PR:
+  - `npm run lint:paths` (or `bash ./tools/check-no-absolute-paths.sh`)
+  - CI will fail if absolute user paths are detected.
+
+### Optional: Enable Pre-commit Hook
+- We ship a lightweight pre-commit hook that runs the path linter.
+- Enable it once per clone:
+  - `git config core.hooksPath .githooks`
+  - Ensure it’s executable: `chmod +x .githooks/pre-commit`
+- Disable locally at any time by unsetting hooksPath:
+  - `git config --unset core.hooksPath`
