@@ -1,0 +1,21 @@
+# CODEOWNERS: update team/handles to your org
+# Fallback owners for everything
+*       @snes-modding/maintainers
+
+# Core scripts
+zelda3-modder-demo.sh              @snes-modding/cli-team @snes-modding/maintainers
+validate-mods.sh                   @snes-modding/validate-team @snes-modding/maintainers
+ultimate-runtime-validation.sh     @snes-modding/runtime-team @snes-modding/maintainers
+
+# Assets and tooling
+snes-modder/                       @snes-modding/assets-team @snes-modding/maintainers
+bsnes-plus/                        @snes-modding/runtime-team @snes-modding/maintainers
+snes9x/                            @snes-modding/runtime-team @snes-modding/maintainers
+SNES_MiSTer/                       @snes-modding/runtime-team @snes-modding/maintainers
+tools/                             @snes-modding/tooling-team @snes-modding/maintainers
+
+# Docs and workflows
+docs/                              @snes-modding/docs-team @snes-modding/maintainers
+.github/workflows/                 @snes-modding/ci-team @snes-modding/maintainers
+.github/ISSUE_TEMPLATE/            @snes-modding/docs-team @snes-modding/maintainers
+.github/pull_request_template.md   @snes-modding/docs-team @snes-modding/maintainers
