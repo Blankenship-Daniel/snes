@@ -113,6 +113,7 @@ Notes
 - Place all project documentation under `docs/` to keep the root tidy.
 - Only the following markdown files remain at the root: `README.md`, `AGENTS.md`, `CLAUDE.md`.
 - Use subfolders in `docs/` as needed (for example, `docs/releases/`, `docs/guides/`, `docs/reports/`).
+ - Start here: `docs/guides/index.md` for a curated list of guides.
 
 ## 🎭 Available Mods
 
