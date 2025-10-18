@@ -44,11 +44,11 @@ tools/setup-rag.sh                 # RAG setup wizard
 
 ### Documentation
 ```
-neo4j-knowledge-graph.md           # Complete Neo4j guide
-neo4j-schema-diagram.md            # Schema reference
-rag-integration.md                 # RAG integration guide
-guides/NEO4J-QUICKSTART.md         # Neo4j quick reference
-guides/RAG-QUICKSTART.md           # RAG quick reference
+../guides/neo4j-knowledge-graph.md   # Complete Neo4j guide
+../guides/neo4j-schema-diagram.md    # Schema reference
+../guides/rag-integration.md         # RAG integration guide
+../guides/NEO4J-QUICKSTART.md        # Neo4j quick reference
+../guides/RAG-QUICKSTART.md          # RAG quick reference
 ```
 
 ### Claude Code Hooks
@@ -223,10 +223,10 @@ print(f"Found {len(results['knowledge'])} knowledge items")
 
 ### Documentation (Read in Order)
 
-1. **guides/RAG-QUICKSTART.md** - Start here!
-2. **rag-integration.md** - Deep dive into RAG
-3. **guides/NEO4J-QUICKSTART.md** - Neo4j basics
-4. **neo4j-knowledge-graph.md** - Complete Neo4j guide
+1. **../guides/RAG-QUICKSTART.md** - Start here!
+2. **../guides/rag-integration.md** - Deep dive into RAG
+3. **../guides/NEO4J-QUICKSTART.md** - Neo4j basics
+4. **../guides/neo4j-knowledge-graph.md** - Complete Neo4j guide
 
 ### Example Queries
 

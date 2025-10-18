@@ -1,0 +1,1 @@
+/Users/ship/.local/bin/send-claude-message.sh

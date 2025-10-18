@@ -1,0 +1,3 @@
+# Neo4j Knowledge Graph Requirements
+
+neo4j>=5.0.0

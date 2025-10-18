@@ -104,10 +104,46 @@ class SNESRAGPipeline:
             "address", "pointer"
         ]
 
+        # ROM reverse-engineering terms
+        rom_keywords = [
+            "header", "lorom", "hirom", "exhirom",
+            "vector", "vectors", "reset", "nmi", "irq",
+            "interrupt", "interrupts", "checksum", "complement",
+            "mapping", "fastrom", "cartridge", "copier",
+            "smc", "validation", "destination", "region"
+        ]
+
+        # Tool names
+        tool_keywords = [
+            "bsnes-plus", "bsnes", "snes9x", "diztinguish",
+            "snes2asm", "ca65", "wla", "wla dx",
+            "yy-chr", "hxd", "ghidra", "emulator",
+            "disassembler", "assembler", "hex editor",
+            "debugger", "debugging", "breakpoint", "breakpoints",
+            "trace", "tracing"
+        ]
+
+        # Methodology keywords
+        methodology_keywords = [
+            "iterative", "discovery", "workflow",
+            "breakpoint-first", "comparison method",
+            "ram search", "automated", "manual",
+            "disassembly", "methodology"
+        ]
+
+        # Assembly/pattern keywords
+        assembly_keywords = [
+            "jsr", "jsl", "rts", "rtl", "rep", "sep",
+            "lda", "sta", "ldx", "stx", "ldy", "sty",
+            "dma", "vram", "oam", "pattern", "subroutine",
+            "65816", "assembly", "asm", "instruction"
+        ]
+
         # Check for keywords
         all_keywords = (
             mod_keywords + hardware_keywords + component_keywords +
-            project_keywords + memory_keywords
+            project_keywords + memory_keywords + rom_keywords +
+            tool_keywords + methodology_keywords + assembly_keywords
         )
 
         for keyword in all_keywords:
@@ -167,6 +203,10 @@ class SNESRAGPipeline:
                 category = "cpu"
             elif any(k in keywords for k in ["dma", "hdma"]):
                 category = "dma"
+            elif any(k in keywords for k in ["rom", "header", "checksum", "validation", "mapping"]):
+                category = "ROM Header"
+            elif any(k in keywords for k in ["vector", "vectors", "reset", "interrupt"]):
+                category = "Interrupt Vectors"
 
             if category:
                 result = session.run("""
@@ -250,6 +290,160 @@ class SNESRAGPipeline:
                        m.end_addr as end, m.type as type,
                        m.description as description
                 ORDER BY m.start_addr
+            """)
+
+            return [dict(record) for record in result]
+
+    def get_relevant_tools(self, keywords: Set[str]) -> List[Dict]:
+        """Get reverse engineering tools relevant to the query"""
+        if not self.driver:
+            return []
+
+        with self.driver.session() as session:
+            # Check for specific tool names
+            tool_names = []
+            if any(k in keywords for k in ["bsnes-plus", "bsnes"]):
+                tool_names.append("bsnes-plus")
+            if "snes9x" in keywords:
+                tool_names.append("Snes9x")
+            if any(k in keywords for k in ["diztinguish"]):
+                tool_names.append("DiztinGUIsh")
+            if "ghidra" in keywords:
+                tool_names.append("Ghidra")
+
+            # Check for tool categories
+            categories = []
+            if any(k in keywords for k in ["emulator", "debugging"]):
+                categories.append("emulator")
+            if any(k in keywords for k in ["disassembler", "disassembly"]):
+                categories.append("disassembler")
+            if "assembler" in keywords:
+                categories.append("assembler")
+
+            if tool_names or categories:
+                result = session.run("""
+                    MATCH (t:Tool)
+                    WHERE t.name IN $names OR t.category IN $categories
+                    RETURN t.name as name, t.category as category,
+                           t.description as description, t.features as features,
+                           t.use_cases as use_cases, t.recommended as recommended
+                    LIMIT 5
+                """, names=tool_names, categories=categories)
+            else:
+                result = session.run("""
+                    MATCH (t:Tool)
+                    RETURN t.name as name, t.category as category,
+                           t.description as description, t.features as features,
+                           t.use_cases as use_cases, t.recommended as recommended
+                    LIMIT 3
+                """)
+
+            return [dict(record) for record in result]
+
+    def get_relevant_methodologies(self, keywords: Set[str]) -> List[Dict]:
+        """Get reverse engineering methodologies relevant to the query"""
+        if not self.driver:
+            return []
+
+        with self.driver.session() as session:
+            # Check for specific methodology names
+            methodology_names = []
+            if any(k in keywords for k in ["breakpoint", "breakpoint-first"]):
+                methodology_names.append("Breakpoint-First Approach")
+            if "iterative" in keywords:
+                methodology_names.append("Iterative Discovery")
+            if "comparison" in keywords:
+                methodology_names.append("Comparison Method")
+            if any(k in keywords for k in ["ram", "search"]):
+                methodology_names.append("RAM Search Workflow")
+
+            # Check for methodology types
+            types = []
+            if "debugging" in keywords:
+                types.append("debugging")
+            if "workflow" in keywords:
+                types.append("workflow")
+            if "disassembly" in keywords:
+                types.append("disassembly")
+
+            if methodology_names or types:
+                result = session.run("""
+                    MATCH (m:Methodology)
+                    WHERE m.name IN $names OR m.type IN $types
+                    RETURN m.name as name, m.type as type,
+                           m.description as description, m.steps as steps,
+                           m.difficulty as difficulty
+                    LIMIT 5
+                """, names=methodology_names, types=types)
+            else:
+                result = session.run("""
+                    MATCH (m:Methodology)
+                    RETURN m.name as name, m.type as type,
+                           m.description as description, m.steps as steps,
+                           m.difficulty as difficulty
+                    LIMIT 3
+                """)
+
+            return [dict(record) for record in result]
+
+    def get_relevant_patterns(self, keywords: Set[str]) -> List[Dict]:
+        """Get technical patterns relevant to the query"""
+        if not self.driver:
+            return []
+
+        with self.driver.session() as session:
+            # Check for specific patterns
+            pattern_names = []
+            if "jsr" in keywords or "rts" in keywords:
+                pattern_names.append("JSR/RTS Pattern")
+            if "jsl" in keywords or "rtl" in keywords:
+                pattern_names.append("JSL/RTL Pattern")
+            if "rep" in keywords or "sep" in keywords:
+                pattern_names.append("REP/SEP Register Switching")
+            if "dma" in keywords:
+                pattern_names.append("VRAM DMA Transfer")
+
+            # Check for categories
+            categories = []
+            if any(k in keywords for k in ["65816", "assembly", "asm"]):
+                categories.append("65816_assembly")
+            if "dma" in keywords:
+                categories.append("dma")
+            if any(k in keywords for k in ["memory", "wram", "sram"]):
+                categories.append("memory")
+
+            if pattern_names or categories:
+                result = session.run("""
+                    MATCH (p:TechnicalPattern)
+                    WHERE p.name IN $names OR p.category IN $categories
+                    RETURN p.name as name, p.category as category,
+                           p.description as description, p.code as code,
+                           p.notes as notes
+                    LIMIT 5
+                """, names=pattern_names, categories=categories)
+            else:
+                result = session.run("""
+                    MATCH (p:TechnicalPattern)
+                    RETURN p.name as name, p.category as category,
+                           p.description as description, p.code as code,
+                           p.notes as notes
+                    LIMIT 3
+                """)
+
+            return [dict(record) for record in result]
+
+    def get_relevant_workflows(self, keywords: Set[str]) -> List[Dict]:
+        """Get example workflows relevant to the query"""
+        if not self.driver:
+            return []
+
+        with self.driver.session() as session:
+            result = session.run("""
+                MATCH (w:Workflow)
+                RETURN w.name as name, w.goal as goal,
+                       w.steps as steps, w.duration as duration,
+                       w.difficulty as difficulty
+                LIMIT 2
             """)
 
             return [dict(record) for record in result]
@@ -446,6 +640,27 @@ class SNESRAGPipeline:
             k['_type'] = 'knowledge'
             all_items.append(k)
 
+        # === NEW: Reverse Engineering Knowledge ===
+        tools = self.get_relevant_tools(keywords)
+        for tool in tools:
+            tool['_type'] = 'tool'
+            all_items.append(tool)
+
+        methodologies = self.get_relevant_methodologies(keywords)
+        for methodology in methodologies:
+            methodology['_type'] = 'methodology'
+            all_items.append(methodology)
+
+        patterns = self.get_relevant_patterns(keywords)
+        for pattern in patterns:
+            pattern['_type'] = 'pattern'
+            all_items.append(pattern)
+
+        workflows = self.get_relevant_workflows(keywords)
+        for workflow in workflows:
+            workflow['_type'] = 'workflow'
+            all_items.append(workflow)
+
         if not all_items:
             return ""
 
@@ -460,12 +675,65 @@ class SNESRAGPipeline:
         registers = [item for item in ranked_items if item['_type'] == 'register']
         components = [item for item in ranked_items if item['_type'] == 'component']
         knowledge = [item for item in ranked_items if item['_type'] == 'knowledge']
+        tools = [item for item in ranked_items if item['_type'] == 'tool']
+        methodologies = [item for item in ranked_items if item['_type'] == 'methodology']
+        patterns = [item for item in ranked_items if item['_type'] == 'pattern']
+        workflows = [item for item in ranked_items if item['_type'] == 'workflow']
 
         context_parts = []
 
+        # Format tools
+        if tools:
+            context_parts.append("🛠️ **Reverse Engineering Tools:**")
+            for tool in tools[:3]:
+                features_str = ", ".join(tool.get('features', [])[:3]) if tool.get('features') else "N/A"
+                recommended = "⭐ Recommended" if tool.get('recommended') else ""
+                context_parts.append(
+                    f"  - **{tool['name']}** ({tool['category']}) {recommended}\n"
+                    f"    {tool['description']}\n"
+                    f"    Features: {features_str}"
+                )
+
+        # Format methodologies
+        if methodologies:
+            context_parts.append("\n📋 **Methodologies:**")
+            for method in methodologies[:2]:
+                difficulty = f"[{method.get('difficulty', 'N/A')}]" if method.get('difficulty') else ""
+                context_parts.append(
+                    f"  - **{method['name']}** {difficulty}\n"
+                    f"    {method['description']}"
+                )
+                if method.get('steps'):
+                    steps = method['steps'][:3] if isinstance(method['steps'], list) else []
+                    if steps:
+                        context_parts.append(f"    Steps: {', '.join(steps)}")
+
+        # Format patterns
+        if patterns:
+            context_parts.append("\n🔧 **Technical Patterns:**")
+            for pattern in patterns[:2]:
+                context_parts.append(
+                    f"  - **{pattern['name']}** ({pattern['category']})\n"
+                    f"    {pattern['description']}"
+                )
+                if pattern.get('code'):
+                    # Show first 100 chars of code
+                    code = pattern['code'][:100] + "..." if len(pattern['code']) > 100 else pattern['code']
+                    context_parts.append(f"    Example: `{code}`")
+
+        # Format workflows
+        if workflows:
+            context_parts.append("\n📝 **Example Workflows:**")
+            for workflow in workflows[:2]:
+                duration = f"({workflow.get('duration', 'N/A')})" if workflow.get('duration') else ""
+                context_parts.append(
+                    f"  - **{workflow['name']}** {duration}\n"
+                    f"    Goal: {workflow['goal']}"
+                )
+
         # Format mods
         if mods:
-            context_parts.append("🎮 **Relevant Mods:**")
+            context_parts.append("\n🎮 **Relevant Mods:**")
             for mod in mods[:3]:
                 components_str = ", ".join(mod['components']) if mod['components'] else "N/A"
                 context_parts.append(
@@ -475,7 +743,7 @@ class SNESRAGPipeline:
 
         # Format registers
         if registers:
-            context_parts.append("\n🔧 **Relevant SNES Registers:**")
+            context_parts.append("\n🔌 **SNES Hardware Registers:**")
             for reg in registers[:5]:
                 context_parts.append(
                     f"  - **{reg['address']} ({reg['name']})**: {reg['description']}"
@@ -483,7 +751,7 @@ class SNESRAGPipeline:
 
         # Format components
         if components:
-            context_parts.append("\n📦 **Relevant Components:**")
+            context_parts.append("\n📦 **Game Components:**")
             for comp in components[:3]:
                 context_parts.append(
                     f"  - **{comp['name']}** ({comp['type']}): {comp['description']}"
