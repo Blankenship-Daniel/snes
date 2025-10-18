@@ -1,0 +1,43 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint-and-policy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Bash syntax check
+        run: |
+          bash -n zelda3-modder-demo.sh validate-mods.sh ultimate-runtime-validation.sh
+          # tools are optional; only check if present
+          if [ -f tools/SHIP-NOW.sh ]; then bash -n tools/SHIP-NOW.sh; fi
+          if [ -f tools/restore_agent_context.sh ]; then bash -n tools/restore_agent_context.sh; fi
+
+      - name: Enforce no ROMs committed outside snes-modder/
+        run: |
+          set -e
+          mapfile -t files < <(git ls-files "*.smc" | grep -v '^snes-modder/' || true)
+          if [ "${#files[@]}" -gt 0 ]; then
+            echo "Found committed ROM files outside snes-modder/:" >&2
+            printf ' - %s\n' "${files[@]}" >&2
+            exit 1
+          fi
+
+      - name: Validate mods (skipped if base ROM absent)
+        if: hashFiles('zelda3.smc') != ''
+        run: ./validate-mods.sh
+
+      - name: Ultimate runtime validation (skipped if base ROM or bsnes absent)
+        if: hashFiles('zelda3.smc') != ''
+        run: |
+          if command -v bsnes >/dev/null 2>&1; then
+            OUTPUT_DIR=out ./ultimate-runtime-validation.sh
+          else
+            echo "bsnes not available on runner; skipping runtime validation"
+          fi
+
