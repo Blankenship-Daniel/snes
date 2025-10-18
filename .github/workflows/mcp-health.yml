@@ -1,0 +1,63 @@
+name: MCP Healthcheck
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  mcp-health:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install prerequisites (ripgrep, jq)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ripgrep jq || true
+
+      - name: Run MCP healthcheck (log + JSON)
+        continue-on-error: true
+        run: |
+          bash ./mcp-healthcheck.sh --log mcp-health.log --json mcp-health.json
+
+      - name: Enforce thresholds from JSON
+        if: always()
+        env:
+          WARN_TOLERANCE: "0"
+        run: |
+          echo "Evaluating mcp-health.json (WARN_TOLERANCE=$WARN_TOLERANCE)"
+          test -f mcp-health.json || { echo 'mcp-health.json missing'; exit 1; }
+          echo "Component statuses:"
+          jq -r '.components[] | "- \(.name): \(.status) (err=\(.errors), warn=\(.warnings))"' mcp-health.json || true
+          ERRORS=$(jq '[.components[].errors] | add // 0' mcp-health.json)
+          WARNS=$(jq '[.components[].warnings] | add // 0' mcp-health.json)
+          RESULT=$(jq -r '.result' mcp-health.json)
+          echo "Totals: errors=$ERRORS warnings=$WARNS result=$RESULT"
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "Failing: errors detected ($ERRORS)"
+            exit 1
+          fi
+          if [ "$WARNS" -gt "$WARN_TOLERANCE" ]; then
+            echo "Failing: warnings ($WARNS) exceed tolerance ($WARN_TOLERANCE)"
+            exit 1
+          fi
+          if [ "$RESULT" != "PASS" ]; then
+            echo "Failing: overall result is $RESULT"
+            exit 1
+          fi
+          echo "Healthcheck within thresholds."
+
+      - name: Upload log artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-health-log
+          path: mcp-health.log
+
+      - name: Upload JSON artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mcp-health-json
+          path: mcp-health.json

@@ -69,6 +69,30 @@ Validation scripts also respect `OUTPUT_DIR` and will scan both `OUTPUT_DIR` and
 # Shows binary proof of modifications
 ```
 
+Emulator path
+- Tools default to `bsnes` discovered on your `PATH`.
+- To target a specific emulator binary, set `BSNES_PATH`:
+  - macOS/Linux: `export BSNES_PATH=/usr/local/bin/bsnes`
+  - Windows (PowerShell): `$env:BSNES_PATH = 'C:\\Path\\To\\bsnes.exe'`
+- Programmatic usage (TypeScript): `new EmulatorRuntimeValidator('/path/to/bsnes')` or rely on `process.env.BSNES_PATH`.
+
+### MCP Healthcheck
+```bash
+# Quick local checks for sources used by MCP servers
+npm run mcp:health
+# Optional log file
+bash ./mcp-healthcheck.sh --log logs/mcp-healthcheck.log
+
+# Skip components and emit JSON summary
+bash ./mcp-healthcheck.sh \
+  --skip-mister \
+  --json logs/mcp-health.json
+
+# Print JSON to stdout (for CI tooling consumption)
+bash ./mcp-healthcheck.sh --json - | jq
+```
+Note: When using `--json -`, human-readable logs are written to stderr and the JSON summary is written to stdout. This makes it safe to pipe into tools like `jq`.
+
 ## 🗂️ Project Structure
 
 - `zelda3-modder-demo.sh` — main entry; produces prebuilt mod ROMs fast.
