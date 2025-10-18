@@ -1029,7 +1029,7 @@ _Retrieved from Neo4j graph + 5 MCP enrichments_
 
 ```bash
 # Test that MCP servers are accessible
-cd /Users/ship/Documents/code/snes
+cd /path/to/your/snes-repo
 npm run build  # Build all MCP servers
 
 # Test individual servers

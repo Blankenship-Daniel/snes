@@ -28,7 +28,7 @@ The original `.mcp.json` configuration used **relative paths** without specifyin
    - Where the CLI was launched
    - IDE workspace settings
    - Terminal current directory
-3. **Result**: If the CLI wasn't running from `/Users/ship/Documents/code/snes`, the relative path `./snes-mcp-server/dist/index.js` would point to a non-existent location
+3. **Result**: If the CLI wasn't running from the repository root (e.g., `/path/to/your/snes-repo`), the relative path `./snes-mcp-server/dist/index.js` would point to a non-existent location
 
 ## Solution
 
@@ -42,7 +42,7 @@ Use the `cwd` (current working directory) parameter to ensure all MCP servers ru
       "args": [
         "./snes-mcp-server/dist/index.js"
       ],
-      "cwd": "/Users/ship/Documents/code/snes",  // ✅ Explicit working directory
+      "cwd": "/path/to/your/snes-repo",  // ✅ Explicit working directory (repo root)
       "description": "SNES development tools..."
     }
   }
@@ -72,8 +72,8 @@ const parsedDataDir = path.join(process.cwd(), 'parsed-data');
 ```
 
 This failed because:
-- `process.cwd()` returns `/Users/ship/Documents/code/snes` (repo root)
-- But `parsed-data` is at `/Users/ship/Documents/code/snes/snes-mcp-server/parsed-data`
+- `process.cwd()` returns the repository root (e.g., `/path/to/your/snes-repo`)
+- But `parsed-data` is located at `<repo-root>/snes-mcp-server/parsed-data`
 
 ### Fix Applied
 
@@ -96,7 +96,7 @@ const parsedDataDir = path.join(__dirname, '..', '..', 'parsed-data');
 ```json
 {
   "args": [
-    "/Users/ship/Documents/code/snes/snes-mcp-server/dist/index.js"
+    "/path/to/your/snes-repo/snes-mcp-server/dist/index.js"
   ]
 }
 ```
@@ -109,7 +109,7 @@ const parsedDataDir = path.join(__dirname, '..', '..', 'parsed-data');
     "${SNES_REPO_PATH}/snes-mcp-server/dist/index.js"
   ],
   "env": {
-    "SNES_REPO_PATH": "/Users/ship/Documents/code/snes"
+    "SNES_REPO_PATH": "/path/to/your/snes-repo"
   }
 }
 ```
@@ -131,7 +131,7 @@ After applying the fix, all servers should start successfully:
 
 ```bash
 # Test each server individually
-cd /Users/ship/Documents/code/snes
+cd /path/to/your/snes-repo
 
 node ./snes-mcp-server/dist/index.js    # Should start without errors
 node ./bsnes-plus/mcp-server/index.js   # Should print "bsnes-plus MCP server running on stdio"

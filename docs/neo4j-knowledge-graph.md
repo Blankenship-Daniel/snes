@@ -88,7 +88,7 @@ python tools/neo4j_populate.py \
     --uri neo4j+s://xxxxx.databases.neo4j.io \
     --user neo4j \
     --password your-password \
-    --repo-path /Users/ship/Documents/code/snes
+    --repo-path /path/to/your/snes-repo
 
 # Clear and repopulate
 python tools/neo4j_populate.py --clear

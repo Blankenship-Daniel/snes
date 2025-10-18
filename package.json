@@ -40,7 +40,7 @@
     "zelda3-modder-demo.sh",
     "validate-mods.sh", 
     "README.md",
-    "DEMO_SCRIPT.md",
+    "docs/DEMO_SCRIPT.md",
     "snes-modder/*.smc"
   ],
   "engines": {

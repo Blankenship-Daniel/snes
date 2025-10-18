@@ -108,6 +108,12 @@ Notes
 - Place your `zelda3.smc` in the repo root; outputs are `zelda3-<mod>-YYYYMMDD.smc`.
 - Generated ROMs and logs are ignored via `.gitignore` to keep the repo clean.
 
+## 📚 Documentation Location
+
+- Place all project documentation under `docs/` to keep the root tidy.
+- Only the following markdown files remain at the root: `README.md`, `AGENTS.md`, `CLAUDE.md`.
+- Use subfolders in `docs/` as needed (for example, `docs/releases/`, `docs/guides/`, `docs/reports/`).
+
 ## 🎭 Available Mods
 
 ### MAGIC & POWER

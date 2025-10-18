@@ -2,6 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+Documentation placement
+- Put all new docs in `docs/` to avoid cluttering the root.
+- Only `README.md`, `AGENTS.md`, and `CLAUDE.md` should stay at the root.
+- Use logical subfolders in `docs/` (e.g., `docs/guides/`, `docs/releases/`, `docs/reports/`).
+
 ## Project Overview
 
 This is a unified SNES development ecosystem with a focused mission: **Create the definitive reverse-engineering and modding platform for The Legend of Zelda: A Link to the Past.** The workspace contains multiple specialized tools that work together to make Zelda 3 ROM modification incredibly simple and accessible.
