@@ -1,0 +1,23 @@
+# Ignore local ROMs and generated outputs
+/zelda3.smc
+/zelda3-*.smc
+
+# Optional output directory
+/out/
+
+# Logs and runtime artifacts
+/logs/
+/*.log
+/wram-*.bin
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+
+# Node artifacts (if present)
+node_modules/
+package-lock.json
+
+# Claude Code hook sessions (privacy - don't commit session transcripts)
+.claude/sessions/
+.claude/logs/
