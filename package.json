@@ -10,7 +10,12 @@
     "start": "./zelda3-modder-demo.sh",
     "validate": "./validate-mods.sh",
     "demo": "./zelda3-modder-demo.sh ultimate",
-    "test": "./validate-mods.sh"
+    "test": "./validate-mods.sh",
+    "preversion": "bash -n zelda3-modder-demo.sh validate-mods.sh ultimate-runtime-validation.sh",
+    "postversion": "git push && git push --tags",
+    "release:version:patch": "npm version patch -m \"chore(release): %s\"",
+    "release:version:minor": "npm version minor -m \"chore(release): %s\"",
+    "release:version:major": "npm version major -m \"chore(release): %s\""
   },
   "keywords": [
     "zelda",

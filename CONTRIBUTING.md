@@ -26,6 +26,15 @@ Thank you for helping improve Zelda 3 Modder. This repo ships a fast, script‑d
   - `./validate-mods.sh`
   - `./ultimate-runtime-validation.sh` (requires `bsnes`, `bc`, `xxd`, `timeout`)
 
+## Release Process
+- Bump version and tag (creates git tag and pushes):
+  - Patch: `npm run release:version:patch`
+  - Minor: `npm run release:version:minor`
+  - Major: `npm run release:version:major`
+- On pushing a `v*` tag, GitHub Actions creates a release.
+  - If `docs/releases/<tag>.md` exists, it will be used as the body.
+  - Otherwise, auto-generated release notes are enabled.
+
 ## Tests and Evidence
 - Include a short terminal excerpt showing:
   - `./validate-mods.sh` summary with pass/fail counts

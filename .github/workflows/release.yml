@@ -1,0 +1,45 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Find release notes file
+        id: notes
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          FILE="docs/releases/${TAG}.md"
+          if [ -f "$FILE" ]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            echo "path=$FILE" >> "$GITHUB_OUTPUT"
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create GitHub Release (with notes file)
+        if: steps.notes.outputs.found == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Zelda 3 Modder ${{ github.ref_name }}
+          body_path: ${{ steps.notes.outputs.path }}
+          generate_release_notes: true
+
+      - name: Create GitHub Release (auto notes)
+        if: steps.notes.outputs.found != 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Zelda 3 Modder ${{ github.ref_name }}
+          generate_release_notes: true
+
