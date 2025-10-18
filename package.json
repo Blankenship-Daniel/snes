@@ -1,0 +1,45 @@
+{
+  "name": "zelda3-modder",
+  "version": "1.1.0",
+  "description": "The 30-second ROM mod experience for The Legend of Zelda: A Link to the Past",
+  "main": "zelda3-modder-demo.sh",
+  "bin": {
+    "zelda3-modder": "./zelda3-modder-demo.sh"
+  },
+  "scripts": {
+    "start": "./zelda3-modder-demo.sh",
+    "validate": "./validate-mods.sh",
+    "demo": "./zelda3-modder-demo.sh ultimate",
+    "test": "./validate-mods.sh"
+  },
+  "keywords": [
+    "zelda",
+    "snes",
+    "rom",
+    "mod",
+    "modding",
+    "retro",
+    "gaming",
+    "link-to-the-past",
+    "nintendo"
+  ],
+  "author": "SNES Modding Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/snes-modding/zelda3-modder.git"
+  },
+  "homepage": "https://github.com/snes-modding/zelda3-modder#readme",
+  "files": [
+    "zelda3-modder-demo.sh",
+    "validate-mods.sh", 
+    "README.md",
+    "DEMO_SCRIPT.md",
+    "snes-modder/*.smc"
+  ],
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "os": ["darwin", "linux", "win32"],
+  "preferGlobal": true
+}

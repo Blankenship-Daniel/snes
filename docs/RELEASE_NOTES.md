@@ -1,3 +1,32 @@
+# 🚀 Zelda 3 Modder v1.1.0 - Output Dir, Runtime Fixes, Cleaner Repo
+
+Release date: 2025-10-18
+
+## Highlights
+- CLI: `OUTPUT_DIR` env and `-o/--out/--output-dir` flag
+- Validation: scripts search both `OUTPUT_DIR` and repo root
+- Runtime: correct `cmp -l` octal→hex formatting in diff output
+- Repo: tidy structure with `docs/`, `logs/`, `tools/`, and `.gitignore`
+- Docs: added `CONTRIBUTING.md`; README structure + output-dir usage
+
+## Details
+- feat(cli): add output directory support and path creation
+- feat(validate): discover generated ROMs dynamically in `validate-mods.sh`
+- feat(runtime): search `OUTPUT_DIR` + root and test snes-modder prebuilts
+- fix(runtime): parse `cmp -l` octal bytes and print correct hex
+- chore(repo): move docs to `docs/`, logs to `logs/`, helper scripts to `tools/`
+- docs: new contributing guide and README project structure section
+
+## Validation Summary
+- Binary validation: all checks passed (sizes, diffs, targeted checks)
+- Runtime validation (bsnes): 100% success across tested ROMs
+
+Upgrade notes
+- No breaking changes. Default behavior (writing to repo root) remains.
+- To direct outputs elsewhere, use: `OUTPUT_DIR=out ./zelda3-modder-demo.sh <mod>` or `./zelda3-modder-demo.sh -o out <mod>`.
+
+---
+
 # 🚀 Zelda 3 Modder v1.0.0 - The 30-Second ROM Mod Revolution
 
 **The world's first binary-validated, 0-second ROM modification system!**
