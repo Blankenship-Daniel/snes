@@ -1,0 +1,39 @@
+{
+  "mcpServers": {
+    "snes-mcp-server": {
+      "command": "node",
+      "args": [
+        "./snes-mcp-server/dist/index.js"
+      ],
+      "description": "SNES development tools for 65816 assembly programming, ROM analysis, and official Nintendo manual access"
+    },
+    "bsnes": {
+      "command": "node",
+      "args": [
+        "./bsnes-plus/mcp-server/index.js"
+      ],
+      "description": "bsnes-plus emulator repository code search and analysis"
+    },
+    "zelda3": {
+      "command": "node",
+      "args": [
+        "./zelda3/mcp-server/index.js"
+      ],
+      "description": "Zelda 3 (A Link to the Past) C reimplementation code search"
+    },
+    "snes-mister": {
+      "command": "node",
+      "args": [
+        "./SNES_MiSTer/mcp-server/index.js"
+      ],
+      "description": "SNES MiSTer FPGA core repository code search and HDL analysis"
+    },
+    "snes9x": {
+      "command": "node",
+      "args": [
+        "./snes9x/mcp-server/index.js"
+      ],
+      "description": "SNES9x emulator repository code search and analysis"
+    }
+  }
+}
