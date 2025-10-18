@@ -11,20 +11,20 @@ Thank you for helping improve Zelda 3 Modder. This repo ships a fast, script‑d
 - Cross‑platform first: keep Bash POSIX‑friendly; gate platform specifics.
 
 ## Project Structure
-- `zelda3-modder-demo.sh` — main entry; copies prebuilt mod ROMs.
-- `validate-mods.sh` — binary‑level checks vs `zelda3.smc`.
-- `ultimate-runtime-validation.sh` — emulator runtime verification (bsnes).
+- `scripts/zelda3-modder-demo.sh` — main entry; copies prebuilt mod ROMs.
+- `scripts/validate-mods.sh` — binary‑level checks vs `zelda3.smc`.
+- `scripts/ultimate-runtime-validation.sh` — emulator runtime verification (bsnes).
 - `snes-modder/` — prebuilt ROM assets used by the demo.
 - `docs/`, `tools/`, `logs/` — docs, helper scripts, and validation outputs.
 
 ## Dev Commands
 - Generate a ROM
-  - `./zelda3-modder-demo.sh list`
-  - `./zelda3-modder-demo.sh <mod>`
-  - `OUTPUT_DIR=out ./zelda3-modder-demo.sh -o out <mod>`
+  - `./scripts/zelda3-modder-demo.sh list`
+  - `./scripts/zelda3-modder-demo.sh <mod>`
+  - `OUTPUT_DIR=out ./scripts/zelda3-modder-demo.sh -o out <mod>`
 - Validate
-  - `./validate-mods.sh`
-  - `./ultimate-runtime-validation.sh` (requires `bsnes`, `bc`, `xxd`, `timeout`)
+  - `./scripts/validate-mods.sh`
+  - `./scripts/ultimate-runtime-validation.sh` (requires `bsnes`, `bc`, `xxd`, `timeout`)
 
 ## Release Process
 - Bump version and tag (creates git tag and pushes):

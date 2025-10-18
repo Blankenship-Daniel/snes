@@ -8,9 +8,9 @@ This repo ships a fast, script‑driven SNES modding workflow for Zelda 3. Keep 
 - Generated reports, specs, analyses, and how‑tos should live under `docs/` (create subfolders as needed, e.g., `docs/releases/`, `docs/guides/`, `docs/reports/`).
 
 ## Project Structure & Module Organization
-- `zelda3-modder-demo.sh` — main entry; produces prebuilt mod ROMs fast.
-- `validate-mods.sh` — binary‑level sanity checks on produced ROMs.
-- `ultimate-runtime-validation.sh` — emulator runtime verification (bsnes).
+- `scripts/zelda3-modder-demo.sh` — main entry; produces prebuilt mod ROMs fast.
+- `scripts/validate-mods.sh` — binary‑level sanity checks on produced ROMs.
+- `scripts/ultimate-runtime-validation.sh` — emulator runtime verification (bsnes).
 - `snes-modder/` — prebuilt mod ROM assets used by the demo.
 - `zelda3*.smc` — base and generated ROMs (do not commit third‑party ROMs).
 - `bsnes-plus`, `snes9x`, `SNES_MiSTer/` — emulator/tooling sources or integrations.
@@ -28,7 +28,7 @@ Prereqs: `bsnes`, `bc`, `xxd`, `cmp`, `timeout` available on PATH; place `zelda3
 - Filenames: scripts kebab‑case; output ROMs `zelda3-<mod>-YYYYMMDD.smc`.
 
 ## Testing Guidelines
-- Primary checks: `validate-mods.sh` then `ultimate-runtime-validation.sh`.
+- Primary checks: `./scripts/validate-mods.sh` then `./scripts/ultimate-runtime-validation.sh`.
 - Add new validations close to the scripts they exercise; keep tests fast and non‑interactive.
 - Avoid committing generated ROMs or large logs; include short excerpts when needed.
 

@@ -14,7 +14,7 @@ This is a unified SNES development ecosystem with a focused mission: **Create th
 ### Vision: 30-Second ROM Mods
 Transform the complex process of SNES ROM hacking into a simple, one-command experience:
 ```bash
-./zelda3-modder-demo.sh infinite-magic
+./scripts/zelda3-modder-demo.sh infinite-magic
 # → Instant: ready-to-play modded ROM
 ```
 
@@ -298,16 +298,16 @@ Per-project testing approaches:
 ### Quick Mod Creation (Production Ready)
 ```bash
 # Pre-built ROM mods - instant creation
-./zelda3-modder-demo.sh infinite-magic
-./zelda3-modder-demo.sh 2x-speed
-./zelda3-modder-demo.sh max-hearts
-./zelda3-modder-demo.sh ultimate
+./scripts/zelda3-modder-demo.sh infinite-magic
+./scripts/zelda3-modder-demo.sh 2x-speed
+./scripts/zelda3-modder-demo.sh max-hearts
+./scripts/zelda3-modder-demo.sh ultimate
 
 # Validate all mods
-./validate-mods.sh
+./scripts/validate-mods.sh
 
 # Runtime validation with emulator
-./ultimate-runtime-validation.sh
+./scripts/ultimate-runtime-validation.sh
 ```
 
 Available mods: `infinite-magic`, `max-hearts`, `2x-speed`, `intro-skip`, `quick-start`, `team-solution`, `ultimate`
@@ -408,7 +408,7 @@ snes2asm -c zelda3-config.yaml -o output zelda3.smc
 **Binary validation**:
 ```bash
 # Validate ROM modifications
-./validate-mods.sh
+./scripts/validate-mods.sh
 
 # Shows byte-level differences and checksums
 ```
@@ -416,7 +416,7 @@ snes2asm -c zelda3-config.yaml -o output zelda3.smc
 **Runtime validation**:
 ```bash
 # Test mods in actual emulator
-./ultimate-runtime-validation.sh
+./scripts/ultimate-runtime-validation.sh
 
 # Runs bsnes-plus with frame testing
 ```
@@ -485,7 +485,7 @@ snes/
 cp /path/to/zelda3.smc .
 
 # 2. Create a mod instantly
-./zelda3-modder-demo.sh infinite-magic
+./scripts/zelda3-modder-demo.sh infinite-magic
 
 # 3. Play the modded ROM
 # Output: zelda3-infinite-magic-YYYYMMDD.smc

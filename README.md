@@ -95,9 +95,9 @@ Note: When using `--json -`, human-readable logs are written to stderr and the J
 
 ## 🗂️ Project Structure
 
-- `zelda3-modder-demo.sh` — main entry; produces prebuilt mod ROMs fast.
-- `validate-mods.sh` — binary-level sanity checks on produced ROMs.
-- `ultimate-runtime-validation.sh` — emulator runtime verification (bsnes).
+- `scripts/zelda3-modder-demo.sh` — main entry; produces prebuilt mod ROMs fast.
+- `scripts/validate-mods.sh` — binary-level sanity checks on produced ROMs.
+- `scripts/ultimate-runtime-validation.sh` — emulator runtime verification (bsnes).
 - `snes-modder/` — prebuilt mod ROM assets used by the demo.
 - `bsnes-plus`, `snes9x`, `SNES_MiSTer/` — emulator/tooling sources or integrations.
 - `docs/` — documentation, specs, and reports moved from the root.

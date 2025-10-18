@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Fail if hard-coded /Users/<name> paths are found in code/config files.
-# Excludes generated or third-party directories.
+# Absolute path linter
+# - Fails if hard-coded user-specific absolute paths are found in code/config files
+#   Examples: /Users/<name>, C:\\Users\\<name>, C:/Users/<name>, /mnt/c/Users/<name>
+# - Excludes generated or third-party directories
+#
+# Usage:
+#   bash ./tools/check-no-absolute-paths.sh
+#
+# CI:
+#   This script is run in CI (see .github/workflows/mcp-health.yml)
+#
+# Quick self-test (optional):
+#   echo '{"p":"C:\\Users\\alice\\AppData"}' > /tmp/test.json
+#   if bash ./tools/check-no-absolute-paths.sh . 2>/dev/null; then echo "Unexpected PASS"; else echo "Expected FAIL"; fi
+#   rm /tmp/test.json
 
 ROOT="${1:-.}"
 
@@ -28,6 +41,7 @@ EXCLUDES=(
   "--glob=!**/tools/check-no-absolute-paths.sh"
   "--glob=!**/zelda3/web/**"
   "--glob=!**/docker-compose.yml"
+  "--glob=!**/zelda3.js"
 )
 
 # File types to scan (code + config + docs where it matters)
@@ -35,9 +49,11 @@ TYPES=(sh bash zsh py ts js tsx jsx json yml yaml)
 
 PATTERNS=(
   '/Users/'
-  'C:/Users/'
-  'C\\Users\\'  # C:\Users\ (fixed string)
-  '/mnt/c/Users/'
+  'C:/Users/'        # Windows with forward slashes
+  'C:\\Users\\'     # Windows escaped backslashes in code (e.g., JSON)
+  'C:\Users\'       # Windows literal backslashes
+  '/home/'          # Linux absolute user paths
+  '/mnt/c/Users/'    # WSL paths
 )
 
 matches_file="$(mktemp)"
@@ -53,6 +69,8 @@ for ext in "${TYPES[@]}"; do
   # Collect matches for this extension; do not stop on non-zero (no matches)
   rg -n "${pattern_args[@]}" "${EXCLUDES[@]}" --glob "**/*.${ext}" "$ROOT" \
     | grep -v "tools/check-no-absolute-paths.sh" \
+    | grep -v "/zelda3/web/" \
+    | grep -v "/docker-compose.yml:" \
     >> "$matches_file" || true
 done
 
