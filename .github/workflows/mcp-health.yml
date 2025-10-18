@@ -19,7 +19,7 @@ jobs:
       - name: Run MCP healthcheck (log + JSON)
         continue-on-error: true
         run: |
-          bash ./mcp-healthcheck.sh --log mcp-health.log --json mcp-health.json
+          bash ./scripts/mcp-healthcheck.sh --log mcp-health.log --json mcp-health.json
 
       - name: Enforce thresholds from JSON
         if: always()
@@ -47,6 +47,11 @@ jobs:
             exit 1
           fi
           echo "Healthcheck within thresholds."
+
+      - name: Lint for absolute /Users paths in code
+        if: always()
+        run: |
+          bash ./tools/check-no-absolute-paths.sh
 
       - name: Upload log artifact
         if: always()

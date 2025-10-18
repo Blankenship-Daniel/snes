@@ -2,18 +2,18 @@
   "name": "zelda3-modder",
   "version": "1.1.1",
   "description": "The 30-second ROM mod experience for The Legend of Zelda: A Link to the Past",
-  "main": "zelda3-modder-demo.sh",
+  "main": "scripts/zelda3-modder-demo.sh",
   "bin": {
-    "zelda3-modder": "./zelda3-modder-demo.sh"
+    "zelda3-modder": "./scripts/zelda3-modder-demo.sh"
   },
   "scripts": {
-    "start": "./zelda3-modder-demo.sh",
-    "validate": "./validate-mods.sh",
-    "demo": "./zelda3-modder-demo.sh ultimate",
-    "test": "./validate-mods.sh",
+    "start": "./scripts/zelda3-modder-demo.sh",
+    "validate": "./scripts/validate-mods.sh",
+    "demo": "./scripts/zelda3-modder-demo.sh ultimate",
+    "test": "./scripts/validate-mods.sh",
     "lint:paths": "bash ./tools/check-no-absolute-paths.sh",
     "mcp:health": "bash ./mcp-healthcheck.sh",
-    "preversion": "bash -n zelda3-modder-demo.sh validate-mods.sh ultimate-runtime-validation.sh",
+    "preversion": "bash -n scripts/zelda3-modder-demo.sh scripts/validate-mods.sh scripts/ultimate-runtime-validation.sh",
     "postversion": "git push && git push --tags",
     "release:version:patch": "npm version patch -m \"chore(release): %s\"",
     "release:version:minor": "npm version minor -m \"chore(release): %s\"",
@@ -38,8 +38,10 @@
   },
   "homepage": "https://github.com/snes-modding/zelda3-modder#readme",
   "files": [
-    "zelda3-modder-demo.sh",
-    "validate-mods.sh", 
+    "scripts/zelda3-modder-demo.sh",
+    "scripts/validate-mods.sh",
+    "scripts/ultimate-runtime-validation.sh",
+    "scripts/mcp-healthcheck.sh",
     "README.md",
     "docs/DEMO_SCRIPT.md",
     "snes-modder/*.smc"
