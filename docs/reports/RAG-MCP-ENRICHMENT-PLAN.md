@@ -1198,7 +1198,7 @@ def test_enrichment_performance():
 
 ### Documentation
 - **This Plan**: `docs/RAG-MCP-ENRICHMENT-PLAN.md`
-- **Current RAG Docs**: `docs/rag-integration.md`
+- **Current RAG Docs**: `../guides/rag-integration.md`
 - **MCP Server List**: `.mcp.json`
 - **SNES Context Command**: `.claude/commands/snes-context.md`
 

@@ -41,7 +41,7 @@ Successfully identified and implemented **advanced RAG and Codex integration opp
 ✅ Created comprehensive guides:
   - `ADVANCED-RAG-ENHANCEMENTS.md` (detailed technical guide)
   - `HOOK-ENHANCEMENT-COMPLETE.md` (from previous session)
-  - `docs/hook-integration-guide.md` (from previous session)
+  - `../guides/hook-integration-guide.md` (from previous session)
 
 ## 🔬 Technical Achievements
 
@@ -434,7 +434,7 @@ if intent == "implement":
    - Pre/post tool use hooks
    - Learning extraction system
 
-3. **docs/hook-integration-guide.md** (previous session):
+3. **../guides/hook-integration-guide.md** (previous session):
    - Architecture diagrams
    - Usage examples
    - Best practices

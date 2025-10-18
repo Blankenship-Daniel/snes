@@ -413,8 +413,8 @@ Possible improvements:
 
 - **RAG Pipeline**: `tools/neo4j_rag.py`
 - **Hook Integration**: `.claude/hooks/user_prompt_submit.py`
-- **Neo4j Docs**: `docs/neo4j-knowledge-graph.md`
-- **Schema**: `docs/neo4j-schema-diagram.md`
+- **Neo4j Docs**: `./neo4j-knowledge-graph.md`
+- **Schema**: `./neo4j-schema-diagram.md`
 
 ---
 

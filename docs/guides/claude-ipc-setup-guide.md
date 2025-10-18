@@ -35,7 +35,7 @@ The IPC MCP server is already installed and configured in this repository.
 
 ### Dependencies
 
-- **UV Package Manager**: ✅ Installed at `/Users/ship/.local/bin/uv`
+- **UV Package Manager**: ✅ Installed at `$HOME/.local/bin/uv` (typical)
 - **Python Version**: ✅ 3.12.8
 - **Virtual Environment**: ✅ Created at `claude-ipc-mcp/.venv/`
 - **Repository**: `claude-ipc-mcp/` (cloned from https://github.com/jdez427/claude-ipc-mcp)

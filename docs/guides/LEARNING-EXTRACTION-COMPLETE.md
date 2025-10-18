@@ -19,7 +19,7 @@ Your Claude Code sessions now automatically extract and store learnings in the N
    - Summary of captured learnings
 
 3. **Comprehensive Documentation** ✅
-   - Complete guide: `docs/learning-extraction.md`
+   - Complete guide: `./learning-extraction.md`
    - Test script: `tools/test_learning_extraction.sh`
    - This summary: `LEARNING-EXTRACTION-COMPLETE.md`
 
@@ -74,7 +74,7 @@ Stop Hook Runs
 ```
 tools/learning_extractor.py           # Core extraction logic
 tools/test_learning_extraction.sh     # Test script
-docs/learning-extraction.md           # Complete documentation
+learning-extraction.md                # Complete documentation
 .claude/hooks/stop.py                 # Updated with extraction
 LEARNING-EXTRACTION-COMPLETE.md       # This summary
 ```
@@ -374,9 +374,9 @@ Back to Knowledge Graph (continuous loop!)
 
 ## 🎓 Documentation
 
-- **Complete Guide**: `docs/learning-extraction.md` (1000+ lines)
-- **RAG Integration**: `docs/rag-integration.md`
-- **Neo4j Guide**: `docs/neo4j-knowledge-graph.md`
+- **Complete Guide**: `./learning-extraction.md` (1000+ lines)
+- **RAG Integration**: `./rag-integration.md`
+- **Neo4j Guide**: `./neo4j-knowledge-graph.md`
 - **Quick Reference**: This file!
 
 ## 🛠️ Management
@@ -400,7 +400,7 @@ open http://localhost:7474
 1. **Try it out**: End this session and watch extraction happen
 2. **Check learnings**: Query Neo4j for captured knowledge
 3. **Use RAG**: Ask questions and see learnings retrieved
-4. **Read docs**: Check `docs/learning-extraction.md` for details
+4. **Read docs**: Check `./learning-extraction.md` for details
 
 ## 🔥 What Makes This Powerful
 

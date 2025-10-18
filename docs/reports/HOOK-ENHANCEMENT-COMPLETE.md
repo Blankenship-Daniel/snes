@@ -38,7 +38,7 @@ Successfully enhanced the Claude Code hook system with RAG pipeline integration 
 
 ## Documentation Created
 
-### `docs/hook-integration-guide.md` ✅
+### `../guides/hook-integration-guide.md` ✅
 **Comprehensive 600+ line guide covering**:
 - Architecture and data flow diagrams
 - Detailed component descriptions
@@ -343,10 +343,10 @@ npx codex-cli "What is this repo?" --context .
 
 ## Related Documentation
 
-- 📚 [Hook Integration Guide](docs/hook-integration-guide.md) - **START HERE**
-- 📚 [RAG Integration Guide](docs/rag-integration.md)
-- 📚 [Learning Extraction Guide](docs/learning-extraction.md)
-- 📚 [Neo4j Knowledge Graph Guide](docs/neo4j-knowledge-graph.md)
+- 📚 [Hook Integration Guide](../guides/hook-integration-guide.md) - **START HERE**
+- 📚 [RAG Integration Guide](../guides/rag-integration.md)
+- 📚 [Learning Extraction Guide](../guides/learning-extraction.md)
+- 📚 [Neo4j Knowledge Graph Guide](../guides/neo4j-knowledge-graph.md)
 - 🚀 [RAG Quick Start](guides/RAG-QUICKSTART.md)
 - 🚀 [Neo4j Quick Start](guides/NEO4J-QUICKSTART.md)
 

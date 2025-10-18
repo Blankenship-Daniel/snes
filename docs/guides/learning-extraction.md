@@ -495,8 +495,8 @@ Planned improvements:
 
 - **Learning Extractor**: `tools/learning_extractor.py`
 - **Stop Hook**: `.claude/hooks/stop.py`
-- **RAG Integration**: `docs/rag-integration.md`
-- **Neo4j Guide**: `docs/neo4j-knowledge-graph.md`
+- **RAG Integration**: `./rag-integration.md`
+- **Neo4j Guide**: `./neo4j-knowledge-graph.md`
 
 ---
 

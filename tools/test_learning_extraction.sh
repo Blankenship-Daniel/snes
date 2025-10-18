@@ -75,7 +75,7 @@ Technical decisions:
 ```
 M  .claude/hooks/user_prompt_submit.py
 A  tools/neo4j_rag.py
-M  docs/rag-integration.md
+    M  docs/guides/rag-integration.md
 ```
 EOF
 
