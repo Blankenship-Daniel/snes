@@ -7,6 +7,13 @@
       ],
       "description": "SNES development tools for 65816 assembly programming, ROM analysis, and official Nintendo manual access"
     },
+    "bsnes": {
+      "command": "node",
+      "args": [
+        "./bsnes-plus/mcp-server/index.js"
+      ],
+      "description": "bsnes-plus emulator repository code search and analysis"
+    },
     "zelda3": {
       "command": "node",
       "args": [
