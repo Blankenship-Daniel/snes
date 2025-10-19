@@ -220,7 +220,7 @@ else
     if [ $TOTAL_TESTS -eq 0 ]; then
         echo "💡 No ROM files found to test"
         echo "   Generate some mods first with:"
-        echo "   ./zelda3-modder-demo.sh infinite-magic zelda3.smc"
+        echo "   ./scripts/zelda3-modder-demo.sh infinite-magic"
     fi
 fi
 

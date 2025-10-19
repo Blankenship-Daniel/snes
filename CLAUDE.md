@@ -195,6 +195,43 @@ cd output_dir && make
 
 Python-based disassembler with asset extraction (graphics, palettes, text), compression support (APLib, RLE, LZ variants), and buildable project generation.
 
+### emulatorjs-mcp-server (Browser-Based Emulator Control)
+Located in: `emulatorjs-mcp-server/`
+
+```bash
+# Install dependencies
+npm install
+
+# Download EmulatorJS files
+npm run setup
+
+# Build
+npm run build
+
+# Development mode
+npm run dev
+
+# Type checking
+npm run typecheck
+
+# Testing
+npm test
+```
+
+Browser-based SNES emulator MCP server using EmulatorJS and Playwright. Provides AI-driven gameplay control with screenshot capabilities for visual analysis, memory access, and state management. Perfect for automated playtesting and ROM validation.
+
+### playwright (Official Playwright MCP Server)
+Installed via: `npx @playwright/mcp@latest`
+
+```bash
+# Install browsers (one-time setup)
+npx playwright install chromium
+```
+
+Official Playwright MCP server for general-purpose browser automation. Provides tools for navigating websites, interacting with web elements, taking screenshots, filling forms, and running browser-based tests. Complements EmulatorJS MCP by enabling automation of web-based tools and dashboards.
+
+**Key Tools**: browser_navigate, browser_click, browser_snapshot, browser_take_screenshot, browser_fill_form, browser_evaluate, browser_wait_for
+
 ## Unified Zelda 3 Modding Architecture
 
 ### The Complete Reverse-Engineering Ecosystem

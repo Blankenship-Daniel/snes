@@ -44,8 +44,8 @@ Thank you for helping improve Zelda 3 Modder. This repo ships a fast, script‑d
 
 ## Tests and Evidence
 - Include a short terminal excerpt showing:
-  - `./validate-mods.sh` summary with pass/fail counts
-  - If relevant, `./ultimate-runtime-validation.sh` summary (success rate)
+  - `./scripts/validate-mods.sh` summary with pass/fail counts
+  - If relevant, `./scripts/ultimate-runtime-validation.sh` summary (success rate)
 - Keep logs under `logs/` (gitignored). Include brief snippets in PRs.
 
 ## Commit & PR Guidelines

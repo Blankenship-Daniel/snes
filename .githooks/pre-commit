@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "🔎 Pre-commit: checking for absolute user paths..."
+bash ./tools/check-no-absolute-paths.sh
+echo "✅ Path check passed"
+

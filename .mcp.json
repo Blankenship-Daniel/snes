@@ -7,13 +7,6 @@
       ],
       "description": "SNES development tools for 65816 assembly programming, ROM analysis, and official Nintendo manual access"
     },
-    "bsnes": {
-      "command": "node",
-      "args": [
-        "./bsnes-plus/mcp-server/index.js"
-      ],
-      "description": "bsnes-plus emulator repository code search and analysis"
-    },
     "zelda3": {
       "command": "node",
       "args": [
@@ -34,6 +27,28 @@
         "./snes9x/mcp-server/index.js"
       ],
       "description": "SNES9x emulator repository code search and analysis"
+    },
+    "emulatorjs": {
+      "command": "node",
+      "args": [
+        "./emulatorjs-mcp-server/dist/index.js"
+      ],
+      "description": "Browser-based SNES emulator with AI gameplay control, screenshots, and memory access"
+    },
+    "zelda3-disasm": {
+      "command": "node",
+      "args": [
+        "./zelda3-disasm/mcp-server/index.js"
+      ],
+      "description": "Zelda 3 assembly disassembly code search and analysis"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "description": "Browser automation with Playwright - navigate, interact, screenshot, and test web applications"
     }
   }
 }

@@ -9,8 +9,9 @@ Transform your Zelda 3 ROM in under 30 seconds with natural language commands. N
 Unlike other ROM tools, every mod is **binary validated** with ground truth testing:
 
 - **infinite-magic**: 7 bytes changed, magic system modified (`0x0f → 0x6b`)
-- **2x-speed**: 26 bytes changed, movement mechanics updated  
+- **2x-speed**: 26 bytes changed, movement mechanics updated
 - **max-hearts**: 4 bytes changed, health system modified
+- **rich-start**: 2 bytes changed, starting rupees modified (0→999/500/777)
 - **All mods**: Verified different from base ROM, correct 1MB size
 
 **We don't just create files - we create PROVEN working mods!** ✅
@@ -43,8 +44,9 @@ zelda3-modder ultimate zelda3.smc
 
 # Examples - all complete in 0 seconds!
 ./scripts/zelda3-modder-demo.sh infinite-magic
-./scripts/zelda3-modder-demo.sh 2x-speed  
+./scripts/zelda3-modder-demo.sh 2x-speed
 ./scripts/zelda3-modder-demo.sh max-hearts
+./scripts/zelda3-modder-demo.sh rich-start     # 999 rupees!
 ./scripts/zelda3-modder-demo.sh ultimate
 ```
 

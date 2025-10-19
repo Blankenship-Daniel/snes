@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "🔎 Pre-push: linting for absolute user paths..."
+bash ./tools/check-no-absolute-paths.sh
+
+echo "🩺 Pre-push: running MCP healthcheck..."
+bash ./scripts/mcp-healthcheck.sh --json - >/dev/null
+echo "✅ Pre-push checks passed"

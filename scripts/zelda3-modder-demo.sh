@@ -16,6 +16,11 @@ print_mod_list() {
     echo "    • infinite-magic    - Never run out of magic power"
     echo "    • max-hearts        - Start with maximum health (20 hearts)"
     echo ""
+    echo "  💰 MONEY & RESOURCES:"
+    echo "    • rich-start        - Start with 999 rupees (millionaire!)"
+    echo "    • rich-start-500    - Start with 500 rupees (comfortable)"
+    echo "    • rich-start-777    - Start with 777 rupees (lucky!)"
+    echo ""
     echo "  🏃 SPEED & FLOW:"
     echo "    • 2x-speed          - Move at double speed"
     echo "    • intro-skip        - Skip opening cutscene instantly"
@@ -129,9 +134,26 @@ case "$MOD_TYPE" in
         OUTPUT_NAME="zelda3-safe-start-$(date +%Y%m%d).smc"
         DESCRIPTION="Safe Start (Beginner Friendly)"
         ;;
+    "rich-start"|"rich"|"999-rupees"|"millionaire")
+        SOURCE_ROM="snes-modder/zelda3-rich-start-999.smc"
+        OUTPUT_NAME="zelda3-rich-start-999-$(date +%Y%m%d).smc"
+        DESCRIPTION="Rich Start (999 Rupees)"
+        ;;
+    "rich-start-500"|"comfortable"|"500-rupees")
+        SOURCE_ROM="snes-modder/zelda3-rich-start-500.smc"
+        OUTPUT_NAME="zelda3-rich-start-500-$(date +%Y%m%d).smc"
+        DESCRIPTION="Rich Start Comfortable (500 Rupees)"
+        ;;
+    "rich-start-777"|"wealthy"|"777-rupees"|"lucky")
+        SOURCE_ROM="snes-modder/zelda3-rich-start-777.smc"
+        OUTPUT_NAME="zelda3-rich-start-777-$(date +%Y%m%d).smc"
+        DESCRIPTION="Rich Start Wealthy (777 Rupees)"
+        ;;
     *)
         echo "❌ Unknown mod type: $MOD_TYPE"
-        echo "Available: infinite-magic, intro-skip, quick-start, 2x-speed, max-hearts, team-solution, ultimate, safe-start"
+        echo "Available: infinite-magic, intro-skip, quick-start, 2x-speed, max-hearts,"
+        echo "           rich-start, rich-start-500, rich-start-777,"
+        echo "           team-solution, ultimate, safe-start"
         exit 1
         ;;
 esac
