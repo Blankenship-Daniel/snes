@@ -40,6 +40,9 @@ EXCLUDES=(
   "--glob=!**/CMakeCache.txt"
   "--glob=!**/tools/check-no-absolute-paths.sh"
   "--glob=!**/zelda3/web/**"
+  # Vendored/compiled browser assets that may include absolute sandbox paths
+  "--glob=!**/emulatorjs-mcp-server/public/**"
+  "--glob=!**/emulatorjs-mcp-server/EmulatorJS-*/**"
   "--glob=!**/docker-compose.yml"
   "--glob=!**/zelda3.js"
 )

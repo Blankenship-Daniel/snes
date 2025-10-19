@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "bsnes-gamer": {
+      "command": "node",
+      "args": [
+        "./bsnes-gamer/dist/index.js"
+      ],
+      "env": {
+        "BSNES_PATH": "bsnes-cli"
+      }
+    }
+  }
+}
