@@ -1,7 +1,8 @@
-name: codex-auto-fix
+name: Codex Auto-Fix on Failure
 
 on:
   workflow_run:
+    # Trigger this job after any run of the primary CI workflow completes
     workflows: ["ci"]
     types: [completed]
 
@@ -20,33 +21,31 @@ jobs:
       FAILED_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
       FAILED_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
     steps:
-      - name: Abort when secret missing
-        if: env.OPENAI_API_KEY == ''
+      - name: Check OpenAI API Key Set
         run: |
-          echo "OPENAI_API_KEY secret is not set. Skipping Codex auto-fix."
-          exit 0
+          if [ -z "${OPENAI_API_KEY}" ]; then
+            echo "OPENAI_API_KEY secret is not set. Skipping auto-fix." >&2
+            exit 1
+          fi
 
       - name: Checkout failing ref
-        if: env.OPENAI_API_KEY != ''
         uses: actions/checkout@v4
         with:
           ref: ${{ env.FAILED_HEAD_SHA }}
           fetch-depth: 0
 
       - name: Setup Node.js
-        if: env.OPENAI_API_KEY != ''
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "yarn"
 
       - name: Install workspace dependencies
-        if: env.OPENAI_API_KEY != ''
         run: |
           corepack enable
           YARN_ENABLE_SCRIPTS=false yarn install --mode skip-build
 
       - name: Run Codex auto-fix
-        if: env.OPENAI_API_KEY != ''
         uses: openai/codex-action@main
         id: codex
         with:
@@ -59,14 +58,13 @@ jobs:
           codex_args: '["--config","sandbox_mode=\"workspace-write\""]'
 
       - name: Re-run workspace checks
-        if: env.OPENAI_API_KEY != ''
         run: |
           corepack enable
           yarn ws:ci:build
           yarn ws:ci:test
 
       - name: Create pull request with Codex fixes
-        if: env.OPENAI_API_KEY != '' && success()
+        if: success()
         uses: peter-evans/create-pull-request@v6
         with:
           commit-message: "fix(ci): auto-fix failing tests via Codex"
