@@ -5,6 +5,10 @@
 # Output directory for generated files
 /output/
 
+# Analysis output (large generated files)
+**/analysis/snes2asm_output/
+**/analysis_metadata.json
+
 # Logs and runtime artifacts
 /logs/
 /*.log
