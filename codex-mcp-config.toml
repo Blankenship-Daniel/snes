@@ -14,12 +14,14 @@
 # codex mcp add snes9x -- node /path/to/repos/snes9x/.mcp-server/index.js
 # codex mcp add snes-mister -- node /path/to/repos/SNES_MiSTer/.mcp-server/index.js
 
+# Replace <REPO_ROOT> with the absolute path to this repository before copying.
+
 # Zelda 3 C Reimplementation MCP Server
 # Provides code search for the Zelda 3 C source code
 # Tools: search_code, list_files, read_source_file
 [mcp_servers.zelda3]
 command = "node"
-args = ["/Users/ship/Documents/code/snes/repos/zelda3/.mcp-server/index.js"]
+args = ["<REPO_ROOT>/repos/zelda3/.mcp-server/index.js"]
 # Uncomment to add environment variables
 # env = { DEBUG = "true" }
 
@@ -28,21 +30,21 @@ args = ["/Users/ship/Documents/code/snes/repos/zelda3/.mcp-server/index.js"]
 # Tools: search_code, list_files, read_source_file
 [mcp_servers.snes9x]
 command = "node"
-args = ["/Users/ship/Documents/code/snes/repos/snes9x/.mcp-server/index.js"]
+args = ["<REPO_ROOT>/repos/snes9x/.mcp-server/index.js"]
 
 # SNES MiSTer FPGA Core MCP Server
 # Provides code search for the MiSTer FPGA implementation
 # Tools: search_code, list_files, read_source_file
 [mcp_servers.snes-mister]
 command = "node"
-args = ["/Users/ship/Documents/code/snes/repos/SNES_MiSTer/.mcp-server/index.js"]
+args = ["<REPO_ROOT>/repos/SNES_MiSTer/.mcp-server/index.js"]
 
 # Zelda 3 Assembly Disassembly MCP Server
 # Provides code search for the Zelda 3 assembly disassembly
 # Tools: search_code, list_files, read_source_file
 [mcp_servers.zelda3-disasm]
 command = "node"
-args = ["/Users/ship/Documents/code/snes/repos/zelda3-disasm/dist/index.js"]
+args = ["<REPO_ROOT>/repos/zelda3-disasm/dist/index.js"]
 
 # Playwright Browser Automation MCP Server (Official)
 # Provides browser automation capabilities

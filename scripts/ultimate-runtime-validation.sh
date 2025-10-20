@@ -9,8 +9,42 @@ echo "REAL emulator testing with gameplay verification!"
 echo ""
 
 BASE_ROM="zelda3.smc"
-# Allow overriding emulator path via BSNES_PATH; default to discovering on PATH
-BSNES="${BSNES_PATH:-bsnes}"
+# Allow overriding emulator path via BSNES_PATH; default to bundled bsnes-plus CLI when available
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+BUNDLED_BSNES="$REPO_ROOT/repos/bsnes-plus/bsnes/cli-headless/bsnes-cli"
+if [ -n "${BSNES_PATH:-}" ]; then
+    BSNES="$BSNES_PATH"
+elif [ -x "$BUNDLED_BSNES" ]; then
+    BSNES="$BUNDLED_BSNES"
+else
+    BSNES="$(command -v bsnes 2>/dev/null || true)"
+    BSNES="${BSNES:-bsnes}"
+fi
+
+if ! command -v "$BSNES" >/dev/null 2>&1; then
+    echo "❌ bsnes executable not found (looked for '$BSNES'). Set BSNES_PATH to a bsnes-plus CLI build."
+    exit 1
+fi
+
+if command -v timeout >/dev/null 2>&1; then
+    TIMEOUT_CMD="timeout"
+elif command -v gtimeout >/dev/null 2>&1; then
+    TIMEOUT_CMD="gtimeout"
+else
+    TIMEOUT_CMD=""
+    echo "⚠️  'timeout' command not found; continuing without frame-run time limits."
+fi
+
+run_with_timeout() {
+    local duration=$1
+    shift
+    if [ -n "$TIMEOUT_CMD" ]; then
+        "$TIMEOUT_CMD" "$duration" "$@"
+    else
+        "$@"
+    fi
+}
 OUTPUT_DIR="${OUTPUT_DIR:-.}"
 SUCCESS_COUNT=0
 TOTAL_TESTS=0
@@ -37,7 +71,7 @@ ultimate_test() {
     # 1. Basic Loading Test
     echo ""
     echo "🔄 STEP 1: Basic ROM Loading Test"
-    if timeout 10s "$BSNES" "$rom_file" --run-frames 60 > /dev/null 2>&1; then
+    if run_with_timeout 10s "$BSNES" "$rom_file" --run-frames 60 > /dev/null 2>&1; then
         echo "✅ ROM loads successfully in bsnes"
         echo "✅ No crashes detected during initial 60 frames"
     else
@@ -48,7 +82,7 @@ ultimate_test() {
     # 2. Extended Stability Test
     echo ""
     echo "🔄 STEP 2: Extended Stability Test"
-    if timeout 15s "$BSNES" "$rom_file" --run-frames 300 > /dev/null 2>&1; then
+    if run_with_timeout 15s "$BSNES" "$rom_file" --run-frames 300 > /dev/null 2>&1; then
         echo "✅ ROM runs stably for 300 frames (5+ seconds)"
         echo "✅ No memory corruption or crashes detected"
     else

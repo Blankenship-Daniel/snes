@@ -159,10 +159,16 @@ export class ROMHandler {
   }
 
   public readWord(offset: number): number {
+    if (offset < 0 || offset + 1 >= this.data.length) {
+      throw new ROMValidationError(`Invalid word read at offset: 0x${offset.toString(16)}`);
+    }
     return this.data.readUInt16LE(offset);
   }
 
   public readLong(offset: number): number {
+    if (offset < 0 || offset + 2 >= this.data.length) {
+      throw new ROMValidationError(`Invalid long read at offset: 0x${offset.toString(16)}`);
+    }
     return this.data.readUInt16LE(offset) | (this.data[offset + 2] << 16);
   }
 
@@ -189,6 +195,9 @@ export class ROMHandler {
   public writeWord(offset: number, value: number): void {
     if (value < 0 || value > 0xFFFF) {
       throw new ROMModificationError(`Invalid word value: ${value}`);
+    }
+    if (offset < 0 || offset + 1 >= this.data.length) {
+      throw new ROMModificationError(`Invalid write offset for word: 0x${offset.toString(16)}`);
     }
     this.data.writeUInt16LE(value, offset);
   }

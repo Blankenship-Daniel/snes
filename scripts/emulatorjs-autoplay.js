@@ -7,16 +7,53 @@
 */
 const fs = require('fs');
 const path = require('path');
-const { Client } = require('../emulatorjs-mcp-server/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/index.js');
-const { StdioClientTransport } = require('../emulatorjs-mcp-server/node_modules/@modelcontextprotocol/sdk/dist/cjs/client/stdio.js');
+
+function resolveMcpModule(subPath, bases) {
+  for (const base of bases) {
+    try {
+      return require.resolve(`@modelcontextprotocol/sdk/dist/cjs/${subPath}`, { paths: [base] });
+    } catch {
+      // continue searching
+    }
+  }
+  // Fall back to Node resolution for globally installed copies
+  return require.resolve(`@modelcontextprotocol/sdk/dist/cjs/${subPath}`);
+}
+
+function resolveServerRoot(cwd) {
+  const configured = process.env.EMULATORJS_MCP_ROOT;
+  const candidates = [
+    configured && path.resolve(cwd, configured),
+    path.join(cwd, 'emulatorjs-mcp-server'),
+    path.join(cwd, 'mcp-servers', 'emulatorjs-mcp-server'),
+    path.join(cwd, 'repos', 'emulatorjs-mcp-server'),
+  ].filter(Boolean);
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  throw new Error(
+    'Unable to locate emulatorjs-mcp-server. Set EMULATORJS_MCP_ROOT or run from a workspace that includes emulatorjs-mcp-server.'
+  );
+}
+
+const cwd = process.cwd();
+const serverRoot = resolveServerRoot(cwd);
+const sdkResolutionBases = [serverRoot, path.join(serverRoot, 'node_modules'), cwd];
+const clientPath = resolveMcpModule('client/index.js', sdkResolutionBases);
+const stdioPath = resolveMcpModule('client/stdio.js', sdkResolutionBases);
+
+const { Client } = require(clientPath);
+const { StdioClientTransport } = require(stdioPath);
 
 async function main() {
   // Resolve ROM path
-  const cwd = process.cwd();
   const candidates = [
     path.join(cwd, 'zelda3.smc'),
     path.join(cwd, 'zelda3.sfc'),
-    path.join(cwd, 'emulatorjs-mcp-server', 'public', 'zelda3.smc'),
+    path.join(serverRoot, 'public', 'zelda3.smc'),
   ];
   const rom = candidates.find(p => fs.existsSync(p));
   if (!rom) {
@@ -28,15 +65,30 @@ async function main() {
   const outDir = path.join(cwd, 'output', 'emulatorjs-autoplay');
   fs.mkdirSync(outDir, { recursive: true });
 
+  const macChrome = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+  const chromeCandidate =
+    process.env.PLAYWRIGHT_EXECUTABLE_PATH ||
+    (process.platform === 'darwin' && fs.existsSync(macChrome) ? macChrome : undefined);
+
   const env = {
+    ...process.env,
     EMULATORJS_PORT: String(43021 + Math.floor(Math.random() * 1000)),
-    PLAYWRIGHT_EXECUTABLE_PATH: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-    PLAYWRIGHT_HEADLESS: '1',
+    PLAYWRIGHT_HEADLESS: process.env.PLAYWRIGHT_HEADLESS ?? '1',
   };
+  if (chromeCandidate) {
+    env.PLAYWRIGHT_EXECUTABLE_PATH = chromeCandidate;
+  }
+
+  const entryPoint = path.join(serverRoot, 'dist', 'index.js');
+  if (!fs.existsSync(entryPoint)) {
+    throw new Error(
+      `Missing build output at ${entryPoint}. Run "npm install && npm run build" in ${serverRoot} first.`
+    );
+  }
 
   const transport = new StdioClientTransport({
     command: 'node',
-    args: [path.join(cwd, 'emulatorjs-mcp-server', 'dist', 'index.js')],
+    args: [entryPoint],
     env,
   });
   const client = new Client({ name: 'autoplay', version: '0.1.0' }, { capabilities: { tools: {} } });
@@ -107,4 +159,3 @@ main().catch(err => {
   console.error('Autoplay error:', err);
   process.exit(1);
 });
-

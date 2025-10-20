@@ -7,14 +7,25 @@ echo "🎮 Zelda 3 - Simple Gameplay Test"
 echo "═════════════════════════════════════"
 echo ""
 
-BSNES_PATH="${BSNES_PATH:-bsnes}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+BUNDLED_BSNES="$REPO_ROOT/repos/bsnes-plus/bsnes/cli-headless/bsnes-cli"
+if [ -n "${BSNES_PATH:-}" ]; then
+    BSNES="$BSNES_PATH"
+elif [ -x "$BUNDLED_BSNES" ]; then
+    BSNES="$BUNDLED_BSNES"
+else
+    BSNES="$(command -v bsnes 2>/dev/null || true)"
+    BSNES="${BSNES:-bsnes}"
+fi
+
 ROM="${1:-repos/snes-modder/zelda3-rich-start-999.smc}"
 OUTPUT_DIR="${OUTPUT_DIR:-output}"
 
 mkdir -p "$OUTPUT_DIR"
 
-if ! command -v "$BSNES_PATH" &> /dev/null; then
-    echo "❌ Error: bsnes not found"
+if ! command -v "$BSNES" >/dev/null 2>&1; then
+    echo "❌ Error: bsnes not found at '$BSNES'"
     exit 1
 fi
 
@@ -27,7 +38,7 @@ echo "🎬 Test 1: Let game run for 60 seconds (no input)"
 echo "   This should boot, show title screen, and possibly play attract mode..."
 echo ""
 
-"$BSNES_PATH" "$ROM" \
+"$BSNES" "$ROM" \
   --run-frames 3600 \
   --dump-wram "0x7EF360:128:$OUTPUT_DIR/test1-attract-mode.bin" \
   > "$OUTPUT_DIR/test1-output.log" 2>&1
@@ -61,7 +72,7 @@ echo "🎬 Test 2: Run for 3 minutes (10800 frames)"
 echo "   Letting all intros/cutscenes complete..."
 echo ""
 
-"$BSNES_PATH" "$ROM" \
+"$BSNES" "$ROM" \
   --run-frames 10800 \
   --dump-wram "0x7EF000:1024:$OUTPUT_DIR/test2-long-run.bin" \
   > "$OUTPUT_DIR/test2-output.log" 2>&1

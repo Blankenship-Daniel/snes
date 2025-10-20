@@ -1,0 +1,18 @@
+# Quick Mods - Experimental Area
+# These files are for local experimentation only
+
+# Ignore test ROMs
+*.smc
+*.sfc
+*.srm
+
+# Keep the log
+!experiments.json
+
+# Ignore temporary experiments
+temp-*.ts
+test-*.ts
+scratch-*.ts
+
+# But keep example experiments
+!example-*.ts

@@ -62,6 +62,8 @@ quick-mods/
 production-mods/
 saves/
 demo-extracted/
+!src/quick-mods/
+!src/quick-mods/zelda3-instant-mods.ts
 
 # Generated analysis reports
 *_ANALYSIS.md

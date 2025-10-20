@@ -10,7 +10,23 @@ echo "════════════════════════�
 echo ""
 
 # Configuration
-BSNES_PATH="${BSNES_PATH:-bsnes}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+BUNDLED_BSNES="$REPO_ROOT/repos/bsnes-plus/bsnes/cli-headless/bsnes-cli"
+if [ -n "${BSNES_PATH:-}" ]; then
+    BSNES="$BSNES_PATH"
+elif [ -x "$BUNDLED_BSNES" ]; then
+    BSNES="$BUNDLED_BSNES"
+else
+    BSNES="$(command -v bsnes 2>/dev/null || true)"
+    BSNES="${BSNES:-bsnes}"
+fi
+
+if ! command -v "$BSNES" >/dev/null 2>&1; then
+    echo "❌ Error: bsnes not found at '$BSNES'. Set BSNES_PATH to the bsnes-plus CLI binary."
+    exit 1
+fi
+
 ROM_999="${1:-repos/snes-modder/zelda3-rich-start-999.smc}"
 ROM_500="${2:-repos/snes-modder/zelda3-rich-start-500.smc}"
 ROM_777="${3:-repos/snes-modder/zelda3-rich-start-777.smc}"
@@ -23,12 +39,6 @@ RUPEE_GOAL_ADDR="0x7EF360"
 RUPEE_ACTUAL_ADDR="0x7EF362"
 
 # Check if bsnes exists
-if ! command -v "$BSNES_PATH" &> /dev/null; then
-    echo "❌ Error: bsnes not found at '$BSNES_PATH'"
-    echo "Set BSNES_PATH environment variable to bsnes binary location"
-    exit 1
-fi
-
 test_rom_rupees() {
     local rom="$1"
     local expected="$2"
@@ -53,7 +63,7 @@ test_rom_rupees() {
     echo "▶️  Running emulator (1800 frames = 30 seconds)..."
     echo "   Waiting for new game initialization..."
 
-    "$BSNES_PATH" "$rom" \
+    "$BSNES" "$rom" \
         --run-frames 1800 \
         --dump-wram "${RUPEE_GOAL_ADDR}:4:${temp_dir}/rupees-goal.bin" \
         > "${temp_dir}/emulator.log" 2>&1 || {
@@ -70,7 +80,7 @@ test_rom_rupees() {
         echo "Falling back to basic emulator test..."
 
         # Just verify ROM loads without crashing
-        "$BSNES_PATH" "$rom" --run-frames 60 > /dev/null 2>&1
+        "$BSNES" "$rom" --run-frames 60 > /dev/null 2>&1
         if [ $? -eq 0 ]; then
             echo "✅ ROM loads successfully (60 frames)"
             echo "⚠️  Cannot verify exact rupee count without memory dump"
