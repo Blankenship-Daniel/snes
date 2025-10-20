@@ -1,0 +1,26 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🚀 Auto-fixing code quality issues..."
+
+# Step 1: Auto-fix everything possible (bsnes-inspired)
+echo "🔧 Running auto-fixes..."
+npm run fix:fast
+
+# Step 2: Run TypeScript check (after fixes)
+echo "🔍 Checking TypeScript compilation..."
+npx tsc --noEmit
+
+# Step 3: Run automated tests (fast)
+echo "🧪 Running critical tests..."
+npm run test:auto
+
+# Step 4: Check for remaining console.log statements
+echo "🔍 Checking for console.log statements..."
+if grep -r "console\.log" src/ --exclude-dir=node_modules --exclude-dir=dist --exclude="*.test.ts" --exclude="*.spec.ts" --exclude="*debug*"; then
+  echo "❌ Error: console.log statements found in source code!"
+  echo "Please remove or replace with proper logging."
+  exit 1
+fi
+
+echo "✅ All pre-commit checks passed! Code auto-fixed and validated!"

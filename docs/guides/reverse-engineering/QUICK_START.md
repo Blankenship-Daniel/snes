@@ -5,14 +5,14 @@ Get started with reverse engineering Zelda 3 using the bsnes-cli headless emulat
 ## ✅ Prerequisites
 
 1. **ROM file**: Ensure `zelda3.smc` exists (or create symlink)
-2. **bsnes-cli**: Already built at `bsnes-plus/bsnes/cli-headless/bsnes-cli`
+2. **bsnes-cli**: Already built at `repos/bsnes-plus/bsnes/cli-headless/bsnes-cli`
 3. **Basic tools**: bash, hexdump (standard on macOS/Linux)
 
 ## 🚀 Quick Start (30 Seconds)
 
 ```bash
 # 1. Ensure ROM symlink exists
-ln -sf snes-modder/.rom-backups/zelda3-original.smc zelda3.smc
+ln -sf repos/snes-modder/.rom-backups/zelda3-original.smc zelda3.smc
 
 # 2. Run memory analysis
 ./scripts/reverse-engineering/zelda3-memory-analysis.sh
@@ -39,12 +39,12 @@ output/memory-analysis/
 
 ```bash
 # Startup state
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 60 \
   --dump-wram 0:131072:wram_startup.bin
 
 # After 5 seconds
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 300 \
   --dump-wram 0:131072:wram_after.bin
 ```
@@ -65,7 +65,7 @@ diff startup.hex after.hex | less
 
 ```bash
 # Magic meter at WRAM offset $F36E (decimal 62318)
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 180 \
   --dump-wram 62318:2:magic_meter.bin
 
@@ -94,7 +94,7 @@ hexdump -v -e '2/1 "%02X " "\n"' magic_meter.bin
 # Extract and display magic meter
 
 # Magic meter is at WRAM offset $F36E (decimal: 62318)
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 180 \
   --dump-wram 62318:2:magic.bin
 
@@ -155,7 +155,7 @@ printf "0x%X\n" 62318  # Output: 0xF36E
 
 ```bash
 # View save data area ($F000-$F4FF)
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 180 \
   --dump-wram 61440:1280:save_area.bin
 
@@ -167,7 +167,7 @@ hexdump -C save_area.bin | less
 ```bash
 # Capture at multiple time points
 for frames in 60 120 180 240 300; do
-  bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+  repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
     --run-frames $frames \
     --dump-wram 0:131072:wram_${frames}.bin
 done
@@ -189,7 +189,7 @@ readlink zelda3.smc
 
 # Recreate if broken
 rm zelda3.smc
-ln -s snes-modder/.rom-backups/zelda3-original.smc zelda3.smc
+ln -s repos/snes-modder/.rom-backups/zelda3-original.smc zelda3.smc
 ```
 
 ### Empty/Zero byte dumps

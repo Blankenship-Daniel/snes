@@ -24,8 +24,8 @@ EOF
 
 # 2. Bundle working ROMs
 mkdir -p dist-minimal/roms
-cp snes-modder/*.smc dist-minimal/roms/ 2>/dev/null || true
-cp zelda3-modder-demo.sh dist-minimal/
+cp repos/snes-modder/*.smc dist-minimal/roms/ 2>/dev/null || true
+cp scripts/zelda3-modder-demo.sh dist-minimal/
 chmod +x dist-minimal/zelda3-modder-demo.sh 2>/dev/null || true
 cp package-minimal.json dist-minimal/package.json
 

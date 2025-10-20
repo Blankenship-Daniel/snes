@@ -21,26 +21,26 @@ Transform the complex process of SNES ROM hacking into a simple, one-command exp
 ## Key Projects and Build Commands
 
 ### bsnes-plus (Enhanced SNES Emulator)
-Located in: `bsnes-plus/`
+Located in: `repos/bsnes-plus/`
 
 ```bash
 # Standard build (performance profile)
-cd bsnes-plus && make
+cd repos/bsnes-plus && make
 
 # Build with accuracy profile (slower but more accurate)
-cd bsnes-plus && make clean && make profile=accuracy
+cd repos/bsnes-plus && make clean && make profile=accuracy
 
 # Create distributable packages (macOS)
-cd bsnes-plus && make dist
+cd repos/bsnes-plus && make dist
 
 # Clean build
-cd bsnes-plus && make clean
+cd repos/bsnes-plus && make clean
 ```
 
 Built with Qt for GUI. Includes debugging tools: memory viewer, disassembler, breakpoints.
 
 ### snes-mcp-server (Development Tools Server)
-Located in: `snes-mcp-server/`
+Located in: `mcp-servers/snes-mcp-server/`
 
 ```bash
 # Install dependencies
@@ -78,7 +78,7 @@ npm run start:production
 MCP server exposing 14 tools for SNES development: instruction lookup, memory mapping, code generation, asset extraction, manual search.
 
 ### snes-modder (ROM Modification Toolkit)
-Located in: `snes-modder/`
+Located in: `repos/snes-modder/`
 
 ```bash
 # Install dependencies
@@ -114,7 +114,7 @@ npm run build:validation-data  # Build validation database
 TypeScript-based toolkit with mathematical validation, 3-layer verification, and 100% test coverage.
 
 ### zelda3 (C Reimplementation)
-Located in: `zelda3/`
+Located in: `repos/zelda3/`
 
 ```bash
 # Extract assets (required first step)
@@ -141,7 +141,7 @@ CC=clang make
 C reimplementation providing frame-accurate game logic understanding.
 
 ### zelda3-disasm (Assembly Disassembly + MCP Server)
-Located in: `zelda3-disasm/`
+Located in: `repos/zelda3-disasm/`
 
 ```bash
 # Install dependencies
@@ -162,12 +162,12 @@ make encodings             # Build encodings only
 Full assembly disassembly with MCP server for code search and analysis.
 
 ### SNES_MiSTer (FPGA Implementation)
-Located in: `SNES_MiSTer/`
+Located in: `repos/SNES_MiSTer/`
 
 Hardware project for MiSTer FPGA platform - uses Quartus Prime for synthesis. Provides hardware validation testing.
 
 ### snes2asm (Python Disassembler)
-Located in: `snes2asm/`
+Located in: `repos/snes2asm/`
 
 ```bash
 # Install
@@ -196,7 +196,7 @@ cd output_dir && make
 Python-based disassembler with asset extraction (graphics, palettes, text), compression support (APLib, RLE, LZ variants), and buildable project generation.
 
 ### emulatorjs-mcp-server (Browser-Based Emulator Control)
-Located in: `emulatorjs-mcp-server/`
+Located in: `mcp-servers/emulatorjs-mcp-server/`
 
 ```bash
 # Install dependencies
@@ -353,7 +353,7 @@ Available mods: `infinite-magic`, `max-hearts`, `2x-speed`, `intro-skip`, `quick
 
 **Step 1: Search Assembly**
 ```bash
-cd zelda3-disasm
+cd repos/zelda3-disasm
 # Use MCP server to search for patterns
 # Example: Find magic-related code
 npm run build && node dist/index.js
@@ -361,14 +361,14 @@ npm run build && node dist/index.js
 
 **Step 2: Analyze in C Source**
 ```bash
-cd zelda3
+cd repos/zelda3
 # Search C reimplementation for logic understanding
 grep -r "magic" src/
 ```
 
 **Step 3: Debug Runtime Behavior**
 ```bash
-cd bsnes-plus
+cd repos/bsnes-plus
 # Build and run with debugger
 make
 ./bsnes+.app/Contents/MacOS/bsnes+ path/to/zelda3.smc
@@ -377,7 +377,7 @@ make
 
 **Step 4: Lookup Hardware Details**
 ```bash
-cd snes-mcp-server
+cd mcp-servers/snes-mcp-server
 # Use MCP tools for instruction/register info
 npm run dev
 # Query tools: lookup_instruction, memory_map, register_info
@@ -385,7 +385,7 @@ npm run dev
 
 **Step 5: Create Modification**
 ```bash
-cd snes-modder
+cd repos/snes-modder
 # Implement binary patch based on findings
 # Build validation database
 npm run build
@@ -396,7 +396,7 @@ npm run test:validation
 
 **Using snes2asm (Python)**:
 ```bash
-cd snes2asm
+cd repos/snes2asm
 # Create YAML config describing ROM structure
 # Disassemble with asset extraction
 snes2asm -c config.yaml -o output_dir zelda3.smc
@@ -407,7 +407,7 @@ cd output_dir && make
 
 **Using zelda3-disasm (Assembly)**:
 ```bash
-cd zelda3-disasm
+cd repos/zelda3-disasm
 # Already disassembled - just build
 make
 
@@ -420,7 +420,7 @@ npm run start
 
 **Extract from ROM using snes-mcp-server**:
 ```bash
-cd snes-mcp-server
+cd mcp-servers/snes-mcp-server
 npm install
 
 # Extract all assets
@@ -461,32 +461,38 @@ snes2asm -c zelda3-config.yaml -o output zelda3.smc
 **Unit testing**:
 ```bash
 # snes-modder
-cd snes-modder && npm test
+cd repos/snes-modder && npm test
 
 # snes-mcp-server
-cd snes-mcp-server && npm test
+cd mcp-servers/snes-mcp-server && npm test
 
 # snes2asm
-cd snes2asm && python3 -m unittest discover snes2asm.test -v
+cd repos/snes2asm && python3 -m unittest discover snes2asm.test -v
 ```
 
 ## Key Files and Locations
 
 ```
 snes/
-├── bsnes-plus/          # Enhanced SNES emulator
-│   ├── bsnes/           # Core emulator
-│   ├── ui-qt/           # Qt interface
-│   └── plugins/         # Extension modules
-├── snes-mcp-server/     # Development tools server
-│   ├── src/             # TypeScript source
-│   └── SNESDevManual/   # Nintendo documentation
-├── snes-modder/         # ROM modification toolkit
-├── zelda3/              # C reimplementation
-│   └── src/             # Game source code
-├── SNES_MiSTer/         # FPGA implementation
-│   └── rtl/             # Hardware description
-└── snes2asm/            # Python disassembler
+├── repos/               # External repositories (unified location)
+│   ├── bsnes-plus/      # Enhanced SNES emulator
+│   ├── zelda3/          # C reimplementation
+│   ├── zelda3-disasm/   # Assembly disassembly
+│   ├── snes-modder/     # ROM modification toolkit
+│   ├── snes2asm/        # Python disassembler
+│   ├── snes9x/          # SNES9x emulator
+│   └── SNES_MiSTer/     # FPGA implementation
+├── mcp-servers/         # MCP servers (unified location)
+│   ├── snes-mcp-server/ # Development tools server
+│   ├── emulatorjs-mcp-server/ # Browser-based emulator control
+│   ├── bsnes-gamer/     # Native bsnes gameplay automation
+│   └── bsnes/           # bsnes MCP server
+├── docs/                # Documentation
+│   ├── guides/          # User guides
+│   ├── reports/         # Session reports
+│   └── screenshots/     # Screenshots and images
+├── output/              # Generated files and artifacts
+└── scripts/             # Build and automation scripts
 ```
 
 ## Getting Started
@@ -498,7 +504,7 @@ snes/
 - **Bash shell** (macOS/Linux/WSL on Windows)
 
 **Required for Development:**
-- **Node.js 18+**: For TypeScript projects (snes-mcp-server, snes-modder, zelda3-disasm)
+- **Node.js 18+**: For TypeScript projects (MCP servers, snes-modder, zelda3-disasm)
 - **Python 3.8+**: For snes2asm and zelda3 asset extraction
   - Install: `python3 -m pip install pillow pyyaml`
 - **C++ toolchain**: For bsnes-plus and zelda3
@@ -530,7 +536,7 @@ cp /path/to/zelda3.smc .
 
 ### Development Setup
 
-**TypeScript Projects (snes-mcp-server, snes-modder, zelda3-disasm):**
+**TypeScript Projects (MCP servers, snes-modder, zelda3-disasm):**
 ```bash
 cd <project-dir>
 npm install
@@ -541,19 +547,19 @@ npm test
 **C Projects (bsnes-plus, zelda3):**
 ```bash
 # zelda3
-cd zelda3
+cd repos/zelda3
 python3 -m pip install -r requirements.txt
 python3 assets/restool.py --extract-from-rom
 make
 
 # bsnes-plus
-cd bsnes-plus
+cd repos/bsnes-plus
 make
 ```
 
 **Python Projects (snes2asm):**
 ```bash
-cd snes2asm
+cd repos/snes2asm
 sudo python setup.py install
 python3 -m unittest discover snes2asm.test -v
 ```

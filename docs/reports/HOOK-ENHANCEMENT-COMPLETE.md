@@ -202,7 +202,7 @@ cd tools
 pip3 install neo4j
 
 # Codex CLI installed
-ls snes-modder/node_modules/.bin/codex-cli
+ls repos/snes-modder/node_modules/.bin/codex-cli
 ```
 
 ### 2. Test Pre-Tool Hook
@@ -317,7 +317,7 @@ python3 -c "from neo4j_rag import SNESRAGPipeline; \
 ### Codex not working?
 ```bash
 # Verify installation
-ls -la snes-modder/node_modules/.bin/codex-cli
+ls -la repos/snes-modder/node_modules/.bin/codex-cli
 
 # Test manually
 cd snes-modder

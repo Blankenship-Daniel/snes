@@ -6,7 +6,7 @@ Thank you for helping improve Zelda 3 Modder. This repo ships a fast, script‑d
 - Do not commit ROMs or keys.
   - Base ROM: keep `zelda3.smc` local only.
   - Generated ROMs: `zelda3-<mod>-YYYYMMDD.smc` are ephemeral.
-  - Prebuilt assets under `snes-modder/` are the only `.smc` files committed.
+  - Prebuilt assets under `repos/snes-modder/` are the only `.smc` files committed.
 - Prefer deterministic, scriptable steps; document external deps and versions.
 - Cross‑platform first: keep Bash POSIX‑friendly; gate platform specifics.
 
@@ -14,7 +14,7 @@ Thank you for helping improve Zelda 3 Modder. This repo ships a fast, script‑d
 - `scripts/zelda3-modder-demo.sh` — main entry; copies prebuilt mod ROMs.
 - `scripts/validate-mods.sh` — binary‑level checks vs `zelda3.smc`.
 - `scripts/ultimate-runtime-validation.sh` — emulator runtime verification (bsnes).
-- `snes-modder/` — prebuilt ROM assets used by the demo.
+- `repos/snes-modder/` — prebuilt ROM assets used by the demo.
 - `docs/`, `tools/`, `logs/` — docs, helper scripts, and validation outputs.
 
 ## Dev Commands

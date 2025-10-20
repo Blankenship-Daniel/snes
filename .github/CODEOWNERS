@@ -8,10 +8,10 @@ validate-mods.sh                   @snes-modding/validate-team @snes-modding/mai
 ultimate-runtime-validation.sh     @snes-modding/runtime-team @snes-modding/maintainers
 
 # Assets and tooling
-snes-modder/                       @snes-modding/assets-team @snes-modding/maintainers
-bsnes-plus/                        @snes-modding/runtime-team @snes-modding/maintainers
-snes9x/                            @snes-modding/runtime-team @snes-modding/maintainers
-SNES_MiSTer/                       @snes-modding/runtime-team @snes-modding/maintainers
+repos/snes-modder/                 @snes-modding/assets-team @snes-modding/maintainers
+repos/bsnes-plus/                  @snes-modding/runtime-team @snes-modding/maintainers
+repos/snes9x/                      @snes-modding/runtime-team @snes-modding/maintainers
+repos/SNES_MiSTer/                 @snes-modding/runtime-team @snes-modding/maintainers
 tools/                             @snes-modding/tooling-team @snes-modding/maintainers
 
 # Docs and workflows

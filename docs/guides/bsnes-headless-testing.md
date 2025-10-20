@@ -296,7 +296,7 @@ echo "Value: $decimal"
 ```bash
 #!/bin/bash
 # Test that ROM loads without crashing
-for rom in snes-modder/*.smc; do
+for rom in repos/snes-modder/*.smc; do
   echo "Testing: $rom"
   bsnes "$rom" --run-frames 60 || echo "FAILED: $rom"
 done
@@ -331,7 +331,7 @@ xxd full-wram.bin | grep -A5 "7ef360"
 ```makefile
 .PHONY: test-roms
 test-roms:
-\t@for rom in snes-modder/*.smc; do \\
+\t@for rom in repos/snes-modder/*.smc; do \\
 \t\techo "Testing $$rom..."; \\
 \t\tbsnes "$$rom" --run-frames 60 || exit 1; \\
 \tdone
@@ -454,8 +454,8 @@ xxd output: e7 03
 ## 📚 Related Resources
 
 **Scripts Created:**
-- `/Users/ship/Documents/code/snes/scripts/test-rich-start-gameplay.sh` - WRAM testing
-- `/Users/ship/Documents/code/snes/scripts/verify-rich-start-rom-bytes.sh` - ROM testing
+- `./scripts/test-rich-start-gameplay.sh` - WRAM testing
+- `./scripts/verify-rich-start-rom-bytes.sh` - ROM testing
 
 **Source References:**
 - `zelda3/src/variables.h` - WRAM variable definitions

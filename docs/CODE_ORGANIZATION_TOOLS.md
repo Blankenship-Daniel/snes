@@ -75,7 +75,7 @@ npm run deps:update:interactive
 **Example Output:**
 
 ```
-Checking /Users/ship/Documents/code/snes/package.json
+Checking package.json
 All dependencies match the latest package versions :)
 ```
 
@@ -174,8 +174,8 @@ npm run clean:dead-code:export        # Export results to JSON
 ```
 Unused files (121)
 mcp-servers/snes-mcp-server/src/manual/parser/manual-parser-sample.ts
-snes-modder/src/examples/discovery-usage.ts
-snes-modder/src/asm/example.ts
+repos/snes-modder/src/examples/discovery-usage.ts
+repos/snes-modder/src/asm/example.ts
 ...
 ```
 
@@ -278,7 +278,7 @@ npm run clean:dead-code:export
 cat knip-report.json | jq
 
 # Remove files manually after review
-git rm snes-modder/src/examples/old-example.ts
+git rm repos/snes-modder/src/examples/old-example.ts
 git commit -m "chore: remove unused example files"
 ```
 

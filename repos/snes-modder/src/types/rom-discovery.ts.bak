@@ -1,0 +1,428 @@
+/**
+ * ROM Discovery Type System - TypeScript Edition
+ * 
+ * High-performance, type-safe discovery tracking with discriminated unions,
+ * branded types, and compile-time validation.
+ */
+
+// ============================================================================
+// Branded Types for Compile-Time Safety
+// ============================================================================
+
+/** ROM offset with type branding to prevent number mixing */
+export type ROMOffset = number ;
+
+/** SNES memory address (24-bit) */
+export type SNESAddress = number ;
+
+/** Discovery ID with guaranteed uniqueness */
+export type DiscoveryId = string ;
+
+/** Size in bytes */
+export type ByteSize = number ;
+
+// Type constructors with validation
+export const ROMOffset = (value: number): ROMOffset => {
+  if (value < 0 || value > 0xFFFFFF) {
+    throw new Error(`Invalid ROM offset: 0x${value.toString(16)}`);
+  }
+  return value as ROMOffset;
+};
+
+export const SNESAddress = (value: number): SNESAddress => {
+  if (value < 0 || value > 0xFFFFFF) {
+    throw new Error(`Invalid SNES address: 0x${value.toString(16)}`);
+  }
+  return value as SNESAddress;
+};
+
+export const DiscoveryId = (type: string, offset: number): DiscoveryId => {
+  return `${type}:0x${offset.toString(16).padStart(6, '0')}:${Date.now()}` as DiscoveryId;
+};
+
+export const ByteSize = (value: number): ByteSize => {
+  if (value < 0) {
+    throw new Error(`Size cannot be negative: ${value}`);
+  }
+  return value as ByteSize;
+};
+
+// ============================================================================
+// Discriminated Union for Discovery Types
+// ============================================================================
+
+/** Base discovery interface with common fields */
+interface BaseDiscovery {
+  readonly id: DiscoveryId;
+  readonly offset: ROMOffset;
+  readonly size: ByteSize;
+  readonly confidence: ConfidenceLevel;
+  readonly discovered: Date;
+  readonly lastVerified: Date;
+  readonly metadata: DiscoveryMetadata;
+  readonly relationships: ReadonlyArray<Relationship>;
+}
+
+/** Item discovery with specific properties */
+export interface ItemDiscovery extends BaseDiscovery {
+  readonly type: 'item';
+  readonly data: {
+    readonly itemId: number;
+    readonly name: string;
+    readonly category: ItemCategory;
+    readonly value?: number;
+    readonly stackable: boolean;
+    readonly maxStack?: number;
+  };
+}
+
+/** Sprite discovery with animation data */
+export interface SpriteDiscovery extends BaseDiscovery {
+  readonly type: 'sprite';
+  readonly data: {
+    readonly spriteId: number;
+    readonly name: string;
+    readonly dimensions: { width: number; height: number };
+    readonly frameCount: number;
+    readonly paletteOffset?: ROMOffset;
+    readonly animationFrames?: ReadonlyArray<AnimationFrame>;
+    readonly behavior: SpriteBehavior;
+  };
+}
+
+/** Tileset discovery for graphics */
+export interface TilesetDiscovery extends BaseDiscovery {
+  readonly type: 'tileset';
+  readonly data: {
+    readonly tileCount: number;
+    readonly tileSize: 8 | 16 | 32;
+    readonly bitsPerPixel: 2 | 4 | 8;
+    readonly compressed: boolean;
+    readonly compressionType?: CompressionType;
+    readonly paletteOffsets: ReadonlyArray<ROMOffset>;
+  };
+}
+
+/** Routine discovery for game logic */
+export interface RoutineDiscovery extends BaseDiscovery {
+  readonly type: 'routine';
+  readonly data: {
+    readonly name: string;
+    readonly entryPoint: SNESAddress;
+    readonly exitPoints: ReadonlyArray<SNESAddress>;
+    readonly calledBy: ReadonlyArray<DiscoveryId>;
+    readonly calls: ReadonlyArray<DiscoveryId>;
+    readonly parameters?: ReadonlyArray<Parameter>;
+    readonly localVariables?: ReadonlyArray<Variable>;
+    readonly cycleCount?: number;
+  };
+}
+
+/** Pointer table discovery */
+export interface PointerTableDiscovery extends BaseDiscovery {
+  readonly type: 'pointer_table';
+  readonly data: {
+    readonly entryCount: number;
+    readonly pointerSize: 2 | 3; // 16-bit or 24-bit
+    readonly targets: ReadonlyArray<SNESAddress>;
+    readonly tableType: 'jump' | 'data' | 'function';
+  };
+}
+
+/** Music/sound discovery */
+export interface AudioDiscovery extends BaseDiscovery {
+  readonly type: 'audio';
+  readonly data: {
+    readonly format: 'spc' | 'brr' | 'custom';
+    readonly subtype: 'music' | 'sfx' | 'sample';
+    readonly sampleRate?: number;
+    readonly channels?: number;
+    readonly loopPoint?: number;
+  };
+}
+
+/** Text/dialogue discovery */
+export interface TextDiscovery extends BaseDiscovery {
+  readonly type: 'text';
+  readonly data: {
+    readonly encoding: 'ascii' | 'shift-jis' | 'custom';
+    readonly text: string;
+    readonly compressed: boolean;
+    readonly tableOffset?: ROMOffset;
+    readonly category: 'dialogue' | 'menu' | 'item_name' | 'location';
+  };
+}
+
+/** Room/map data discovery */
+export interface RoomDiscovery extends BaseDiscovery {
+  readonly type: 'room';
+  readonly data: {
+    readonly roomId: number;
+    readonly dimensions: { width: number; height: number };
+    readonly layers: number;
+    readonly exits: ReadonlyArray<RoomExit>;
+    readonly enemySpawns?: ReadonlyArray<EnemySpawn>;
+    readonly treasures?: ReadonlyArray<TreasureData>;
+  };
+}
+
+/** Discriminated union of all discovery types */
+export type Discovery = 
+  | ItemDiscovery
+  | SpriteDiscovery
+  | TilesetDiscovery
+  | RoutineDiscovery
+  | PointerTableDiscovery
+  | AudioDiscovery
+  | TextDiscovery
+  | RoomDiscovery;
+
+// ============================================================================
+// Supporting Types
+// ============================================================================
+
+export enum ConfidenceLevel {
+  VERIFIED = 'verified',     // Tested and confirmed
+  HIGH = 'high',             // Strong evidence
+  MEDIUM = 'medium',         // Probable
+  LOW = 'low',              // Speculative
+  HYPOTHESIS = 'hypothesis'  // Needs testing
+}
+
+export enum ItemCategory {
+  WEAPON = 'weapon',
+  SHIELD = 'shield',
+  ARMOR = 'armor',
+  CONSUMABLE = 'consumable',
+  KEY_ITEM = 'key_item',
+  DUNGEON_ITEM = 'dungeon_item',
+  COLLECTIBLE = 'collectible'
+}
+
+export enum SpriteBehavior {
+  ENEMY = 'enemy',
+  NPC = 'npc',
+  BOSS = 'boss',
+  PROJECTILE = 'projectile',
+  INTERACTIVE = 'interactive',
+  DECORATION = 'decoration'
+}
+
+export enum CompressionType {
+  LZ77 = 'lz77',
+  RLE = 'rle',
+  HUFFMAN = 'huffman',
+  CUSTOM = 'custom'
+}
+
+export interface DiscoveryMetadata {
+  readonly source: string;           // Required: WHO discovered this
+  readonly method: DiscoveryMethod;  // Required: HOW was it discovered  
+  readonly tags: ReadonlySet<string>; // Required: WHAT categories
+  readonly author?: string;          // Optional
+  readonly notes?: string;           // Optional
+}
+
+export enum DiscoveryMethod {
+  MANUAL = 'manual',
+  PATTERN_SCAN = 'pattern_scan',
+  TRACE_ANALYSIS = 'trace_analysis',
+  DIFFERENTIAL = 'differential',
+  DECOMPILATION = 'decompilation',
+  CROSS_REFERENCE = 'cross_reference'
+}
+
+export interface Relationship {
+  readonly type: RelationType;
+  readonly targetId: DiscoveryId;
+  readonly metadata?: Record<string, unknown>;
+}
+
+export enum RelationType {
+  REFERENCES = 'references',
+  REFERENCED_BY = 'referenced_by',
+  CONTAINS = 'contains',
+  CONTAINED_BY = 'contained_by',
+  CALLS = 'calls',
+  CALLED_BY = 'called_by',
+  READS = 'reads',
+  WRITES = 'writes',
+  DEPENDS_ON = 'depends_on',
+  REQUIRED_BY = 'required_by'
+}
+
+export interface AnimationFrame {
+  readonly index: number;
+  readonly duration: number;
+  readonly offset: ROMOffset;
+}
+
+export interface Parameter {
+  readonly name: string;
+  readonly type: 'byte' | 'word' | 'long' | 'pointer';
+  readonly register?: 'A' | 'X' | 'Y';
+  readonly stackOffset?: number;
+}
+
+export interface Variable {
+  readonly name: string;
+  readonly type: string;
+  readonly offset: number;
+  readonly size: number;
+}
+
+export interface RoomExit {
+  readonly direction: 'north' | 'south' | 'east' | 'west';
+  readonly targetRoomId: number;
+  readonly position: { x: number; y: number };
+  readonly type: 'door' | 'stairs' | 'warp' | 'hole';
+}
+
+export interface EnemySpawn {
+  readonly enemyId: number;
+  readonly position: { x: number; y: number };
+  readonly respawns: boolean;
+}
+
+export interface TreasureData {
+  readonly itemId: number;
+  readonly position: { x: number; y: number };
+  readonly requirements?: string[];
+}
+
+// ============================================================================
+// Type Guards with Type Predicates
+// ============================================================================
+
+export const isItemDiscovery = (d: Discovery): d is ItemDiscovery => 
+  d.type === 'item';
+
+export const isSpriteDiscovery = (d: Discovery): d is SpriteDiscovery => 
+  d.type === 'sprite';
+
+export const isTilesetDiscovery = (d: Discovery): d is TilesetDiscovery => 
+  d.type === 'tileset';
+
+export const isRoutineDiscovery = (d: Discovery): d is RoutineDiscovery => 
+  d.type === 'routine';
+
+export const isPointerTableDiscovery = (d: Discovery): d is PointerTableDiscovery => 
+  d.type === 'pointer_table';
+
+export const isAudioDiscovery = (d: Discovery): d is AudioDiscovery => 
+  d.type === 'audio';
+
+export const isTextDiscovery = (d: Discovery): d is TextDiscovery => 
+  d.type === 'text';
+
+export const isRoomDiscovery = (d: Discovery): d is RoomDiscovery => 
+  d.type === 'room';
+
+// ============================================================================
+// Query Types for Type-Safe Filtering
+// ============================================================================
+
+export interface DiscoveryQuery<T extends Discovery['type'] = Discovery['type']> {
+  readonly type?: T | ReadonlyArray<T>;
+  readonly offsetRange?: {
+    readonly start: ROMOffset;
+    readonly end: ROMOffset;
+  };
+  readonly confidence?: ConfidenceLevel;
+  readonly tags?: ReadonlyArray<string>;
+  readonly limit?: number;
+  readonly sortBy?: 'offset' | 'size' | 'confidence' | 'date';
+  readonly sortOrder?: 'asc' | 'desc';
+}
+
+// Type-safe query result based on query type
+export type QueryResult<T extends Discovery['type']> = 
+  T extends 'item' ? ItemDiscovery[] :
+  T extends 'sprite' ? SpriteDiscovery[] :
+  T extends 'tileset' ? TilesetDiscovery[] :
+  T extends 'routine' ? RoutineDiscovery[] :
+  T extends 'pointer_table' ? PointerTableDiscovery[] :
+  T extends 'audio' ? AudioDiscovery[] :
+  T extends 'text' ? TextDiscovery[] :
+  T extends 'room' ? RoomDiscovery[] :
+  Discovery[];
+
+// ============================================================================
+// Builder Pattern for Type-Safe Discovery Creation
+// ============================================================================
+
+export class DiscoveryBuilder<T extends Discovery['type']> {
+  private discovery: Partial<Extract<Discovery, { type: T }>> & {
+    type: T;
+    id: DiscoveryId;
+    discovered: Date;
+    lastVerified: Date;
+    relationships: Relationship[];
+  };
+  
+  constructor(type: T) {
+    this.discovery = {
+      type,
+      id: DiscoveryId(type, Date.now()),
+      discovered: new Date(),
+      lastVerified: new Date(),
+      relationships: []
+    };
+  }
+  
+  offset(value: number): this {
+    if (value < 0 || value > 0xFFFFFF) {
+      throw new Error(`Invalid ROM offset: 0x${value.toString(16)}`);
+    }
+    (this.discovery as any).offset = ROMOffset(value);
+    return this;
+  }
+  
+  size(value: number): this {
+    if (value <= 0) {
+      throw new Error(`Size must be positive: ${value}`);
+    }
+    (this.discovery as any).size = ByteSize(value);
+    return this;
+  }
+  
+  confidence(level: Extract<Discovery, { type: T }>['confidence']): this {
+    (this.discovery as any).confidence = level;
+    return this;
+  }
+  
+  metadata(meta: DiscoveryMetadata): this {
+    // Validate required fields
+    if (!meta.source) throw new Error('Metadata source is required');
+    if (!meta.method) throw new Error('Metadata method is required');
+    if (!meta.tags) throw new Error('Metadata tags are required');
+    
+    (this.discovery as any).metadata = meta;
+    return this;
+  }
+  
+  data(data: Extract<Discovery, { type: T }>['data']): this {
+    (this.discovery as any).data = data;
+    return this;
+  }
+  
+  relationship(rel: Relationship): this {
+    this.discovery.relationships = [
+      ...this.discovery.relationships,
+      rel
+    ];
+    return this;
+  }
+  
+  build(): Extract<Discovery, { type: T }> {
+    const { offset, size, confidence, data, metadata } = this.discovery;
+    
+    if (offset === undefined) throw new Error('Offset is required');
+    if (size === undefined) throw new Error('Size is required');
+    if (confidence === undefined) throw new Error('Confidence is required');
+    if (data === undefined) throw new Error('Data is required');
+    if (metadata === undefined) throw new Error('Metadata is required');
+    
+    return this.discovery as Extract<Discovery, { type: T }>;
+  }
+}

@@ -98,8 +98,8 @@ This repository includes multiple Model Context Protocol (MCP) servers that prov
 
 ### 5. zelda3 (C Reimplementation Search)
 **Type**: Custom Code Search
-**Location**: `zelda3/mcp-server/`
-**Command**: `node ./zelda3/mcp-server/index.js`
+**Location**: `repos/zelda3/mcp-server/`
+**Command**: `node ./repos/zelda3/mcp-server/index.js`
 
 **Purpose**: Search and analyze the Zelda 3 C reimplementation codebase.
 
@@ -111,8 +111,8 @@ This repository includes multiple Model Context Protocol (MCP) servers that prov
 
 ### 6. zelda3-disasm (Assembly Disassembly)
 **Type**: Custom Code Search
-**Location**: `zelda3-disasm/mcp-server/`
-**Command**: `node ./zelda3-disasm/mcp-server/index.js`
+**Location**: `repos/zelda3-disasm/mcp-server/`
+**Command**: `node ./repos/zelda3-disasm/mcp-server/index.js`
 
 **Purpose**: Search and analyze the full Zelda 3 assembly disassembly.
 
@@ -124,8 +124,8 @@ This repository includes multiple Model Context Protocol (MCP) servers that prov
 
 ### 7. bsnes (bsnes-plus Code Search)
 **Type**: Custom Code Search
-**Location**: `bsnes-plus/mcp-server/`
-**Command**: `node ./bsnes-plus/mcp-server/index.js`
+**Location**: `repos/bsnes-plus/mcp-server/`
+**Command**: `node ./repos/bsnes-plus/mcp-server/index.js`
 
 **Purpose**: Search bsnes-plus emulator source code.
 
@@ -137,8 +137,8 @@ This repository includes multiple Model Context Protocol (MCP) servers that prov
 
 ### 8. snes9x (SNES9x Code Search)
 **Type**: Custom Code Search
-**Location**: `snes9x/mcp-server/`
-**Command**: `node ./snes9x/mcp-server/index.js`
+**Location**: `repos/snes9x/mcp-server/`
+**Command**: `node ./repos/snes9x/mcp-server/index.js`
 
 **Purpose**: Search SNES9x emulator source code.
 
@@ -149,8 +149,8 @@ This repository includes multiple Model Context Protocol (MCP) servers that prov
 
 ### 9. snes-mister (FPGA Core Analysis)
 **Type**: Custom Code Search
-**Location**: `SNES_MiSTer/mcp-server/`
-**Command**: `node ./SNES_MiSTer/mcp-server/index.js`
+**Location**: `repos/SNES_MiSTer/mcp-server/`
+**Command**: `node ./repos/SNES_MiSTer/mcp-server/index.js`
 
 **Purpose**: Search and analyze SNES MiSTer FPGA core (VHDL/SystemVerilog).
 

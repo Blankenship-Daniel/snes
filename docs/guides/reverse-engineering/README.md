@@ -57,7 +57,7 @@ See [zelda3-headless-workflow.md](./zelda3-headless-workflow.md) for complete do
 
 ## Tools Used
 
-- **bsnes-cli**: Headless emulator (`bsnes-plus/bsnes/cli-headless/bsnes-cli`)
+- **bsnes-cli**: Headless emulator (`repos/bsnes-plus/bsnes/cli-headless/bsnes-cli`)
 - **hexdump**: Binary data visualization
 - **grep/awk**: Trace log analysis
 - **cmp**: Binary comparison

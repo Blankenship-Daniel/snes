@@ -1,0 +1,42 @@
+{
+  "id": "Gameplay-With-Intro-Skip-1760860319610",
+  "name": "Gameplay-With-Intro-Skip",
+  "description": "Full gameplay session using intro-skip ROM, playing through as much as possible with reverse image search when stuck",
+  "startFrame": 2970,
+  "inputs": [
+    {
+      "frame": -2850,
+      "button": "Start",
+      "duration": 10
+    },
+    {
+      "frame": -2790,
+      "button": "Start",
+      "duration": 10
+    },
+    {
+      "frame": -2730,
+      "button": "A",
+      "duration": 10
+    },
+    {
+      "frame": -2430,
+      "button": "Down",
+      "duration": 30
+    }
+  ],
+  "metadata": {
+    "duration": -2400,
+    "success": false,
+    "notes": [
+      "Intro-skip ROM still has cutscenes",
+      "Need manual intervention to reach gameplay",
+      "Recommend: create save state manually once, then automate from there"
+    ],
+    "tags": [
+      "intro-challenges",
+      "testing-roms"
+    ],
+    "timestamp": 1760860319611
+  }
+}

@@ -1,0 +1,105 @@
+# Node/TypeScript
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+.npm
+.yarn
+
+# ROM files should be gitignored but were accidentally committed
+*.smc
+*.sfc
+*.srm
+*.sav
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+.nyc_output
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# IDE and OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Temporary files
+*.tmp
+.temp/
+
+# Build artifacts
+*.map
+*.d.ts.map
+.tsbuildinfo
+dist/.tsbuildinfo
+
+# Validation and test output files
+*.bin
+*.sym
+validation-report.json
+test-roms/
+test-discoveries/
+
+# Backup directories
+backups/
+.rom-backups/
+quick-mods/
+production-mods/
+saves/
+demo-extracted/
+
+# Generated analysis reports
+*_ANALYSIS.md
+*_STUDY.md
+*_REPORT.md
+PHASE*.md
+*_EXCHANGE.md
+*_STRATEGY.md
+*_STATUS.md
+*_GUIDE.md
+*_PACKAGE.md
+*_HANDOFF.md
+*DELIVERY*.md
+*DEPLOYMENT*.md
+*ACHIEVEMENT*.md
+*VALIDATION*.md
+*INTEGRATION*.md
+*SUCCESS*.md
+*METHODOLOGY*.md
+*POSTMORTEM*.md
+*SPEC.md
+*FRAMEWORK.md
+*FEATURES.md
+CONSENSUS.md
+MVP_*.md
+SHIP_*.md
+TEAM_*.md
+TECHNICAL_DEBT*.md
+TECH_DEBT*.md
+QUICK_WINS.md
+REVOLUTION_*.md
+DAY*_*.md
+
+# Quality/Dashboard generated files
+quality-dashboard.html
+quality-report.json
+quality-badges.json
+dashboard-data.json
+
+# Runtime validation scripts
+validate-runtime.sh

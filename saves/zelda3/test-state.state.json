@@ -1,0 +1,12 @@
+{
+  "id": "test-state-1760855180686",
+  "name": "test-state",
+  "timestamp": 1760855180686,
+  "frameCount": 120,
+  "gameState": {
+    "romName": "zelda3",
+    "location": "Title screen",
+    "notes": "Testing save state functionality"
+  },
+  "stateData": "{\"success\":true}"
+}

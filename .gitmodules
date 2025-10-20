@@ -1,0 +1,15 @@
+[submodule "repos/SNES_MiSTer"]
+	path = repos/SNES_MiSTer
+	url = git@github.com:MiSTer-devel/SNES_MiSTer.git
+[submodule "repos/bsnes-plus"]
+	path = repos/bsnes-plus
+	url = git@github.com:Optiroc/bsnes-plus.git
+[submodule "repos/snes2asm"]
+	path = repos/snes2asm
+	url = git@github.com:nathancassano/snes2asm.git
+[submodule "repos/snes9x"]
+	path = repos/snes9x
+	url = git@github.com:snes9xgit/snes9x.git
+[submodule "repos/zelda3"]
+	path = repos/zelda3
+	url = https://github.com/snesrev/zelda3.git

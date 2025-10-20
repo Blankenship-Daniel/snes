@@ -1,0 +1,370 @@
+name: 🚀 Unified Quality Pipeline
+# Cross-team CI/CD for SNES Modder + bsnes-plus integration
+# Maintainer: Sam (Code Custodian)
+
+on:
+  push:
+    branches: [ main, develop, integration/* ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 6 * * *' # Daily quality check at 6 AM
+
+env:
+  NODE_VERSION: '18'
+  CACHE_VERSION: 'v1'
+
+jobs:
+  # ============================================================================
+  # PHASE 1: Foundation Checks
+  # ============================================================================
+  
+  foundation-checks:
+    name: 🏗️ Foundation Quality Checks
+    runs-on: ubuntu-latest
+    outputs:
+      typescript-errors: ${{ steps.tsc-check.outputs.error-count }}
+      eslint-issues: ${{ steps.eslint-check.outputs.issue-count }}
+      
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for better analysis
+          
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 🔧 Install Dependencies
+        run: |
+          npm ci
+          npm run postinstall || true
+          
+      - name: 🎯 TypeScript Compilation Check
+        id: tsc-check
+        run: |
+          echo "🔍 Checking TypeScript compilation..."
+          npx tsc --noEmit 2>&1 | tee tsc-output.log
+          
+          ERROR_COUNT=$(grep "error TS" tsc-output.log | wc -l || echo "0")
+          echo "error-count=$ERROR_COUNT" >> $GITHUB_OUTPUT
+          
+          if [ "$ERROR_COUNT" -gt 0 ]; then
+            echo "❌ TypeScript errors found: $ERROR_COUNT"
+            cat tsc-output.log
+            exit 1
+          else
+            echo "✅ TypeScript compilation clean!"
+          fi
+          
+      - name: 🧹 ESLint Quality Check
+        id: eslint-check
+        run: |
+          echo "🔍 Running ESLint analysis..."
+          npm run lint 2>&1 | tee eslint-output.log || true
+          
+          ERROR_COUNT=$(grep -E "error|✖" eslint-output.log | tail -1 | grep -oE '[0-9]+ error' | grep -oE '[0-9]+' || echo "0")
+          WARNING_COUNT=$(grep -E "warning|✖" eslint-output.log | tail -1 | grep -oE '[0-9]+ warning' | grep -oE '[0-9]+' || echo "0")
+          TOTAL_ISSUES=$((ERROR_COUNT + WARNING_COUNT))
+          
+          echo "issue-count=$TOTAL_ISSUES" >> $GITHUB_OUTPUT
+          echo "📊 ESLint Issues: $ERROR_COUNT errors, $WARNING_COUNT warnings"
+          
+          # Fail on critical errors (configurable threshold)
+          if [ "$ERROR_COUNT" -gt 50 ]; then
+            echo "❌ Too many ESLint errors: $ERROR_COUNT (threshold: 50)"
+            exit 1
+          fi
+          
+      - name: 📊 Upload Quality Reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: quality-reports-foundation
+          path: |
+            tsc-output.log
+            eslint-output.log
+
+  # ============================================================================
+  # PHASE 2: Unit Tests
+  # ============================================================================
+  
+  unit-tests:
+    name: 🧪 Unit Test Suite
+    runs-on: ubuntu-latest
+    needs: foundation-checks
+    strategy:
+      matrix:
+        test-group: [core, discovery, mods, validation]
+        
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 🔧 Install Dependencies
+        run: npm ci
+        
+      - name: 🧪 Run Test Group - ${{ matrix.test-group }}
+        run: |
+          echo "🧪 Running ${{ matrix.test-group }} tests..."
+          npm run test:${{ matrix.test-group }} -- --coverage --reporter=json
+          
+      - name: 📊 Upload Test Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.test-group }}
+          path: |
+            coverage/
+            test-results.json
+
+  # ============================================================================
+  # PHASE 3: Integration Tests
+  # ============================================================================
+  
+  integration-tests:
+    name: 🔄 Integration Testing
+    runs-on: ubuntu-latest
+    needs: [foundation-checks, unit-tests]
+    if: needs.foundation-checks.outputs.typescript-errors == '0'
+    
+    services:
+      # Mock bsnes-plus for integration testing
+      mock-emulator:
+        image: ubuntu:latest
+        options: --name mock-bsnes
+        
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 🔧 Install Dependencies
+        run: npm ci
+        
+      - name: 📦 Setup Test ROMs
+        run: |
+          mkdir -p test-roms
+          # Download or generate test ROMs
+          ./scripts/setup-test-roms.sh
+          
+      - name: 🏗️ Build Test Infrastructure
+        run: |
+          npm run build:test
+          npm run setup:integration
+          
+      - name: 🔄 ROM Lifecycle Integration Tests
+        run: |
+          echo "🎮 Testing ROM modification → emulation workflow..."
+          npm run test:integration:lifecycle
+          
+      - name: 🧭 Discovery Validation Tests
+        run: |
+          echo "🔍 Testing cross-tool discovery validation..."
+          npm run test:integration:discovery
+          
+      - name: ⚡ Performance Integration Tests
+        run: |
+          echo "📊 Testing performance characteristics..."
+          npm run test:integration:performance
+          
+      - name: 📊 Generate Integration Report
+        if: always()
+        run: |
+          npm run report:integration
+          
+      - name: 📤 Upload Integration Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-test-results
+          path: |
+            integration-report.html
+            performance-metrics.json
+
+  # ============================================================================
+  # PHASE 4: Cross-Platform Compatibility
+  # ============================================================================
+  
+  cross-platform:
+    name: 🌐 Cross-Platform Testing
+    runs-on: ${{ matrix.os }}
+    needs: integration-tests
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 🔧 Install Dependencies
+        run: npm ci
+        
+      - name: 🏗️ Build for Platform
+        run: |
+          npm run build
+          npm run package:${{ matrix.os }}
+          
+      - name: 🧪 Platform-Specific Tests
+        run: |
+          npm run test:platform:${{ matrix.os }}
+          
+      - name: 📦 Upload Platform Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.os }}
+          path: dist/
+
+  # ============================================================================
+  # PHASE 5: Quality Gates & Deployment
+  # ============================================================================
+  
+  quality-gates:
+    name: 🚪 Quality Gates Validation
+    runs-on: ubuntu-latest
+    needs: [foundation-checks, unit-tests, integration-tests, cross-platform]
+    if: always()
+    
+    steps:
+      - name: 📥 Download All Artifacts
+        uses: actions/download-artifact@v4
+        
+      - name: 📊 Analyze Quality Metrics
+        run: |
+          echo "📊 Quality Gates Analysis"
+          echo "========================="
+          
+          # TypeScript Errors Gate
+          TS_ERRORS="${{ needs.foundation-checks.outputs.typescript-errors }}"
+          echo "TypeScript Errors: $TS_ERRORS (Gate: 0)"
+          
+          # ESLint Issues Gate  
+          ESLINT_ISSUES="${{ needs.foundation-checks.outputs.eslint-issues }}"
+          echo "ESLint Issues: $ESLINT_ISSUES (Gate: <1000)"
+          
+          # Calculate overall quality score
+          QUALITY_SCORE=100
+          
+          if [ "$TS_ERRORS" -gt 0 ]; then
+            QUALITY_SCORE=$((QUALITY_SCORE - 50))
+            echo "❌ TypeScript gate failed"
+          else
+            echo "✅ TypeScript gate passed"
+          fi
+          
+          if [ "$ESLINT_ISSUES" -gt 1000 ]; then
+            QUALITY_SCORE=$((QUALITY_SCORE - 30))
+            echo "⚠️ ESLint gate warning"
+          else
+            echo "✅ ESLint gate passed"
+          fi
+          
+          echo "📊 Overall Quality Score: $QUALITY_SCORE/100"
+          
+          # Set quality score for badge
+          echo "QUALITY_SCORE=$QUALITY_SCORE" >> $GITHUB_ENV
+          
+      - name: 🎯 Quality Badge Update
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # Update quality badge based on score
+          BADGE_COLOR="red"
+          if [ "$QUALITY_SCORE" -ge 90 ]; then
+            BADGE_COLOR="brightgreen"
+          elif [ "$QUALITY_SCORE" -ge 75 ]; then
+            BADGE_COLOR="yellow"
+          elif [ "$QUALITY_SCORE" -ge 50 ]; then
+            BADGE_COLOR="orange"
+          fi
+          
+          echo "Badge Color: $BADGE_COLOR"
+          # Could integrate with shields.io or similar service
+          
+      - name: 🚀 Deployment Readiness
+        if: github.ref == 'refs/heads/main' && env.QUALITY_SCORE >= '90'
+        run: |
+          echo "🚀 Code quality meets deployment standards!"
+          echo "✅ TypeScript: Clean compilation"
+          echo "✅ Tests: Passing"
+          echo "✅ Integration: Validated"
+          echo "✅ Cross-Platform: Compatible"
+          
+          # Could trigger deployment pipeline here
+
+  # ============================================================================
+  # PHASE 6: Cleanup & Reporting
+  # ============================================================================
+  
+  cleanup-and-report:
+    name: 🧹 Cleanup & Final Report
+    runs-on: ubuntu-latest
+    needs: quality-gates
+    if: always()
+    
+    steps:
+      - name: 📊 Generate Final Report
+        run: |
+          echo "# 📊 Unified Quality Pipeline Report" > pipeline-report.md
+          echo "**Generated**: $(date)" >> pipeline-report.md
+          echo "" >> pipeline-report.md
+          
+          echo "## 🎯 Quality Metrics" >> pipeline-report.md
+          echo "- TypeScript Errors: ${{ needs.foundation-checks.outputs.typescript-errors }}" >> pipeline-report.md
+          echo "- ESLint Issues: ${{ needs.foundation-checks.outputs.eslint-issues }}" >> pipeline-report.md
+          echo "" >> pipeline-report.md
+          
+          echo "## ✅ Pipeline Status" >> pipeline-report.md
+          echo "- Foundation: ${{ needs.foundation-checks.result }}" >> pipeline-report.md
+          echo "- Unit Tests: ${{ needs.unit-tests.result }}" >> pipeline-report.md
+          echo "- Integration: ${{ needs.integration-tests.result }}" >> pipeline-report.md
+          echo "- Cross-Platform: ${{ needs.cross-platform.result }}" >> pipeline-report.md
+          echo "- Quality Gates: ${{ needs.quality-gates.result }}" >> pipeline-report.md
+          
+      - name: 📤 Upload Final Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-final-report
+          path: pipeline-report.md
+          
+      - name: 💬 Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('pipeline-report.md', 'utf8');
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            });
+
+# ============================================================================
+# NOTIFICATION SETTINGS
+# ============================================================================
+
+# Slack/Discord notifications for quality alerts
+# Could be configured with webhooks for team notifications

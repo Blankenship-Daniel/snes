@@ -1,0 +1,170 @@
+{
+  "id": "Post-Intro-Save-State-Creation-1760859630656",
+  "name": "Post-Intro-Save-State-Creation",
+  "description": "Navigate through full intro to create reusable save state at Link's house",
+  "startFrame": 590,
+  "inputs": [
+    {
+      "frame": 0,
+      "button": "Start",
+      "duration": 5
+    },
+    {
+      "frame": -530,
+      "button": "Start",
+      "duration": 5
+    },
+    {
+      "frame": -500,
+      "button": "A",
+      "duration": 5
+    },
+    {
+      "frame": -320,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -320,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -320,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -320,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -320,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -320,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -320,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -320,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -20,
+      "button": "A",
+      "duration": 5
+    },
+    {
+      "frame": -20,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -20,
+      "button": "A",
+      "duration": 5
+    },
+    {
+      "frame": -20,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -20,
+      "button": "A",
+      "duration": 5
+    },
+    {
+      "frame": -20,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -20,
+      "button": "A",
+      "duration": 5
+    },
+    {
+      "frame": -20,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -20,
+      "button": "A",
+      "duration": 5
+    },
+    {
+      "frame": -20,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": 380,
+      "button": "Down",
+      "duration": 30
+    },
+    {
+      "frame": 380,
+      "button": "Start",
+      "duration": 3
+    },
+    {
+      "frame": 380,
+      "button": "A",
+      "duration": 3
+    },
+    {
+      "frame": 380,
+      "button": "B",
+      "duration": 3
+    },
+    {
+      "frame": 380,
+      "button": "A",
+      "duration": 3
+    },
+    {
+      "frame": 380,
+      "button": "B",
+      "duration": 3
+    },
+    {
+      "frame": 380,
+      "button": "Start",
+      "duration": 3
+    },
+    {
+      "frame": 980,
+      "button": "Down",
+      "duration": 40
+    }
+  ],
+  "metadata": {
+    "duration": 1020,
+    "success": false,
+    "notes": [
+      "Progressed to 1570 frames (~26 seconds)",
+      "Intro sequence longer than expected",
+      "Memory still uninitialized (health=0, sword=0)",
+      "Debug mode active and ready for use",
+      "Need alternative approach: manual skip or pre-made save state"
+    ],
+    "tags": [
+      "intro-navigation",
+      "incomplete",
+      "debug-testing"
+    ],
+    "timestamp": 1760859630656
+  }
+}

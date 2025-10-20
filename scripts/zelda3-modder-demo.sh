@@ -95,57 +95,57 @@ fi
 # Map mod types to existing ROMs
 case "$MOD_TYPE" in
     "infinite-magic"|"unlimited-magic"|"never-run-out-of-magic")
-        SOURCE_ROM="snes-modder/zelda3-infinite-magic.smc"
+        SOURCE_ROM="repos/snes-modder/zelda3-infinite-magic.smc"
         OUTPUT_NAME="zelda3-infinite-magic-$(date +%Y%m%d).smc"
         DESCRIPTION="Infinite Magic Mod"
         ;;
     "intro-skip"|"skip-intro"|"no-intro")
-        SOURCE_ROM="snes-modder/zelda3-intro-skip.smc"
+        SOURCE_ROM="repos/snes-modder/zelda3-intro-skip.smc"
         OUTPUT_NAME="zelda3-intro-skip-$(date +%Y%m%d).smc"
         DESCRIPTION="Intro Skip Mod"
         ;;
     "quick-start"|"speedrun-start")
-        SOURCE_ROM="snes-modder/zelda3-quickstart-final.smc"
+        SOURCE_ROM="repos/snes-modder/zelda3-quickstart-final.smc"
         OUTPUT_NAME="zelda3-quickstart-$(date +%Y%m%d).smc"
         DESCRIPTION="Quick Start Mod"
         ;;
     "2x-speed"|"double-speed"|"faster")
-        SOURCE_ROM="snes-modder/zelda3-2x-speed.smc"
+        SOURCE_ROM="repos/snes-modder/zelda3-2x-speed.smc"
         OUTPUT_NAME="zelda3-2x-speed-$(date +%Y%m%d).smc"
         DESCRIPTION="2x Speed Mod"
         ;;
     "max-hearts"|"full-health"|"20-hearts")
-        SOURCE_ROM="snes-modder/zelda3-health-v2-fixed.smc"
+        SOURCE_ROM="repos/snes-modder/zelda3-health-v2-fixed.smc"
         OUTPUT_NAME="zelda3-max-health-$(date +%Y%m%d).smc"
         DESCRIPTION="Maximum Health Mod"
         ;;
     "team-solution"|"best-combo")
-        SOURCE_ROM="snes-modder/zelda3-team-solution.smc"
+        SOURCE_ROM="repos/snes-modder/zelda3-team-solution.smc"
         OUTPUT_NAME="zelda3-team-solution-$(date +%Y%m%d).smc"
         DESCRIPTION="Team Solution (Balanced Combo)"
         ;;
     "ultimate"|"ultimate-combo"|"everything")
-        SOURCE_ROM="snes-modder/zelda3-ultimate-test.smc"
+        SOURCE_ROM="repos/snes-modder/zelda3-ultimate-test.smc"
         OUTPUT_NAME="zelda3-ultimate-$(date +%Y%m%d).smc"
         DESCRIPTION="Ultimate Combo (All Mods)"
         ;;
     "safe-start"|"beginner")
-        SOURCE_ROM="snes-modder/zelda3-safe-start.smc"
+        SOURCE_ROM="repos/snes-modder/zelda3-safe-start.smc"
         OUTPUT_NAME="zelda3-safe-start-$(date +%Y%m%d).smc"
         DESCRIPTION="Safe Start (Beginner Friendly)"
         ;;
     "rich-start"|"rich"|"999-rupees"|"millionaire")
-        SOURCE_ROM="snes-modder/zelda3-rich-start-999.smc"
+        SOURCE_ROM="repos/snes-modder/zelda3-rich-start-999.smc"
         OUTPUT_NAME="zelda3-rich-start-999-$(date +%Y%m%d).smc"
         DESCRIPTION="Rich Start (999 Rupees)"
         ;;
     "rich-start-500"|"comfortable"|"500-rupees")
-        SOURCE_ROM="snes-modder/zelda3-rich-start-500.smc"
+        SOURCE_ROM="repos/snes-modder/zelda3-rich-start-500.smc"
         OUTPUT_NAME="zelda3-rich-start-500-$(date +%Y%m%d).smc"
         DESCRIPTION="Rich Start Comfortable (500 Rupees)"
         ;;
     "rich-start-777"|"wealthy"|"777-rupees"|"lucky")
-        SOURCE_ROM="snes-modder/zelda3-rich-start-777.smc"
+        SOURCE_ROM="repos/snes-modder/zelda3-rich-start-777.smc"
         OUTPUT_NAME="zelda3-rich-start-777-$(date +%Y%m%d).smc"
         DESCRIPTION="Rich Start Wealthy (777 Rupees)"
         ;;

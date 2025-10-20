@@ -1,0 +1,177 @@
+{
+  "bridge_id": "bridge-f8c006c6e7e6",
+  "version": "1.0.0",
+  "generated": "2025-08-18T00:00:00Z",
+  "critical_addresses": {
+    "player_state": {
+      "health_current": "0x7EF36D",
+      "health_max": "0x7EF36C",
+      "health_pieces": "0x7EF36B",
+      "magic_current": "0x7EF36E",
+      "magic_max": "0x7EF36F"
+    },
+    "inventory_items": {
+      "bow": "0x7EF340",
+      "boomerang": "0x7EF341",
+      "hookshot": "0x7EF342",
+      "bombs": "0x7EF343",
+      "mushroom_powder": "0x7EF344",
+      "fire_rod": "0x7EF345",
+      "ice_rod": "0x7EF346",
+      "bombos": "0x7EF347",
+      "ether": "0x7EF348",
+      "quake": "0x7EF349",
+      "lamp": "0x7EF34A",
+      "hammer": "0x7EF34B",
+      "flute": "0x7EF34C",
+      "bug_net": "0x7EF34D",
+      "book_of_mudora": "0x7EF34E",
+      "somaria": "0x7EF350",
+      "byrna": "0x7EF351",
+      "magic_cape": "0x7EF352",
+      "magic_mirror": "0x7EF353"
+    },
+    "equipment": {
+      "gloves": "0x7EF354",
+      "boots": "0x7EF355",
+      "flippers": "0x7EF356",
+      "moon_pearl": "0x7EF357",
+      "sword": "0x7EF359",
+      "shield": "0x7EF35A",
+      "armor": "0x7EF35B"
+    },
+    "bottles": {
+      "bottle_1": "0x7EF35C",
+      "bottle_2": "0x7EF35D",
+      "bottle_3": "0x7EF35E",
+      "bottle_4": "0x7EF35F"
+    },
+    "currency": {
+      "rupees_low": "0x7EF360",
+      "rupees_high": "0x7EF361",
+      "keys": "0x7EF36F"
+    },
+    "game_state": {
+      "game_mode": "0x7E0010",
+      "submode": "0x7E0011",
+      "current_room": "0x7E00A0",
+      "dungeon_id": "0x7E040C"
+    },
+    "player_position": {
+      "x_position": "0x7E0020",
+      "y_position": "0x7E0022",
+      "z_position": "0x7E0024",
+      "facing_direction": "0x7E002F"
+    },
+    "save_data": {
+      "start": "0x7EF000",
+      "end": "0x7EF4FF",
+      "checksum": "0x7EF4FE"
+    },
+    "rom_header": {
+      "title": "0x7FC0",
+      "mapping_mode": "0x7FD5",
+      "rom_type": "0x7FD6",
+      "rom_size": "0x7FD7",
+      "sram_size": "0x7FD8",
+      "checksum": "0x7FDE",
+      "checksum_complement": "0x7FDC"
+    },
+    "interrupt_vectors": {
+      "cop": "0xFFE4",
+      "brk": "0xFFE6",
+      "abort": "0xFFE8",
+      "nmi": "0xFFEA",
+      "reset": "0xFFEC",
+      "irq": "0xFFEE"
+    }
+  },
+  "memory_regions": {
+    "wram": {
+      "start": "0x7E0000",
+      "end": "0x7FFFFF",
+      "size": 131072,
+      "writable": true,
+      "persistent": false
+    },
+    "sram": {
+      "start": "0x700000",
+      "end": "0x77FFFF",
+      "size": 524288,
+      "writable": true,
+      "persistent": true
+    },
+    "rom_lorom": {
+      "banks_00_3f": {
+        "start": "0x008000",
+        "end": "0x3FFFFF"
+      },
+      "banks_40_7d": {
+        "start": "0x408000",
+        "end": "0x7DFFFF"
+      },
+      "banks_80_bf": {
+        "start": "0x808000",
+        "end": "0xBFFFFF"
+      },
+      "banks_c0_ff": {
+        "start": "0xC08000",
+        "end": "0xFFFFFF"
+      }
+    },
+    "hardware_registers": {
+      "ppu": {
+        "start": "0x2100",
+        "end": "0x213F"
+      },
+      "cpu": {
+        "start": "0x4200",
+        "end": "0x421F"
+      },
+      "dma": {
+        "start": "0x4300",
+        "end": "0x437F"
+      },
+      "joypad": {
+        "start": "0x4016",
+        "end": "0x4017"
+      }
+    }
+  },
+  "address_conversions": {
+    "rom_to_snes_formula": "snes = ((rom_offset / 0x8000) | 0x80) << 16 | ((rom_offset % 0x8000) + 0x8000)",
+    "snes_to_rom_formula": "rom = ((snes >> 16) & 0x7F) * 0x8000 + ((snes & 0xFFFF) - 0x8000)",
+    "examples": [
+      {
+        "rom": "0x000000",
+        "snes": "0x808000"
+      },
+      {
+        "rom": "0x007FFF",
+        "snes": "0x80FFFF"
+      },
+      {
+        "rom": "0x008000",
+        "snes": "0x818000"
+      },
+      {
+        "rom": "0x0274EC",
+        "snes": "0x84F4EC"
+      }
+    ]
+  },
+  "hot_addresses": [
+    "0x7EF36D",
+    "0x7EF360",
+    "0x7E0020",
+    "0x7E0022",
+    "0x7E0010"
+  ],
+  "notes": {
+    "endianness": "little",
+    "address_width": 24,
+    "data_bus_width": 8,
+    "mapping": "LoROM",
+    "header_location": "0x7FC0 or 0xFFC0 depending on header presence"
+  }
+}

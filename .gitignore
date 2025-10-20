@@ -2,8 +2,12 @@
 /zelda3.smc
 /zelda3-*.smc
 
-# Optional output directory
-/out/
+# Output directory for generated files
+/output/
+
+# Analysis output (large generated files)
+**/analysis/snes2asm_output/
+**/analysis_metadata.json
 
 # Logs and runtime artifacts
 /logs/
@@ -21,3 +25,6 @@ package-lock.json
 # Claude Code hook sessions (privacy - don't commit session transcripts)
 .claude/sessions/
 .claude/logs/
+
+.ai-team-workspace
+.context-registry

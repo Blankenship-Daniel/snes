@@ -562,7 +562,7 @@ def calculate_relevance_score_advanced(item, query, keywords, query_type="genera
 **Checks**:
 ```bash
 # Verify Codex CLI exists
-ls -la snes-modder/node_modules/.bin/codex-cli
+ls -la repos/snes-modder/node_modules/.bin/codex-cli
 
 # Test manually
 cd snes-modder

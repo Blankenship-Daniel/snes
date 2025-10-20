@@ -74,9 +74,9 @@ verify_rom_bytes() {
 echo "Starting ROM byte verification..."
 echo ""
 
-verify_rom_bytes "snes-modder/zelda3-rich-start-999.smc" 999 "Millionaire (999 rupees)"
-verify_rom_bytes "snes-modder/zelda3-rich-start-500.smc" 500 "Comfortable (500 rupees)"
-verify_rom_bytes "snes-modder/zelda3-rich-start-777.smc" 777 "Wealthy (777 rupees)"
+verify_rom_bytes "repos/snes-modder/zelda3-rich-start-999.smc" 999 "Millionaire (999 rupees)"
+verify_rom_bytes "repos/snes-modder/zelda3-rich-start-500.smc" 500 "Comfortable (500 rupees)"
+verify_rom_bytes "repos/snes-modder/zelda3-rich-start-777.smc" 777 "Wealthy (777 rupees)"
 
 echo "═══════════════════════════════════════════"
 echo "✨ ROM byte verification complete!"

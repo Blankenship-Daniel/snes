@@ -1,0 +1,325 @@
+/**
+ * Type Guards Test Patterns
+ * Sam's testing philosophy: Test the boundaries, mock sparingly
+ */
+
+import { describe, it, expect, assertType } from 'vitest';
+
+import {
+  isDiscovery,
+  isItemDiscovery,
+  isSpriteDiscovery,
+  assertDiscovery,
+  assertValidated,
+  assertValidAddress,
+  onlyValidated,
+  filterByCategory,
+  extractItems,
+  toROMAddress,
+  toItemID,
+  toSpriteID
+} from '../types/guards';
+import type {
+  Discovery,
+  ItemDiscovery,
+  SpriteDiscovery
+} from '../types/core.types';
+import { DiscoveryCategory, ConfidenceLevel } from '../types/core.types';
+
+// ============================================
+// TEST FIXTURES - Reusable test data
+// ============================================
+
+const validBaseDiscovery = {
+  id: 'test-id',
+  name: 'Test Discovery',
+  description: 'A test discovery',
+  category: DiscoveryCategory.Item,
+  confidence: ConfidenceLevel.High,
+  discoveredAt: new Date('2024-01-01'),
+  discoveredBy: 'test-user',
+  validated: true,
+  version: { major: 1, minor: 0, patch: 0 }
+};
+
+const validItemDiscovery: ItemDiscovery = {
+  ...validBaseDiscovery,
+  category: DiscoveryCategory.Item,
+  itemId: 42,
+  address: {
+    rom: 0x123456
+  },
+  properties: {
+    stackable: true,
+    maxQuantity: 99,
+    value: 100
+  }
+};
+
+const validSpriteDiscovery: SpriteDiscovery = {
+  ...validBaseDiscovery,
+  category: DiscoveryCategory.Sprite,
+  spriteId: 15,
+  dimensions: {
+    width: 16,
+    height: 16
+  },
+  palette: [0x00, 0x01, 0x02]
+};
+
+// ============================================
+// TYPE GUARD TESTS - Core functionality
+// ============================================
+
+describe('Type Guards', () => {
+  describe('isDiscovery', () => {
+    it('should validate correct Discovery objects', () => {
+      expect(isDiscovery(validBaseDiscovery)).toBe(true);
+      expect(isDiscovery(validItemDiscovery)).toBe(true);
+    });
+
+    it('should reject invalid objects', () => {
+      expect(isDiscovery(null)).toBe(false);
+      expect(isDiscovery(undefined)).toBe(false);
+      expect(isDiscovery({})).toBe(false);
+      expect(isDiscovery('string')).toBe(false);
+      expect(isDiscovery(123)).toBe(false);
+      expect(isDiscovery([])).toBe(false);
+    });
+
+    it('should reject objects missing required fields', () => {
+      const missingId = { ...validBaseDiscovery };
+      delete (missingId as any).id;
+      expect(isDiscovery(missingId)).toBe(false);
+
+      const missingName = { ...validBaseDiscovery };
+      delete (missingName as any).name;
+      expect(isDiscovery(missingName)).toBe(false);
+
+      const invalidDate = { ...validBaseDiscovery, discoveredAt: 'invalid' };
+      expect(isDiscovery(invalidDate)).toBe(false);
+    });
+
+    it('should provide proper type narrowing', () => {
+      const unknown: unknown = validBaseDiscovery;
+      
+      if (isDiscovery(unknown)) {
+        // TypeScript should know this is a Discovery
+        assertType<Discovery>(unknown);
+        expect(unknown.id).toBe('test-id');
+        expect(unknown.name).toBe('Test Discovery');
+      }
+    });
+  });
+
+  describe('Category-specific guards', () => {
+    it('should correctly identify ItemDiscovery', () => {
+      expect(isItemDiscovery(validItemDiscovery)).toBe(true);
+      expect(isItemDiscovery(validSpriteDiscovery)).toBe(false);
+    });
+
+    it('should correctly identify SpriteDiscovery', () => {
+      expect(isSpriteDiscovery(validSpriteDiscovery)).toBe(true);
+      expect(isSpriteDiscovery(validItemDiscovery)).toBe(false);
+    });
+
+    it('should provide proper type narrowing for categories', () => {
+      if (isItemDiscovery(validItemDiscovery)) {
+        assertType<ItemDiscovery>(validItemDiscovery);
+        expect(validItemDiscovery.itemId).toBe(42);
+        expect(validItemDiscovery.address.rom).toBe(0x123456);
+      }
+    });
+  });
+});
+
+// ============================================
+// ASSERTION GUARD TESTS - Error throwing
+// ============================================
+
+describe('Assertion Guards', () => {
+  describe('assertDiscovery', () => {
+    it('should pass for valid Discovery objects', () => {
+      expect(() => assertDiscovery(validBaseDiscovery)).not.toThrow();
+    });
+
+    it('should throw TypeError for invalid objects', () => {
+      expect(() => assertDiscovery(null)).toThrow(TypeError);
+      expect(() => assertDiscovery({})).toThrow(TypeError);
+      expect(() => assertDiscovery('string')).toThrow(TypeError);
+    });
+
+    it('should provide type assertion', () => {
+      const unknown: unknown = validBaseDiscovery;
+      assertDiscovery(unknown);
+      // After assertion, TypeScript knows this is Discovery
+      assertType<Discovery>(unknown);
+    });
+  });
+
+  describe('assertValidated', () => {
+    it('should pass for validated discoveries', () => {
+      const validated = { ...validBaseDiscovery, validated: true };
+      expect(() => assertValidated(validated)).not.toThrow();
+    });
+
+    it('should throw for unvalidated discoveries', () => {
+      const unvalidated = { ...validBaseDiscovery, validated: false };
+      expect(() => assertValidated(unvalidated)).toThrow('not validated');
+    });
+  });
+
+  describe('assertValidAddress', () => {
+    it('should pass for valid SNES addresses', () => {
+      expect(() => assertValidAddress(0x000000)).not.toThrow();
+      expect(() => assertValidAddress(0x7E0000)).not.toThrow();
+      expect(() => assertValidAddress(0xFFFFFF)).not.toThrow();
+    });
+
+    it('should throw for invalid addresses', () => {
+      expect(() => assertValidAddress(-1)).toThrow(RangeError);
+      expect(() => assertValidAddress(0x1000000)).toThrow(RangeError);
+    });
+  });
+});
+
+// ============================================
+// FILTERING TESTS - Array operations
+// ============================================
+
+describe('Array Filtering', () => {
+  const discoveries: Discovery[] = [
+    { ...validItemDiscovery, validated: true },
+    { ...validItemDiscovery, id: 'item-2', validated: false },
+    { ...validSpriteDiscovery, validated: true }
+  ];
+
+  describe('onlyValidated', () => {
+    it('should filter to only validated discoveries', () => {
+      const validated = onlyValidated(discoveries);
+      expect(validated).toHaveLength(2);
+      expect(validated.every(d => d.validated)).toBe(true);
+      
+      // Type should be narrowed to validated discoveries
+      validated.forEach(discovery => {
+        assertType<Discovery & { validated: true }>(discovery);
+      });
+    });
+  });
+
+  describe('filterByCategory', () => {
+    it('should filter by category with proper typing', () => {
+      const items = filterByCategory<ItemDiscovery>(discoveries, DiscoveryCategory.Item);
+      expect(items).toHaveLength(2);
+      
+      items.forEach(item => {
+        assertType<ItemDiscovery>(item);
+        expect(item.category).toBe('item');
+      });
+    });
+  });
+
+  describe('extractItems', () => {
+    it('should extract only ItemDiscovery objects', () => {
+      const items = extractItems(discoveries);
+      expect(items).toHaveLength(2);
+      
+      items.forEach(item => {
+        assertType<ItemDiscovery>(item);
+        expect(item.category).toBe('item');
+        expect(typeof item.itemId).toBe('number');
+      });
+    });
+  });
+});
+
+// ============================================
+// BRANDED TYPE TESTS - Type safety
+// ============================================
+
+describe('Branded Types', () => {
+  describe('toROMAddress', () => {
+    it('should create branded ROM addresses', () => {
+      const address = toROMAddress(0x123456);
+      assertType<number & { readonly __brand: 'ROMAddress' }>(address);
+      expect(address).toBe(0x123456);
+    });
+
+    it('should validate address range', () => {
+      expect(() => toROMAddress(-1)).toThrow(RangeError);
+      expect(() => toROMAddress(0x1000000)).toThrow(RangeError);
+    });
+  });
+
+  describe('toItemID', () => {
+    it('should create branded item IDs', () => {
+      const itemId = toItemID(42);
+      assertType<number & { readonly __brand: 'ItemID' }>(itemId);
+      expect(itemId).toBe(42);
+    });
+
+    it('should validate item ID range', () => {
+      expect(() => toItemID(-1)).toThrow(RangeError);
+      expect(() => toItemID(256)).toThrow(RangeError);
+    });
+  });
+
+  describe('toSpriteID', () => {
+    it('should create branded sprite IDs', () => {
+      const spriteId = toSpriteID(15);
+      assertType<number & { readonly __brand: 'SpriteID' }>(spriteId);
+      expect(spriteId).toBe(15);
+    });
+
+    it('should validate sprite ID range', () => {
+      expect(() => toSpriteID(-1)).toThrow(RangeError);
+      expect(() => toSpriteID(512)).toThrow(RangeError);
+    });
+  });
+});
+
+// ============================================
+// EDGE CASE TESTS - Boundary conditions
+// ============================================
+
+describe('Edge Cases', () => {
+  it('should handle empty arrays gracefully', () => {
+    const empty: Discovery[] = [];
+    expect(onlyValidated(empty)).toHaveLength(0);
+    expect(extractItems(empty)).toHaveLength(0);
+  });
+
+  it('should handle malformed date objects', () => {
+    const invalidDate = { ...validBaseDiscovery, discoveredAt: new Date('invalid') };
+    expect(isDiscovery(invalidDate)).toBe(false);
+  });
+
+  it('should handle circular references safely', () => {
+    const circular: any = { ...validBaseDiscovery };
+    circular.self = circular;
+    
+    // Type guard should handle this gracefully
+    expect(() => isDiscovery(circular)).not.toThrow();
+  });
+});
+
+// ============================================
+// PERFORMANCE TESTS - Basic benchmarking
+// ============================================
+
+describe('Performance', () => {
+  it('should handle large arrays efficiently', () => {
+    const largeArray = Array.from({ length: 10000 }, (_, i) => ({
+      ...validItemDiscovery,
+      id: `item-${i}`,
+      validated: i % 2 === 0
+    }));
+
+    const start = performance.now();
+    const validated = onlyValidated(largeArray);
+    const end = performance.now();
+
+    expect(validated).toHaveLength(5000);
+    expect(end - start).toBeLessThan(100); // Should complete in under 100ms
+  });
+});

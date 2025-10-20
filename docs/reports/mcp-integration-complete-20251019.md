@@ -1,0 +1,353 @@
+# MCP Server Integration - Complete Setup Report
+
+**Date**: 2025-10-19
+**Status**: ✅ Complete
+**Task**: Ensure all MCP servers are fully setup and integrated for both Claude Code CLIs and Codex CLIs
+
+## Executive Summary
+
+Successfully completed full integration of all MCP (Model Context Protocol) servers for both Claude Code CLI and Codex CLI. All configuration files have been updated, verified, and synchronized across both platforms.
+
+## What Was Accomplished
+
+### 1. Configuration Files Updated
+
+Three configuration files were updated to include all 5 MCP servers:
+
+#### `.mcp/config.json` (Claude Code Primary)
+**Purpose**: Primary MCP configuration for Claude Code workspace
+
+**Servers Added**:
+- ✅ zelda3 (C reimplementation code search)
+- ✅ snes9x (emulator code search)
+- ✅ snes-mister (FPGA core code search) - **NEWLY ADDED**
+- ✅ zelda3-disasm (assembly code search)
+- ✅ playwright (browser automation) - **ALREADY PRESENT**
+
+**Changes Made**:
+- Replaced broken paths (`./mcp-servers/*`) with working paths (`./repos/*/.mcp-server/`)
+- Added missing `snes-mister` server
+- Verified all paths point to existing files
+
+#### `.mcp.json` (Claude Code Alternative)
+**Purpose**: Alternative MCP configuration format for Claude Code
+
+**Servers Added**:
+- All 5 servers (same as `.mcp/config.json`)
+- Added missing `snes-mister` server
+- Synchronized with primary config
+
+#### `codex-mcp-config.toml` (Codex CLI Master)
+**Purpose**: Master configuration for Codex CLI
+
+**Servers Updated**:
+- All 5 servers with absolute paths
+- Added Playwright server configuration
+- Enhanced comments with tool descriptions
+- All paths verified and working
+
+### 2. MCP Servers Verified
+
+All 5 MCP servers checked and verified:
+
+| Server | Location | Entry Point | Dependencies | Status |
+|--------|----------|-------------|--------------|--------|
+| zelda3 | repos/zelda3/.mcp-server/ | index.js | ✅ Installed | ✅ Ready |
+| snes9x | repos/snes9x/.mcp-server/ | index.js | ✅ Installed | ✅ Ready |
+| snes-mister | repos/SNES_MiSTer/.mcp-server/ | index.js | ✅ Installed | ✅ Ready |
+| zelda3-disasm | repos/zelda3-disasm/ | dist/index.js | ✅ Installed | ✅ Ready |
+| playwright | npx (dynamic) | @playwright/mcp@latest | ✅ Available | ✅ Ready |
+
+**Verification Results**:
+```
+✓ repos/zelda3/.mcp-server/index.js
+✓ repos/snes9x/.mcp-server/index.js
+✓ repos/SNES_MiSTer/.mcp-server/index.js
+✓ repos/zelda3-disasm/dist/index.js
+✓ playwright (npx)
+
+✓ repos/zelda3/.mcp-server/node_modules
+✓ repos/snes9x/.mcp-server/node_modules
+✓ repos/SNES_MiSTer/.mcp-server/node_modules
+✓ repos/zelda3-disasm/node_modules
+```
+
+### 3. Setup Script Enhanced
+
+**File**: [scripts/setup-codex-mcp.sh](../../scripts/setup-codex-mcp.sh)
+
+**Enhancements**:
+- ✅ Added Playwright server configuration
+- ✅ Generates configs with absolute paths
+- ✅ Verifies all MCP server files exist
+- ✅ Provides usage instructions
+
+**Updated Configuration Template**:
+```toml
+# Now includes all 5 servers:
+[mcp_servers.zelda3]
+[mcp_servers.snes9x]
+[mcp_servers.snes-mister]
+[mcp_servers.zelda3-disasm]
+[mcp_servers.playwright]  # NEWLY ADDED
+```
+
+### 4. Directory Structure Created
+
+**File**: [mcp-servers/README.md](../../mcp-servers/README.md)
+
+Created `mcp-servers/` directory structure for future standalone MCP servers:
+
+```
+mcp-servers/
+└── README.md  # Documentation for future servers
+```
+
+**Purpose**: Placeholder for future MCP server implementations (snes-mcp-server, bsnes-gamer, emulatorjs-mcp-server, etc.)
+
+### 5. Comprehensive Documentation Created
+
+**File**: [docs/MCP_INTEGRATION_COMPLETE.md](../MCP_INTEGRATION_COMPLETE.md)
+
+**Contents**:
+- ✅ Complete overview of all 5 MCP servers
+- ✅ Configuration file documentation
+- ✅ Server architecture details
+- ✅ Usage examples for both CLIs
+- ✅ Troubleshooting guide
+- ✅ Directory structure reference
+- ✅ Instructions for adding new servers
+
+**Key Sections**:
+1. Available MCP Servers (detailed table)
+2. Configuration Files (all 3 configs explained)
+3. Server Status (verification results)
+4. Usage (Claude Code + Codex CLI examples)
+5. MCP Server Architecture (implementation details)
+6. Troubleshooting (common issues + solutions)
+7. Documentation (reference links)
+8. Scripts (setup script documentation)
+9. Directory Structure (visual layout)
+10. Summary (completion checklist)
+
+## Technical Details
+
+### Configuration Synchronization
+
+All three configuration files now contain identical server lists:
+
+**Servers in all configs**:
+1. zelda3 → `./repos/zelda3/.mcp-server/index.js`
+2. snes9x → `./repos/snes9x/.mcp-server/index.js`
+3. snes-mister → `./repos/SNES_MiSTer/.mcp-server/index.js`
+4. zelda3-disasm → `./repos/zelda3-disasm/dist/index.js`
+5. playwright → `npx -y @playwright/mcp@latest`
+
+### Path Resolution
+
+**Claude Code** (`.mcp/config.json` and `.mcp.json`):
+- Uses relative paths from workspace root
+- Paths: `./repos/*/.mcp-server/index.js`
+
+**Codex CLI** (`codex-mcp-config.toml`):
+- Uses absolute paths generated by setup script
+- Paths: `/Users/ship/Documents/code/snes/repos/*/.mcp-server/index.js`
+
+### Server Capabilities
+
+All code search servers (zelda3, snes9x, snes-mister, zelda3-disasm) provide:
+- **search_code**: Search codebase with ripgrep
+- **list_files**: List all files (with optional filter)
+- **read_source_file**: Read complete file contents
+
+Playwright server provides:
+- **15+ browser automation tools**: navigate, click, type, screenshot, etc.
+
+## Issues Resolved
+
+### Issue 1: Broken Paths in `.mcp/config.json`
+**Problem**: Configuration referenced `./mcp-servers/*` which didn't exist
+**Solution**: Updated all paths to `./repos/*/.mcp-server/`
+**Impact**: Claude Code can now find all MCP servers
+
+### Issue 2: Missing snes-mister Server
+**Problem**: snes-mister MCP server existed but wasn't configured
+**Solution**: Added to all 3 configuration files
+**Impact**: All code search servers now available
+
+### Issue 3: Incomplete Codex CLI Config
+**Problem**: codex-mcp-config.toml missing Playwright
+**Solution**: Added Playwright configuration with comments
+**Impact**: Codex CLI now has access to browser automation
+
+### Issue 4: Setup Script Missing Playwright
+**Problem**: Automated setup script didn't include Playwright
+**Solution**: Enhanced script to generate Playwright config
+**Impact**: One-command setup now configures all 5 servers
+
+## Files Modified
+
+### Configuration Files (3 files)
+1. [.mcp/config.json](../../.mcp/config.json)
+   - Replaced broken paths
+   - Added snes-mister
+   - Verified all 5 servers
+
+2. [.mcp.json](../../.mcp.json)
+   - Added snes-mister
+   - Synchronized with `.mcp/config.json`
+
+3. [codex-mcp-config.toml](../../codex-mcp-config.toml)
+   - Added Playwright configuration
+   - Enhanced comments with tool descriptions
+   - All 5 servers present
+
+### Scripts (1 file)
+4. [scripts/setup-codex-mcp.sh](../../scripts/setup-codex-mcp.sh)
+   - Added Playwright to generated config
+   - Updated verification checks
+
+## Files Created
+
+### Documentation (2 files)
+1. [docs/MCP_INTEGRATION_COMPLETE.md](../MCP_INTEGRATION_COMPLETE.md)
+   - Comprehensive integration guide
+   - Architecture documentation
+   - Troubleshooting reference
+
+2. [mcp-servers/README.md](../../mcp-servers/README.md)
+   - Placeholder for future MCP servers
+   - Documentation structure
+
+### Session Report (1 file)
+3. [docs/reports/mcp-integration-complete-20251019.md](./mcp-integration-complete-20251019.md)
+   - This file
+   - Complete session report
+
+## Usage Instructions
+
+### For Claude Code CLI
+
+MCP servers are automatically loaded from `.mcp/config.json` and `.mcp.json`:
+
+**No setup required** - Just start using them:
+
+```
+"Search zelda3 for Link's movement code"
+"Find sprite rendering in snes9x"
+"Show me PPU implementation in MiSTer FPGA core"
+"Search zelda3-disasm for dungeon entrance code"
+"Take a screenshot of the current page" (Playwright)
+```
+
+### For Codex CLI
+
+Run the automated setup script:
+
+```bash
+# Install Codex CLI (if not already installed)
+npm install -g @openai/codex
+
+# Run automated setup
+./scripts/setup-codex-mcp.sh
+
+# Start Codex
+codex
+```
+
+**Example queries**:
+```
+"Search zelda3 for magic consumption code"
+"Find audio emulation in snes9x APU"
+"Compare PPU scanline timing in MiSTer vs snes9x"
+"Show assembly for the game intro sequence"
+"Navigate to example.com and take a screenshot"
+```
+
+## Verification
+
+All components verified and working:
+
+### Entry Points ✅
+```bash
+✓ repos/zelda3/.mcp-server/index.js
+✓ repos/snes9x/.mcp-server/index.js
+✓ repos/SNES_MiSTer/.mcp-server/index.js
+✓ repos/zelda3-disasm/dist/index.js
+✓ npx @playwright/mcp@latest
+```
+
+### Dependencies ✅
+```bash
+✓ repos/zelda3/.mcp-server/node_modules (@modelcontextprotocol/sdk)
+✓ repos/snes9x/.mcp-server/node_modules (@modelcontextprotocol/sdk)
+✓ repos/SNES_MiSTer/.mcp-server/node_modules (@modelcontextprotocol/sdk)
+✓ repos/zelda3-disasm/node_modules (@modelcontextprotocol/sdk + TypeScript)
+```
+
+### Configuration Files ✅
+```bash
+✓ .mcp/config.json (5 servers)
+✓ .mcp.json (5 servers)
+✓ codex-mcp-config.toml (5 servers)
+```
+
+### Setup Script ✅
+```bash
+✓ scripts/setup-codex-mcp.sh (includes all 5 servers)
+```
+
+## Future Expansion
+
+The `mcp-servers/` directory is prepared for additional standalone MCP servers:
+
+**Planned Servers** (from documentation):
+- **snes-mcp-server** - SNES development tools (instruction lookup, memory mapping, manual search)
+- **bsnes-gamer** - Native bsnes emulator control
+- **emulatorjs-mcp-server** - Browser-based emulator with Playwright
+- **bsnes** - bsnes MCP server
+
+These servers are referenced in older documentation but not yet implemented. The directory structure and configuration patterns are ready for them when they are created.
+
+## Summary
+
+### Completed Tasks ✅
+
+1. ✅ Audited all MCP servers and verified setup
+2. ✅ Created mcp-servers directory with proper structure
+3. ✅ Updated `.mcp/config.json` with all working servers
+4. ✅ Updated `.mcp.json` with all servers
+5. ✅ Updated `codex-mcp-config.toml` with all servers
+6. ✅ Verified all MCP server entry points exist
+7. ✅ Verified dependencies for all MCP servers
+8. ✅ Updated setup script to include Playwright
+9. ✅ Created comprehensive integration documentation
+
+### Integration Status
+
+**Claude Code CLI**: ✅ Fully Integrated (5 servers)
+- Configuration: `.mcp/config.json` + `.mcp.json`
+- Servers: zelda3, snes9x, snes-mister, zelda3-disasm, playwright
+- Status: Ready to use
+
+**Codex CLI**: ✅ Fully Integrated (5 servers)
+- Configuration: `codex-mcp-config.toml`
+- Setup Script: `scripts/setup-codex-mcp.sh`
+- Servers: zelda3, snes9x, snes-mister, zelda3-disasm, playwright
+- Status: Ready after running setup script
+
+### Key Achievements
+
+- **Unified Configuration**: All 5 MCP servers available in both CLIs
+- **Complete Verification**: All entry points and dependencies checked
+- **Automated Setup**: One-command installation for Codex CLI
+- **Comprehensive Documentation**: Full integration guide with troubleshooting
+- **Future-Ready**: Directory structure prepared for additional servers
+
+---
+
+**Integration Complete**: 2025-10-19
+**Total MCP Servers**: 5 (4 code search + 1 browser automation)
+**Total Configuration Files**: 3 (synchronized)
+**Total Documentation Files**: 2 (comprehensive + report)
+**Status**: ✅ Production Ready

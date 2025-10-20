@@ -505,5 +505,5 @@ The future of SNES modding just got a lot more interactive! 🎮✨
 ---
 
 **Created**: 2025-10-18
-**Repository**: `/Users/ship/Documents/code/snes/bsnes-mcp-server/`
+**Repository**: `repos/mcp-servers/bsnes/`
 **Status**: ✅ **PRODUCTION READY**

@@ -513,7 +513,7 @@ learning = {
 **Checks**:
 1. Verify Codex CLI installed:
    ```bash
-   ls -la snes-modder/node_modules/.bin/codex-cli
+   ls -la repos/snes-modder/node_modules/.bin/codex-cli
    ```
 
 2. Test Codex manually:

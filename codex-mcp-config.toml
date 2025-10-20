@@ -1,0 +1,53 @@
+# Codex CLI Configuration for All SNES MCP Servers
+#
+# This configuration file enables all SNES-related MCP servers for use with Codex CLI.
+#
+# Installation:
+# 1. Install Codex CLI: npm install -g @openai/codex
+# 2. Copy this file to ~/.codex/config.toml:
+#    cp codex-mcp-config.toml ~/.codex/config.toml
+# 3. Update the paths below to match your system
+# 4. Run: codex
+#
+# Or add servers individually:
+# codex mcp add zelda3 -- node /path/to/repos/zelda3/.mcp-server/index.js
+# codex mcp add snes9x -- node /path/to/repos/snes9x/.mcp-server/index.js
+# codex mcp add snes-mister -- node /path/to/repos/SNES_MiSTer/.mcp-server/index.js
+
+# Zelda 3 C Reimplementation MCP Server
+# Provides code search for the Zelda 3 C source code
+# Tools: search_code, list_files, read_source_file
+[mcp_servers.zelda3]
+command = "node"
+args = ["/Users/ship/Documents/code/snes/repos/zelda3/.mcp-server/index.js"]
+# Uncomment to add environment variables
+# env = { DEBUG = "true" }
+
+# SNES9x Emulator MCP Server
+# Provides code search for the SNES9x emulator codebase
+# Tools: search_code, list_files, read_source_file
+[mcp_servers.snes9x]
+command = "node"
+args = ["/Users/ship/Documents/code/snes/repos/snes9x/.mcp-server/index.js"]
+
+# SNES MiSTer FPGA Core MCP Server
+# Provides code search for the MiSTer FPGA implementation
+# Tools: search_code, list_files, read_source_file
+[mcp_servers.snes-mister]
+command = "node"
+args = ["/Users/ship/Documents/code/snes/repos/SNES_MiSTer/.mcp-server/index.js"]
+
+# Zelda 3 Assembly Disassembly MCP Server
+# Provides code search for the Zelda 3 assembly disassembly
+# Tools: search_code, list_files, read_source_file
+[mcp_servers.zelda3-disasm]
+command = "node"
+args = ["/Users/ship/Documents/code/snes/repos/zelda3-disasm/dist/index.js"]
+
+# Playwright Browser Automation MCP Server (Official)
+# Provides browser automation capabilities
+# Tools: browser_navigate, browser_click, browser_snapshot, browser_take_screenshot,
+#        browser_fill_form, browser_evaluate, browser_wait_for, and more
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y", "@playwright/mcp@latest"]

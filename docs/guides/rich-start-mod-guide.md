@@ -111,7 +111,7 @@ $ xxd -s 0x274F4 -l 2 zelda3-rich-start-777.smc
 ```bash
 # Test in bsnes-plus
 cd bsnes-plus
-./bsnes+.app/Contents/MacOS/bsnes+ ../snes-modder/zelda3-rich-start-999.smc
+./bsnes+.app/Contents/MacOS/bsnes+ ../repos/snes-modder/zelda3-rich-start-999.smc
 
 # Start a new game and check rupee count
 ```
@@ -225,7 +225,7 @@ npx tsx src/mods/RichStartMod.ts zelda3.smc zelda3-custom.smc custom 250
 
 ### Source Code
 
-**Location:** `/Users/ship/Documents/code/snes/snes-modder/src/mods/RichStartMod.ts`
+**Location:** `repos/snes-modder/src/mods/RichStartMod.ts`
 
 **Key Features:**
 - TypeScript with full type safety

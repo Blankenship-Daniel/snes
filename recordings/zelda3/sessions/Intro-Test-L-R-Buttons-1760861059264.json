@@ -1,0 +1,90 @@
+{
+  "id": "Intro-Test-L-R-Buttons-1760861059264",
+  "name": "Intro-Test-L-R-Buttons",
+  "description": "Testing L and R buttons for faster intro navigation based on speedrun community findings",
+  "startFrame": 425,
+  "inputs": [
+    {
+      "frame": 0,
+      "button": "Start",
+      "duration": 5
+    },
+    {
+      "frame": -365,
+      "button": "A",
+      "duration": 5
+    },
+    {
+      "frame": -305,
+      "button": "L",
+      "duration": 3
+    },
+    {
+      "frame": -290,
+      "button": "R",
+      "duration": 3
+    },
+    {
+      "frame": -275,
+      "button": "L",
+      "duration": 3
+    },
+    {
+      "frame": -275,
+      "button": "R",
+      "duration": 3
+    },
+    {
+      "frame": -275,
+      "button": "L",
+      "duration": 3
+    },
+    {
+      "frame": -275,
+      "button": "R",
+      "duration": 3
+    },
+    {
+      "frame": -275,
+      "button": "L",
+      "duration": 3
+    },
+    {
+      "frame": -275,
+      "button": "R",
+      "duration": 3
+    },
+    {
+      "frame": -275,
+      "button": "L",
+      "duration": 3
+    },
+    {
+      "frame": -275,
+      "button": "R",
+      "duration": 3
+    },
+    {
+      "frame": -275,
+      "button": "L",
+      "duration": 3
+    },
+    {
+      "frame": -275,
+      "button": "R",
+      "duration": 3
+    }
+  ],
+  "metadata": {
+    "duration": -272,
+    "success": false,
+    "notes": [
+      "Tested L and R buttons per speedrun community advice",
+      "Still stuck at health=0 after 180 frames",
+      "L/R buttons require visual feedback to be effective",
+      "Fundamental blocker: no visual state detection"
+    ],
+    "tags": [],
+    "timestamp": 1760861059264
+  }
+}

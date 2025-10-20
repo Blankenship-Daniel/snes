@@ -199,7 +199,7 @@ Check messages
 Share research findings between sessions:
 
 ```
-Send message to snes-research: Found critical bug in sprite rendering at bsnes-plus/bsnes/snes/ppu/sprite.cpp:245
+Send message to snes-research: Found critical bug in sprite rendering at repos/bsnes-plus/bsnes/snes/ppu/sprite.cpp:245
 Share file with snes-research: ./docs/sprite-bug-analysis.md
 ```
 

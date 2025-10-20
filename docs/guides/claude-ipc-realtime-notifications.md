@@ -212,7 +212,7 @@ Ctrl+A then Tab
 ### Quick Start (Recommended: File Watcher)
 
 ```bash
-cd /Users/ship/Documents/code/snes/claude-ipc-mcp
+cd ./repos/claude-ipc-mcp
 
 # Install watchdog
 uv pip install watchdog
@@ -227,7 +227,7 @@ uv run python tools/ipc_watch.py snes-dev
 ### Alternative (Background Monitor)
 
 ```bash
-cd /Users/ship/Documents/code/snes/claude-ipc-mcp
+cd ./repos/claude-ipc-mcp
 
 # No installation needed!
 uv run python tools/ipc_background_monitor.py snes-dev 2
@@ -241,20 +241,20 @@ uv run python tools/ipc_background_monitor.py snes-dev 2
 
 **Terminal 1 - Main development session:**
 ```bash
-cd /Users/ship/Documents/code/snes
+cd .
 claude
 # Register as snes-dev
 ```
 
 **Terminal 2 - IPC monitor:**
 ```bash
-cd /Users/ship/Documents/code/snes/claude-ipc-mcp
+cd ./repos/claude-ipc-mcp
 uv run python tools/ipc_watch.py snes-dev
 ```
 
 **Terminal 3 - Research/testing session:**
 ```bash
-cd /Users/ship/Documents/code/snes
+cd .
 claude
 # Register as snes-research
 # Send message to snes-dev: Found the bug!
@@ -397,12 +397,12 @@ You can combine real-time monitoring with the existing hook:
 **For Active Development:**
 ```bash
 # Terminal 1: Claude Code
-cd /Users/ship/Documents/code/snes
+cd .
 claude
 # Register as snes-dev
 
 # Terminal 2: Real-time monitor
-cd /Users/ship/Documents/code/snes/claude-ipc-mcp
+cd ./repos/claude-ipc-mcp
 uv run python tools/ipc_watch.py snes-dev
 
 # Terminal 3: Other Claude Code session (optional)

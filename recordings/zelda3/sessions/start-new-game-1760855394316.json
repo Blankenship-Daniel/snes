@@ -1,0 +1,208 @@
+{
+  "id": "start-new-game-1760855394316",
+  "name": "start-new-game",
+  "description": "Complete name entry and start new game file",
+  "startFrame": 300,
+  "inputs": [
+    {
+      "frame": 0,
+      "button": "Start",
+      "duration": 1
+    },
+    {
+      "frame": 120,
+      "button": "Start",
+      "duration": 1
+    },
+    {
+      "frame": 420,
+      "button": "Start",
+      "duration": 1
+    },
+    {
+      "frame": 600,
+      "button": "Start",
+      "duration": 1
+    },
+    {
+      "frame": 840,
+      "button": "Start",
+      "duration": 1
+    },
+    {
+      "frame": 1140,
+      "button": "Start",
+      "duration": 1
+    },
+    {
+      "frame": 1170,
+      "button": "Start",
+      "duration": 1
+    },
+    {
+      "frame": 1200,
+      "button": "Start",
+      "duration": 1
+    },
+    {
+      "frame": 1230,
+      "button": "Start",
+      "duration": 1
+    },
+    {
+      "frame": 1410,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 1430,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 1450,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 1470,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 1590,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 1590,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 1590,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 1590,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 1590,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 1890,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 1900,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 1910,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 1920,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 1930,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2170,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2170,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2170,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2170,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2170,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2170,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2170,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2170,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2170,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2170,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2770,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2780,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2790,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2800,
+      "button": "A",
+      "duration": 1
+    },
+    {
+      "frame": 2810,
+      "button": "A",
+      "duration": 1
+    }
+  ],
+  "metadata": {
+    "duration": 2811,
+    "success": false,
+    "notes": [
+      "Intro sequence too long to record efficiently",
+      "Will need different approach to skip intro"
+    ],
+    "tags": [],
+    "timestamp": 1760855394316
+  }
+}

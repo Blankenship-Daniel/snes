@@ -90,7 +90,7 @@ Frame 600: 256x224, hasContent=no  # ⚠️ All pixels are zero
 
 ## 📋 Evidence from Documentation
 
-From `bsnes-plus/CLAUDE.md`:
+From `repos/bsnes-plus/CLAUDE.md`:
 
 > **VRAM Dumping (⚠️ Returns Zeros)**: VRAM is not populated in headless mode since no graphics are rendered. This is expected behavior. Use WRAM dumping for game state analysis.
 
@@ -162,7 +162,7 @@ DISPLAY=:99 bsnes+.app/Contents/MacOS/bsnes --fullscreen zelda3.smc
 
 **Fastest Path**: Try `accuracy` profile
 ```bash
-cd /Users/ship/Documents/code/snes/bsnes-plus/bsnes
+cd repos/bsnes-plus/bsnes
 make clean
 make profile=accuracy
 cd cli-headless

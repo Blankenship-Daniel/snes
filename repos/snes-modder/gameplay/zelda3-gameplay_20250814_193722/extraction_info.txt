@@ -1,0 +1,32 @@
+Video Frame Extraction Metadata
+================================
+Source Video: zelda3-gameplay.mov
+Extraction Date: Thu Aug 14 19:37:22 CDT 2025
+Interval: 1 frame every 1 seconds
+Total Frames:       22
+Output Format: PNG
+
+Frame List:
+-----------
+frame_000001.png - Approximate timestamp: 00:01
+frame_000002.png - Approximate timestamp: 00:02
+frame_000003.png - Approximate timestamp: 00:03
+frame_000004.png - Approximate timestamp: 00:04
+frame_000005.png - Approximate timestamp: 00:05
+frame_000006.png - Approximate timestamp: 00:06
+frame_000007.png - Approximate timestamp: 00:07
+frame_000008.png - Approximate timestamp: 00:08
+frame_000009.png - Approximate timestamp: 00:09
+frame_000010.png - Approximate timestamp: 00:10
+frame_000011.png - Approximate timestamp: 00:11
+frame_000012.png - Approximate timestamp: 00:12
+frame_000013.png - Approximate timestamp: 00:13
+frame_000014.png - Approximate timestamp: 00:14
+frame_000015.png - Approximate timestamp: 00:15
+frame_000016.png - Approximate timestamp: 00:16
+frame_000017.png - Approximate timestamp: 00:17
+frame_000018.png - Approximate timestamp: 00:18
+frame_000019.png - Approximate timestamp: 00:19
+frame_000020.png - Approximate timestamp: 00:20
+frame_000021.png - Approximate timestamp: 00:21
+frame_000022.png - Approximate timestamp: 00:22

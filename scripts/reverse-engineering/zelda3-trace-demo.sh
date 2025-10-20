@@ -5,7 +5,7 @@
 set -e
 
 # Configuration
-BSNES_CLI="bsnes-plus/bsnes/cli-headless/bsnes-cli"
+BSNES_CLI="repos/bsnes-plus/bsnes/cli-headless/bsnes-cli"
 ROM="zelda3.smc"
 OUTPUT_DIR="output/trace-demo"
 

@@ -1,0 +1,59 @@
+/**
+ * Quick test that the discovery tracker works
+ */
+
+import { ROMDiscoveries, ZELDA3_DISCOVERIES } from './ROMDiscoveries.js';
+
+// Create tracker with pre-loaded data
+const tracker = new ROMDiscoveries(ZELDA3_DISCOVERIES);
+
+// ROM Discovery Tracker - TypeScript Version
+
+// Add some new discoveries
+const newId = tracker.add('item', 0x274DB, 'Armor type', 1, 0x02);
+// Added: ${newId}
+
+// Find discoveries at offset
+// Items near sword offset (0x274D9 ± 10):
+const nearby = tracker.findAtOffset(0x274D9, 10);
+nearby.forEach(d => {
+  // ${d.id}: 0x${d.offset.toString(16).toUpperCase()} - ${d.description}
+});
+
+// Find by type
+// All items:
+const items = tracker.findByType('item');
+items.forEach(d => {
+  // ${d.id}: ${d.description}
+});
+
+// Search
+// Search for "health":
+const results = tracker.search('health');
+results.forEach(d => {
+  // ${d.id}: ${d.description}
+});
+
+// Link related items
+tracker.link('stat_0', 'stat_1');
+// Linked current and max health
+
+// Stats
+// Statistics:
+// Total discoveries: ${tracker.size()}
+const byType = new Map<string, number>();
+tracker.getAll().forEach(d => {
+  byType.set(d.type, (byType.get(d.type) || 0) + 1);
+});
+byType.forEach((count, type) => {
+  // ${type}: ${count}
+});
+
+// Export/Import JSON
+// JSON Export/Import:
+const json = tracker.toJSON();
+// Exported ${json.discoveries.length} discoveries
+const restored = ROMDiscoveries.fromJSON(json);
+// Restored ${restored.size()} discoveries
+
+// Discovery tracker working in TypeScript!

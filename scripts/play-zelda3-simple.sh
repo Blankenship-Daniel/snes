@@ -8,7 +8,7 @@ echo "════════════════════════�
 echo ""
 
 BSNES_PATH="${BSNES_PATH:-bsnes}"
-ROM="${1:-snes-modder/zelda3-rich-start-999.smc}"
+ROM="${1:-repos/snes-modder/zelda3-rich-start-999.smc}"
 OUTPUT_DIR="${OUTPUT_DIR:-output}"
 
 mkdir -p "$OUTPUT_DIR"

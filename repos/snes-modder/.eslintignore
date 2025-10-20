@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+*.d.ts
+*.d.ts.map
+
+# Documentation and examples
+docs/
+*.md
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# ROM and binary files
+*.smc
+*.sfc
+*.bin
+*.sym
+
+# Temporary and backup directories
+backups/
+.rom-backups/
+quick-mods/
+test-roms/
+test-discoveries/
+saves/
+demo-extracted/
+
+# Generated files
+disassembly/
+
+# Vendor and third-party code
+scripts/*.sh
+scripts/*.js
+
+# Environment and config
+.env*
+vite.config.ts
+vitest.config.ts

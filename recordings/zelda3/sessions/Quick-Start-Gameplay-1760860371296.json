@@ -1,0 +1,69 @@
+{
+  "id": "Quick-Start-Gameplay-1760860371296",
+  "name": "Quick-Start-Gameplay",
+  "description": "Using quick-start ROM to jump directly into gameplay and play through as much as possible",
+  "startFrame": 570,
+  "inputs": [
+    {
+      "frame": -390,
+      "button": "Start",
+      "duration": 10
+    },
+    {
+      "frame": -330,
+      "button": "A",
+      "duration": 10
+    },
+    {
+      "frame": -270,
+      "button": "A",
+      "duration": 5
+    },
+    {
+      "frame": -210,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -210,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -210,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -210,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -210,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -150,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": -150,
+      "button": "B",
+      "duration": 5
+    }
+  ],
+  "metadata": {
+    "duration": -145,
+    "success": false,
+    "notes": [
+      "Still stuck in intro sequence at 420+ frames",
+      "Health remains 0 (cutscenes not complete)",
+      "Third ROM variant tested - all have lengthy intros"
+    ],
+    "tags": [],
+    "timestamp": 1760860371296
+  }
+}

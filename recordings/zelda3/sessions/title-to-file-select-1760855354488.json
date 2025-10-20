@@ -1,0 +1,31 @@
+{
+  "id": "title-to-file-select-1760855354488",
+  "name": "title-to-file-select",
+  "description": "Navigate from Nintendo logo through title screen to file select menu",
+  "startFrame": 125,
+  "inputs": [
+    {
+      "frame": 55,
+      "button": "Start",
+      "duration": 1
+    },
+    {
+      "frame": 115,
+      "button": "Start",
+      "duration": 1
+    }
+  ],
+  "metadata": {
+    "duration": 116,
+    "success": true,
+    "notes": [
+      "Successfully navigated to file select/name entry",
+      "Used Start button to progress through menus"
+    ],
+    "tags": [
+      "navigation",
+      "intro"
+    ],
+    "timestamp": 1760855354488
+  }
+}

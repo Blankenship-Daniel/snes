@@ -1,0 +1,2 @@
+# bsnes-plus CPU Trace
+# Format: Frame:PC:Instruction:A:X:Y:S:P:DB

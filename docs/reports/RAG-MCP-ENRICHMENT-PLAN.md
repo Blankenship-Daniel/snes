@@ -298,7 +298,7 @@ def build_multi_level_explanation(topic: str, keywords: Set[str]) -> Dict:
     # Call: mcp__bsnes__analyze_emulation_core
     # Parameters: component='dma'
     explanation['emulator'] = {
-        'implementation': 'bsnes-plus/snes/dma/dma.cpp:123',
+        'implementation': 'repos/bsnes-plus/snes/dma/dma.cpp:123',
         'timing': '8 master clock cycles per byte',
         'notes': 'Handles both DMA and HDMA modes'
     }
@@ -979,7 +979,7 @@ class SNESRAGPipeline:
   - `bank_0E.asm:4567` - Magic_CheckIfEnough
 
 **Emulator Implementation (bsnes)**:
-  - `bsnes-plus/snes/cpu/memory.cpp:789` - Memory read handler
+  - `repos/bsnes-plus/snes/cpu/memory.cpp:789` - Memory read handler
 
 💡 Implementation Template:
 
@@ -1034,7 +1034,7 @@ npm run build  # Build all MCP servers
 
 # Test individual servers
 node snes-mcp-server/dist/index.js
-node zelda3/mcp-server/index.js
+node repos/zelda3/mcp-server/index.js
 ```
 
 ### Step 2: Create MCP client helper
@@ -1209,11 +1209,11 @@ def test_enrichment_performance():
 
 ### MCP Servers
 - **snes-mcp-server**: `snes-mcp-server/` - 14 tools + manual access
-- **zelda3**: `zelda3/mcp-server/` - C source search
-- **zelda3-disasm**: `zelda3-disasm/mcp-server/` - Assembly search
-- **bsnes**: `bsnes-plus/mcp-server/` - Emulator source search
-- **snes9x**: `snes9x/mcp-server/` - Alternative emulator search
-- **snes-mister**: `SNES_MiSTer/mcp-server/` - FPGA HDL search
+- **zelda3**: `repos/zelda3/mcp-server/` - C source search
+- **zelda3-disasm**: `repos/zelda3-disasm/mcp-server/` - Assembly search
+- **bsnes**: `repos/bsnes-plus/mcp-server/` - Emulator source search
+- **snes9x**: `repos/snes9x/mcp-server/` - Alternative emulator search
+- **snes-mister**: `repos/SNES_MiSTer/mcp-server/` - FPGA HDL search
 
 ---
 

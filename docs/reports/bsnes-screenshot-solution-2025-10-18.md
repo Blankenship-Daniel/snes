@@ -102,7 +102,7 @@ SNES::ppu.set_frameskip(0);
 
 ### Test 1: Basic Screenshot
 ```bash
-cd /Users/ship/Documents/code/snes/bsnes-plus/bsnes/cli-headless
+cd repos/bsnes-plus/bsnes/cli-headless
 ./bsnes-cli zelda3.smc --run-frames 180 --screenshot test.png
 ```
 
