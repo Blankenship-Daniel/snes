@@ -34,6 +34,15 @@ jobs:
           ref: ${{ env.FAILED_HEAD_SHA }}
           fetch-depth: 0
 
+      - name: Detect Yarn version from package.json
+        run: |
+          YARN_VERSION="$(jq -r '.packageManager | split(\"@\") | last' package.json)"
+          if [ -z "${YARN_VERSION}" ] || [ "${YARN_VERSION}" = "null" ]; then
+            echo "Unable to determine Yarn version from package.json" >&2
+            exit 1
+          fi
+          echo "YARN_VERSION=${YARN_VERSION}" >> "${GITHUB_ENV}"
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -43,6 +52,7 @@ jobs:
       - name: Install workspace dependencies
         run: |
           corepack enable
+          corepack prepare "yarn@${YARN_VERSION}" --activate
           YARN_ENABLE_SCRIPTS=false yarn install --mode skip-build
 
       - name: Run Codex auto-fix
@@ -60,6 +70,7 @@ jobs:
       - name: Re-run workspace checks
         run: |
           corepack enable
+          corepack prepare "yarn@${YARN_VERSION}" --activate
           yarn ws:ci:build
           yarn ws:ci:test
 
