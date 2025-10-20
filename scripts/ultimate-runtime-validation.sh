@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 # 🎮 ULTIMATE RUNTIME VALIDATION
 # ACTUAL EMULATOR TESTING WITH REAL GAMEPLAY VERIFICATION!
@@ -9,8 +10,43 @@ echo "REAL emulator testing with gameplay verification!"
 echo ""
 
 BASE_ROM="zelda3.smc"
-# Allow overriding emulator path via BSNES_PATH; default to discovering on PATH
-BSNES="${BSNES_PATH:-bsnes}"
+# Allow overriding emulator path via BSNES_PATH; default to bundled bsnes-plus CLI when available
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+source "$SCRIPT_DIR/mod-manifest.sh"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+BUNDLED_BSNES="$REPO_ROOT/repos/bsnes-plus/bsnes/cli-headless/bsnes-cli"
+if [ -n "${BSNES_PATH:-}" ]; then
+    BSNES="$BSNES_PATH"
+elif [ -x "$BUNDLED_BSNES" ]; then
+    BSNES="$BUNDLED_BSNES"
+else
+    BSNES="$(command -v bsnes 2>/dev/null || true)"
+    BSNES="${BSNES:-bsnes}"
+fi
+
+if ! command -v "$BSNES" >/dev/null 2>&1; then
+    echo "❌ bsnes executable not found (looked for '$BSNES'). Set BSNES_PATH to a bsnes-plus CLI build."
+    exit 1
+fi
+
+if command -v timeout >/dev/null 2>&1; then
+    TIMEOUT_CMD="timeout"
+elif command -v gtimeout >/dev/null 2>&1; then
+    TIMEOUT_CMD="gtimeout"
+else
+    TIMEOUT_CMD=""
+    echo "⚠️  'timeout' command not found; continuing without frame-run time limits."
+fi
+
+run_with_timeout() {
+    local duration=$1
+    shift
+    if [ -n "$TIMEOUT_CMD" ]; then
+        "$TIMEOUT_CMD" "$duration" "$@"
+    else
+        "$@"
+    fi
+}
 OUTPUT_DIR="${OUTPUT_DIR:-.}"
 SUCCESS_COUNT=0
 TOTAL_TESTS=0
@@ -20,6 +56,7 @@ ultimate_test() {
     local rom_file="$1"
     local mod_name="$2"
     local test_description="$3"
+    local allow_identical="${4:-0}"
     
     echo ""
     echo "🎮 ULTIMATE TEST: $mod_name"
@@ -37,7 +74,7 @@ ultimate_test() {
     # 1. Basic Loading Test
     echo ""
     echo "🔄 STEP 1: Basic ROM Loading Test"
-    if timeout 10s "$BSNES" "$rom_file" --run-frames 60 > /dev/null 2>&1; then
+    if run_with_timeout 10s "$BSNES" "$rom_file" --run-frames 60 > /dev/null 2>&1; then
         echo "✅ ROM loads successfully in bsnes"
         echo "✅ No crashes detected during initial 60 frames"
     else
@@ -48,7 +85,7 @@ ultimate_test() {
     # 2. Extended Stability Test
     echo ""
     echo "🔄 STEP 2: Extended Stability Test"
-    if timeout 15s "$BSNES" "$rom_file" --run-frames 300 > /dev/null 2>&1; then
+    if run_with_timeout 15s "$BSNES" "$rom_file" --run-frames 300 > /dev/null 2>&1; then
         echo "✅ ROM runs stably for 300 frames (5+ seconds)"
         echo "✅ No memory corruption or crashes detected"
     else
@@ -61,7 +98,7 @@ ultimate_test() {
     echo "🔄 STEP 3: Memory State Analysis"
     local wram_dump="wram-${mod_name}-$(date +%H%M%S).bin"
     
-    if "$BSNES" "$rom_file" --run-frames 180 --dump-wram 0:65536:"$wram_dump" > /dev/null 2>&1; then
+    if run_with_timeout 15s "$BSNES" "$rom_file" --run-frames 180 --dump-wram 0:65536:"$wram_dump" > /dev/null 2>&1; then
         echo "✅ Successfully dumped WRAM state after 3 seconds of gameplay"
         
         if [ -f "$wram_dump" ] && [ -s "$wram_dump" ]; then
@@ -123,7 +160,7 @@ ultimate_test() {
     # 4. AI Controller Test (if available)
     echo ""
     echo "🔄 STEP 4: Interactive Simulation Test"
-    if "$BSNES" "$rom_file" --ai-controller --input-command p1_press_A --input-command p1_hold_right --run-frames 120 > /dev/null 2>&1; then
+    if run_with_timeout 10s "$BSNES" "$rom_file" --ai-controller --input-command p1_press_A --input-command p1_hold_right --run-frames 120 > /dev/null 2>&1; then
         echo "✅ AI controller simulation successful"
         echo "✅ ROM responds to input commands correctly"
         echo "✅ No input-related crashes or freezes"
@@ -135,19 +172,24 @@ ultimate_test() {
     echo ""
     echo "🔄 STEP 5: Binary Modification Verification"
     if [ -f "$BASE_ROM" ]; then
-        local changes=$(cmp -l "$BASE_ROM" "$rom_file" | wc -l | tr -d ' ')
+        local changes
+        changes=$({ cmp -l "$BASE_ROM" "$rom_file" || true; } | wc -l | tr -d ' ')
         echo "✅ Binary modifications confirmed: $changes bytes changed"
         
         if [ "$changes" -gt 0 ]; then
             echo "✅ ROM successfully modified from original"
             echo "🔍 First 3 modification points:"
-            cmp -l "$BASE_ROM" "$rom_file" | head -3 | while read -r offset base_val mod_val; do
+            { cmp -l "$BASE_ROM" "$rom_file" || true; } | head -3 | while read -r offset base_val mod_val; do
                 # cmp -l reports differing byte values in octal; ensure correct hex by prefixing 0
                 printf "  📍 Offset %s: 0x%02x → 0x%02x\n" "$offset" "0$base_val" "0$mod_val"
             done
         else
-            echo "❌ ROM appears unchanged from base"
-            return 1
+            if [ "$allow_identical" -eq 1 ]; then
+                echo "🟡 ROM matches base (allowed for $mod_name)"
+            else
+                echo "❌ ROM appears unchanged from base"
+                return 1
+            fi
         fi
     fi
     
@@ -172,22 +214,34 @@ fi
 
 shopt -s nullglob
 for dir in "${SEARCH_DIRS[@]}"; do
-  for f in "$dir"/zelda3-infinite-magic-*.smc; do [ -f "$f" ] && ultimate_test "$f" "infinite-magic" "Magic never depletes during gameplay"; done
-  for f in "$dir"/zelda3-2x-speed-*.smc; do [ -f "$f" ] && ultimate_test "$f" "2x-speed" "Link moves at double speed"; done
-  for f in "$dir"/zelda3-max-health-*.smc; do [ -f "$f" ] && ultimate_test "$f" "max-health" "Start with 20 hearts"; done
-  for f in "$dir"/zelda3-team-solution-*.smc; do [ -f "$f" ] && ultimate_test "$f" "team-solution" "Balanced combination mod"; done
+  while IFS= read -r key; do
+    prefix="$(mod_manifest_field "$key" output_prefix)"
+    description="$(mod_manifest_field "$key" description)"
+    for f in "$dir"/"$prefix"-*.smc; do
+      [ -f "$f" ] && ultimate_test "$f" "$key" "$description"
+    done
+  done < <(mod_manifest_keys)
 done
 shopt -u nullglob
 
 # Also test source ROMs from repos/snes-modder
-for f in repos/snes-modder/zelda3-infinite-magic.smc repos/snes-modder/zelda3-2x-speed.smc; do
-  if [ -f "$f" ]; then
-    case "$f" in
-      *infinite-magic*) ultimate_test "$f" "source-infinite-magic" "Pre-built infinite magic mod" ;;
-      *2x-speed*)       ultimate_test "$f" "source-2x-speed" "Pre-built 2x speed mod" ;;
-    esac
+checked_sources=""
+while IFS= read -r key; do
+  source_rom="$(mod_manifest_field "$key" source)"
+  description="$(mod_manifest_field "$key" description)"
+  flags="$(mod_manifest_field "$key" flags)"
+  case " $checked_sources " in
+    *" $source_rom "*) continue ;;
+  esac
+  checked_sources+=" $source_rom"
+  if [ -f "$source_rom" ]; then
+    allow_identical=0
+    if [[ " $flags " == *" allow-identical "* ]]; then
+      allow_identical=1
+    fi
+    ultimate_test "$source_rom" "source-$key" "Pre-built $description" "$allow_identical"
   fi
-done
+done < <(mod_manifest_keys)
 
 echo ""
 echo "🏆 ULTIMATE VALIDATION SUMMARY"
@@ -196,7 +250,12 @@ echo "✅ ROMs Successfully Tested: $SUCCESS_COUNT"
 echo "📊 Total Test Attempts: $TOTAL_TESTS"
 
 if [ $SUCCESS_COUNT -gt 0 ]; then
-    success_rate=$(echo "scale=1; $SUCCESS_COUNT * 100 / $TOTAL_TESTS" | bc 2>/dev/null || echo "100")
+    if command -v bc >/dev/null 2>&1; then
+        success_rate=$(echo "scale=1; $SUCCESS_COUNT * 100 / $TOTAL_TESTS" | bc)
+    else
+        # Fall back to integer math when bc is unavailable
+        success_rate=$((SUCCESS_COUNT * 100 / TOTAL_TESTS))
+    fi
     echo "📈 Success Rate: ${success_rate}%"
     
     echo ""

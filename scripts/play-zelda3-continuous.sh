@@ -10,7 +10,18 @@ echo "════════════════════════�
 echo ""
 
 # Configuration
-BSNES_PATH="${BSNES_PATH:-bsnes}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+BUNDLED_BSNES="$REPO_ROOT/repos/bsnes-plus/bsnes/cli-headless/bsnes-cli"
+if [ -n "${BSNES_PATH:-}" ]; then
+    BSNES="$BSNES_PATH"
+elif [ -x "$BUNDLED_BSNES" ]; then
+    BSNES="$BUNDLED_BSNES"
+else
+    BSNES="$(command -v bsnes 2>/dev/null || true)"
+    BSNES="${BSNES:-bsnes}"
+fi
+
 ROM="${1:-repos/snes-modder/zelda3-rich-start-999.smc}"
 OUTPUT_DIR="${OUTPUT_DIR:-output}"
 
@@ -18,8 +29,8 @@ OUTPUT_DIR="${OUTPUT_DIR:-output}"
 mkdir -p "$OUTPUT_DIR"
 
 # Check if bsnes exists
-if ! command -v "$BSNES_PATH" &> /dev/null; then
-    echo "❌ Error: bsnes not found at '$BSNES_PATH'"
+if ! command -v "$BSNES" >/dev/null 2>&1; then
+    echo "❌ Error: bsnes not found at '$BSNES'"
     exit 1
 fi
 
@@ -80,7 +91,7 @@ echo "▶️  Running continuous gameplay ($TOTAL_FRAMES frames = ~66 seconds)..
 echo "   This will take about 1-2 minutes depending on your system..."
 echo ""
 
-"$BSNES_PATH" "$ROM" \
+"$BSNES" "$ROM" \
   --run-frames $TOTAL_FRAMES \
   --ai-controller \
   --input-command "p1_press_start@180" \
@@ -129,7 +140,7 @@ echo ""
 
 # Analyze final memory state
 if [ -f "$OUTPUT_DIR/final-memory.bin" ]; then
-    echo "💾 Final Memory State (64 bytes from $0x7EF360):"
+    echo "💾 Final Memory State (64 bytes from 0x7EF360):"
     xxd -l 64 "$OUTPUT_DIR/final-memory.bin" | sed 's/^/   /'
     echo ""
 

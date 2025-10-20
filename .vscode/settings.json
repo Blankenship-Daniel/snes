@@ -1,0 +1,3 @@
+{
+  "claudeCode.hooks.userPromptSubmit": "${workspaceFolder}/scripts/prompt-enhancer-hook.sh"
+}
