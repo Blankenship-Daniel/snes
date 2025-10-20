@@ -20,7 +20,7 @@
     "quality:report": "node scripts/generate-quality-report.js",
     "show-validation": "node dist/cli/zelda3-modder.js show-validation",
     "test": "vitest run --passWithNoTests",
-    "test:coverage": "vitest --coverage",
+    "test:coverage": "vitest run --coverage",
     "test:validation": "vitest --run src/tests/validation/",
     "typecheck": "tsc --noEmit",
     "validate-mod": "node dist/cli/zelda3-modder.js validate",
