@@ -36,12 +36,15 @@ export {
 // Clean import pattern: Re-export Discovery from correct source to fix lib dependencies
 export type {
   Discovery,
-  DiscoveryQuery,
   ItemDiscovery,
   SpriteDiscovery,
   MemoryDiscovery,
   RoutineDiscovery
-} from '../discovery/types/core.types';
+} from '../discovery/schema';
+
+export type {
+  DiscoveryQuery
+} from '../types/rom-discovery';
 
 // Export ROM discovery types for compatibility
 export type {
