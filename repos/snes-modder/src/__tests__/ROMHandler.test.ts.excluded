@@ -1,0 +1,145 @@
+/**
+ * ROMHandler Test Suite
+ * Basic tests to get us started - Sam
+ */
+
+import { describe, it, expect, beforeEach } from 'vitest';
+import { ROMHandler, ROMValidationError, ROMModificationError } from './ROMHandler';
+import * as fs from 'fs';
+import * as path from 'path';
+
+// Mock fs module
+vi.mock('fs');
+
+describe('ROMHandler', () => {
+  const mockROMPath = '/test/zelda3.sfc';
+  const mockROMData = Buffer.alloc(1048576); // 1MB ROM
+  
+  beforeEach(() => {
+    // Reset mocks
+    vi.clearAllMocks();
+    
+    // Setup mock file system
+    vi.mocked(fs.existsSync).mockReturnValue(true);
+    vi.mocked(fs.readFileSync).mockReturnValue(mockROMData);
+  });
+
+  describe('constructor', () => {
+    it('should throw if ROM file does not exist', () => {
+      vi.mocked(fs.existsSync).mockReturnValue(false);
+      
+      expect(() => new ROMHandler('/nonexistent.sfc')).toThrow(ROMValidationError);
+    });
+
+    it('should load ROM data successfully', () => {
+      const rom = new ROMHandler(mockROMPath);
+      expect(rom).toBeDefined();
+      expect(rom.getSize()).toBe(1048576);
+    });
+  });
+
+  describe('read operations', () => {
+    it('should read a byte correctly', () => {
+      mockROMData[0x100] = 0x42;
+      const rom = new ROMHandler(mockROMPath);
+      
+      expect(rom.readByte(0x100)).toBe(0x42);
+    });
+
+    it('should throw on invalid offset', () => {
+      const rom = new ROMHandler(mockROMPath);
+      
+      expect(() => rom.readByte(-1)).toThrow(ROMValidationError);
+      expect(() => rom.readByte(1048576)).toThrow(ROMValidationError);
+    });
+
+    it('should read multiple bytes', () => {
+      mockROMData[0x100] = 0x12;
+      mockROMData[0x101] = 0x34;
+      mockROMData[0x102] = 0x56;
+      
+      const rom = new ROMHandler(mockROMPath);
+      const bytes = rom.readBytes(0x100, 3);
+      
+      expect(bytes).toEqual(Buffer.from([0x12, 0x34, 0x56]));
+    });
+  });
+
+  describe('write operations', () => {
+    it('should write a byte correctly', () => {
+      const rom = new ROMHandler(mockROMPath);
+      rom.writeByte(0x100, 0x42);
+      
+      expect(rom.readByte(0x100)).toBe(0x42);
+    });
+
+    it('should throw on invalid byte value', () => {
+      const rom = new ROMHandler(mockROMPath);
+      
+      expect(() => rom.writeByte(0x100, -1)).toThrow(ROMModificationError);
+      expect(() => rom.writeByte(0x100, 256)).toThrow(ROMModificationError);
+    });
+
+    it('should track modifications', () => {
+      const rom = new ROMHandler(mockROMPath);
+      
+      expect(rom.isModified()).toBe(false);
+      
+      rom.writeByte(0x100, 0x42);
+      
+      expect(rom.isModified()).toBe(true);
+    });
+  });
+
+  describe('address conversion', () => {
+    it('should convert PC to SNES address', () => {
+      const rom = new ROMHandler(mockROMPath);
+      
+      // PC $0000 -> SNES $00:8000
+      expect(rom.toSNESAddress(0x0000)).toBe(0x008000);
+      
+      // PC $7FFF -> SNES $00:FFFF
+      expect(rom.toSNESAddress(0x7FFF)).toBe(0x00FFFF);
+    });
+
+    it('should convert SNES to PC address', () => {
+      const rom = new ROMHandler(mockROMPath);
+      
+      // SNES $00:8000 -> PC $0000
+      expect(rom.toPCAddress(0x008000)).toBe(0x0000);
+      
+      // SNES $00:FFFF -> PC $7FFF
+      expect(rom.toPCAddress(0x00FFFF)).toBe(0x7FFF);
+    });
+
+    it('should throw on invalid SNES address', () => {
+      const rom = new ROMHandler(mockROMPath);
+      
+      // Addresses below $8000 are invalid for ROM
+      expect(() => rom.toPCAddress(0x007FFF)).toThrow(ROMValidationError);
+    });
+  });
+
+  describe('save operations', () => {
+    it('should save to file', () => {
+      const rom = new ROMHandler(mockROMPath);
+      const outputPath = '/test/output.sfc';
+      
+      rom.saveAs(outputPath);
+      
+      expect(fs.writeFileSync).toHaveBeenCalledWith(outputPath, mockROMData);
+    });
+
+    it('should create backup when overwriting', () => {
+      vi.mocked(fs.existsSync).mockReturnValue(true);
+      
+      const rom = new ROMHandler(mockROMPath);
+      rom.save();
+      
+      expect(fs.copyFileSync).toHaveBeenCalledWith(
+        mockROMPath,
+        `${mockROMPath}.backup`
+      );
+    });
+  });
+});

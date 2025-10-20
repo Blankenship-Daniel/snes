@@ -1,0 +1,99 @@
+{
+  "id": "RE-Session-2-Intro-Skip-1760859282410",
+  "name": "RE-Session-2-Intro-Skip",
+  "description": "Quick navigation through intro to reach gameplay with Link in his house",
+  "startFrame": 0,
+  "inputs": [
+    {
+      "frame": 0,
+      "button": "Start",
+      "duration": 10
+    },
+    {
+      "frame": 30,
+      "button": "Start",
+      "duration": 10
+    },
+    {
+      "frame": 60,
+      "button": "Start",
+      "duration": 10
+    },
+    {
+      "frame": 80,
+      "button": "A",
+      "duration": 10
+    },
+    {
+      "frame": 200,
+      "button": "B",
+      "duration": 15
+    },
+    {
+      "frame": 200,
+      "button": "B",
+      "duration": 15
+    },
+    {
+      "frame": 200,
+      "button": "B",
+      "duration": 15
+    },
+    {
+      "frame": 380,
+      "button": "A",
+      "duration": 20
+    },
+    {
+      "frame": 380,
+      "button": "A",
+      "duration": 20
+    },
+    {
+      "frame": 580,
+      "button": "Down",
+      "duration": 20
+    },
+    {
+      "frame": 580,
+      "button": "B",
+      "duration": 10
+    },
+    {
+      "frame": 580,
+      "button": "B",
+      "duration": 10
+    },
+    {
+      "frame": 580,
+      "button": "B",
+      "duration": 10
+    },
+    {
+      "frame": 580,
+      "button": "B",
+      "duration": 10
+    },
+    {
+      "frame": 580,
+      "button": "B",
+      "duration": 10
+    }
+  ],
+  "metadata": {
+    "duration": 590,
+    "success": false,
+    "notes": [
+      "Tested intro skip sequence - 880 frames elapsed",
+      "Health remained at 0 throughout cutscenes",
+      "Console debug mode should be showing EmulatorJS internals",
+      "Need to check MCP server terminal for debug output"
+    ],
+    "tags": [
+      "intro",
+      "incomplete",
+      "debug-test"
+    ],
+    "timestamp": 1760859282410
+  }
+}

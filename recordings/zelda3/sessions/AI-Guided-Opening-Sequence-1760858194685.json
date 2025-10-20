@@ -1,0 +1,103 @@
+{
+  "id": "AI-Guided-Opening-Sequence-1760858194685",
+  "name": "AI-Guided-Opening-Sequence",
+  "description": "AI reverse-engineering session following human gameplay recording as a guide",
+  "startFrame": 0,
+  "inputs": [
+    {
+      "frame": 0,
+      "button": "Start",
+      "duration": 5
+    },
+    {
+      "frame": 30,
+      "button": "Start",
+      "duration": 5
+    },
+    {
+      "frame": 50,
+      "button": "Left",
+      "duration": 3
+    },
+    {
+      "frame": 50,
+      "button": "A",
+      "duration": 5
+    },
+    {
+      "frame": 110,
+      "button": "Start",
+      "duration": 10
+    },
+    {
+      "frame": 110,
+      "button": "Start",
+      "duration": 10
+    },
+    {
+      "frame": 230,
+      "button": "A",
+      "duration": 20
+    },
+    {
+      "frame": 230,
+      "button": "A",
+      "duration": 20
+    },
+    {
+      "frame": 290,
+      "button": "B",
+      "duration": 10
+    },
+    {
+      "frame": 410,
+      "button": "A",
+      "duration": 15
+    },
+    {
+      "frame": 410,
+      "button": "A",
+      "duration": 15
+    },
+    {
+      "frame": 500,
+      "button": "Down",
+      "duration": 10
+    },
+    {
+      "frame": 500,
+      "button": "Down",
+      "duration": 10
+    },
+    {
+      "frame": 500,
+      "button": "B",
+      "duration": 15
+    },
+    {
+      "frame": 500,
+      "button": "B",
+      "duration": 15
+    },
+    {
+      "frame": 500,
+      "button": "B",
+      "duration": 15
+    }
+  ],
+  "metadata": {
+    "duration": 515,
+    "success": false,
+    "notes": [
+      "Encountered challenges with intro sequence progression",
+      "Memory addresses showed 0 values during cutscenes",
+      "Need better understanding of game state initialization"
+    ],
+    "tags": [
+      "incomplete",
+      "learning",
+      "intro-challenges"
+    ],
+    "timestamp": 1760858194685
+  }
+}

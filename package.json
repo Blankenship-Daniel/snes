@@ -8,6 +8,9 @@
     "zelda3-modder": "./scripts/zelda3-modder-demo.sh"
   },
   "scripts": {
+    "ws:list": "yarn workspaces list",
+    "ws:build": "yarn workspaces foreach -A run build",
+    "ws:test": "yarn workspaces foreach -A run test",
     "clean:dead-code": "knip",
     "clean:dead-code:export": "knip --reporter json > knip-report.json",
     "demo": "./scripts/zelda3-modder-demo.sh ultimate",
@@ -33,12 +36,14 @@
     "validate": "./scripts/validate-mods.sh"
   },
   "devDependencies": {
+    "@types/node": "^24.1.0",
     "depcheck": "1.4.7",
     "husky": "9.1.7",
     "knip": "5.66.1",
     "lint-staged": "16.2.4",
     "npm-check-updates": "19.1.1",
-    "syncpack": "13.0.4"
+    "syncpack": "13.0.4",
+    "typescript": "^5.8.3"
   },
   "author": "SNES Modding Team",
   "engines": {
@@ -51,7 +56,7 @@
     "scripts/mcp-healthcheck.sh",
     "README.md",
     "docs/DEMO_SCRIPT.md",
-    "snes-modder/*.smc"
+    "repos/snes-modder/*.smc"
   ],
   "homepage": "https://github.com/snes-modding/zelda3-modder#readme",
   "keywords": [
@@ -75,12 +80,8 @@
   "preferGlobal": true,
   "repository": "snes-modding/zelda3-modder.git",
   "workspaces": [
-    "mcp-servers/*",
-    "snes-modder",
-    "zelda3-disasm",
-    "bsnes-plus/zelda3_save_tool_mvp",
-    "zelda3/mcp-server",
-    "snes9x/mcp-server",
-    "SNES_MiSTer/mcp-server"
+    "repos/snes-modder",
+    "repos/zelda3-disasm",
+    "repos/bsnes-plus/zelda3_save_tool_mvp"
   ]
 }

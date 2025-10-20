@@ -1,0 +1,103 @@
+{
+  "id": "Full-Gameplay-Session-1-1760860189071",
+  "name": "Full-Gameplay-Session-1",
+  "description": "Complete gameplay session from intro through as much of the game as possible, using reverse image search when stuck",
+  "startFrame": 1610,
+  "inputs": [
+    {
+      "frame": 0,
+      "button": "Start",
+      "duration": 10
+    },
+    {
+      "frame": -1520,
+      "button": "Start",
+      "duration": 10
+    },
+    {
+      "frame": -1460,
+      "button": "A",
+      "duration": 10
+    },
+    {
+      "frame": -1220,
+      "button": "B",
+      "duration": 8
+    },
+    {
+      "frame": -1070,
+      "button": "B",
+      "duration": 8
+    },
+    {
+      "frame": -920,
+      "button": "B",
+      "duration": 8
+    },
+    {
+      "frame": -770,
+      "button": "B",
+      "duration": 8
+    },
+    {
+      "frame": -620,
+      "button": "B",
+      "duration": 8
+    },
+    {
+      "frame": -470,
+      "button": "B",
+      "duration": 8
+    },
+    {
+      "frame": -170,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": 30,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": 230,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": 430,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": 630,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": 830,
+      "button": "B",
+      "duration": 5
+    },
+    {
+      "frame": 1330,
+      "button": "Down",
+      "duration": 30
+    }
+  ],
+  "metadata": {
+    "duration": 1360,
+    "success": false,
+    "notes": [
+      "Reached 2940 frames without reaching gameplay",
+      "Intro sequence too long for automated navigation",
+      "Switching to intro-skip ROM to actually play the game"
+    ],
+    "tags": [
+      "intro",
+      "long-sequence",
+      "switching-to-modded-rom"
+    ],
+    "timestamp": 1760860189071
+  }
+}

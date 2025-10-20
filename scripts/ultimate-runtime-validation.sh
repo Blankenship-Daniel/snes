@@ -179,8 +179,8 @@ for dir in "${SEARCH_DIRS[@]}"; do
 done
 shopt -u nullglob
 
-# Also test source ROMs from snes-modder
-for f in snes-modder/zelda3-infinite-magic.smc snes-modder/zelda3-2x-speed.smc; do
+# Also test source ROMs from repos/snes-modder
+for f in repos/snes-modder/zelda3-infinite-magic.smc repos/snes-modder/zelda3-2x-speed.smc; do
   if [ -f "$f" ]; then
     case "$f" in
       *infinite-magic*) ultimate_test "$f" "source-infinite-magic" "Pre-built infinite magic mod" ;;

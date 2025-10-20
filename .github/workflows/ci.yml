@@ -18,12 +18,12 @@ jobs:
           if [ -f tools/SHIP-NOW.sh ]; then bash -n tools/SHIP-NOW.sh; fi
           if [ -f tools/restore_agent_context.sh ]; then bash -n tools/restore_agent_context.sh; fi
 
-      - name: Enforce no ROMs committed outside snes-modder/
+      - name: Enforce no ROMs committed outside repos/snes-modder/
         run: |
           set -e
-          mapfile -t files < <(git ls-files "*.smc" | grep -v '^snes-modder/' || true)
+          mapfile -t files < <(git ls-files "*.smc" | grep -v '^repos/snes-modder/' || true)
           if [ "${#files[@]}" -gt 0 ]; then
-            echo "Found committed ROM files outside snes-modder/:" >&2
+            echo "Found committed ROM files outside repos/snes-modder/:" >&2
             printf ' - %s\n' "${files[@]}" >&2
             exit 1
           fi

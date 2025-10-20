@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNES Modder - Safe ROM Modifications</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .file-input-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 20px;
+            border: 3px dashed #3498db;
+            border-radius: 8px;
+            text-align: center;
+            color: #3498db;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            background: #ecf0f1;
+            border-color: #2980b9;
+        }
+
+        .file-status {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .file-status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .file-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .mod-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .mod-card {
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .mod-card:hover {
+            border-color: #3498db;
+            box-shadow: 0 4px 16px rgba(52, 152, 219, 0.2);
+        }
+
+        .mod-card.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .mod-card.disabled:hover {
+            border-color: #ecf0f1;
+            box-shadow: none;
+        }
+
+        .mod-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .mod-description {
+            color: #7f8c8d;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .mod-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 500;
+            margin-right: 8px;
+        }
+
+        .mod-badge.safe {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .mod-badge.experimental {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .apply-button {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .apply-button:hover:not(:disabled) {
+            background: #219a52;
+            transform: translateY(-2px);
+        }
+
+        .apply-button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .backup-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .backup-list {
+            margin-top: 15px;
+        }
+
+        .backup-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            background: white;
+        }
+
+        .backup-info {
+            flex: 1;
+        }
+
+        .backup-name {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .backup-time {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .restore-button {
+            background: #f39c12;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .restore-button:hover {
+            background: #e67e22;
+        }
+
+        .status-bar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            max-width: 350px;
+        }
+
+        .status-bar.show {
+            transform: translateX(0);
+        }
+
+        .status-bar.success {
+            background: #27ae60;
+        }
+
+        .status-bar.error {
+            background: #e74c3c;
+        }
+
+        .footer {
+            background: #ecf0f1;
+            padding: 20px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #ecf0f1;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #3498db;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 SNES Modder</h1>
+            <p>Safe, one-click ROM modifications for retro gaming enthusiasts</p>
+        </div>
+
+        <div class="main-content">
+            <!-- ROM Loading Section -->
+            <div class="section">
+                <h2>
+                    <span class="icon">📁</span>
+                    Load Your ROM
+                </h2>
+                <div class="file-input-container">
+                    <input type="file" id="romFile" class="file-input" accept=".smc,.sfc,.bin">
+                    <label for="romFile" class="file-input-label">
+                        Click here or drag & drop your Zelda 3 ROM file (.smc, .sfc, .bin)
+                    </label>
+                </div>
+                <div id="fileStatus" class="file-status" style="display: none;"></div>
+                <div id="progressBar" class="progress-bar" style="display: none;">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- Modifications Section -->
+            <div class="section">
+                <h2>
+                    <span class="icon">⚡</span>
+                    Available Modifications
+                </h2>
+                <div class="mod-grid">
+                    <div class="mod-card" data-mod="master-sword">
+                        <div class="mod-title">🗡️ Master Sword Start</div>
+                        <div class="mod-description">Start the game with the Master Sword already equipped. Perfect for speedrun practice or just having more fun from the beginning!</div>
+                        <div class="mod-badge safe">Safe</div>
+                        <button class="apply-button" disabled>Apply Modification</button>
+                    </div>
+
+                    <div class="mod-card" data-mod="max-health">
+                        <div class="mod-title">❤️ Maximum Health</div>
+                        <div class="mod-description">Start with 20 heart containers (maximum health). No more worrying about collecting heart pieces!</div>
+                        <div class="mod-badge safe">Safe</div>
+                        <button class="apply-button" disabled>Apply Modification</button>
+                    </div>
+
+                    <div class="mod-card" data-mod="rich-start">
+                        <div class="mod-title">💰 Rich Start</div>
+                        <div class="mod-description">Begin your adventure with 999 rupees. Buy all the items you need without grinding for money!</div>
+                        <div class="mod-badge safe">Safe</div>
+                        <button class="apply-button" disabled>Apply Modification</button>
+                    </div>
+
+                    <div class="mod-card" data-mod="all-items">
+                        <div class="mod-title">🎒 All Items Start</div>
+                        <div class="mod-description">Start with most key items in inventory. Great for exploration or testing different areas immediately.</div>
+                        <div class="mod-badge experimental">Experimental</div>
+                        <button class="apply-button" disabled>Apply Modification</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup Management Section -->
+            <div class="section">
+                <h2>
+                    <span class="icon">💾</span>
+                    Backup Management
+                </h2>
+                <div class="backup-section">
+                    <p><strong>Safety First:</strong> All modifications automatically create backups. You can restore your original ROM at any time.</p>
+                    <div id="backupList" class="backup-list">
+                        <div style="text-align: center; color: #6c757d; padding: 20px;">
+                            Load a ROM to see available backups
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🛡️ <strong>Safe ROM Modification</strong> • Uses enterprise-grade binary validation • Never corrupts your original files</p>
+            <p>Built with TypeScript, binary-file, binary-parser, and buffer packages</p>
+        </div>
+    </div>
+
+    <!-- Status notification -->
+    <div id="statusBar" class="status-bar">
+        <div id="statusMessage"></div>
+    </div>
+
+    <script type="module" src="/src/ui/app.ts"></script>
+</body>
+</html>

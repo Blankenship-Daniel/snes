@@ -1,0 +1,39 @@
+{
+  "id": "Replay-Human-Recording-1760861571916",
+  "name": "Replay-Human-Recording",
+  "description": "Replaying human recording to find gameplay start point",
+  "startFrame": 153,
+  "inputs": [
+    {
+      "frame": 0,
+      "button": "Start",
+      "duration": 2
+    },
+    {
+      "frame": 2,
+      "button": "Start",
+      "duration": 3
+    },
+    {
+      "frame": 5,
+      "button": "Start",
+      "duration": 3
+    },
+    {
+      "frame": 8,
+      "button": "Left",
+      "duration": 10
+    }
+  ],
+  "metadata": {
+    "duration": 18,
+    "success": false,
+    "notes": [
+      "Cannot efficiently replay 831 inputs",
+      "Would require 40,000+ tokens",
+      "Need different approach"
+    ],
+    "tags": [],
+    "timestamp": 1760861571916
+  }
+}

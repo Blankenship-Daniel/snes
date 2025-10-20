@@ -92,8 +92,8 @@ shopt -u nullglob
 # Test source ROMs from snes-modder
 echo ""
 echo "🔬 Testing Source ROMs (Pre-built mods):"
-validate_rom "snes-modder/zelda3-infinite-magic.smc" "source-infinite-magic" "Source infinite magic mod"
-validate_rom "snes-modder/zelda3-2x-speed.smc" "source-2x-speed" "Source 2x speed mod"
+validate_rom "repos/snes-modder/zelda3-infinite-magic.smc" "source-infinite-magic" "Source infinite magic mod"
+validate_rom "repos/snes-modder/zelda3-2x-speed.smc" "source-2x-speed" "Source 2x speed mod"
 
 echo ""
 echo "📊 VALIDATION SUMMARY"

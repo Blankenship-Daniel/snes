@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/knip@latest/schema.json",
   "workspaces": {
     ".": {
-      "entry": ["scripts/**/*.{js,sh}", "*.config.{js,ts}"],
+      "entry": ["scripts/**/*.{js,sh}"],
       "project": ["**/*.{js,ts}"],
       "ignore": [
         "**/dist/**",
@@ -15,10 +15,10 @@
         "**/*.test.{js,ts}",
         "**/*.spec.{js,ts}",
         "zelda3/**",
-        "bsnes-plus/**",
-        "SNES_MiSTer/**",
-        "snes9x/**",
-        "snes2asm/**",
+        "repos/bsnes-plus/**",
+        "repos/SNES_MiSTer/**",
+        "repos/snes9x/**",
+        "repos/snes2asm/**",
         "repos/**",
         "**/EmulatorJS-*/**",
         "mcp-servers/snes-mcp-server/src/parser/**",
@@ -53,5 +53,6 @@
     }
   },
   "ignoreExportsUsedInFile": true,
-  "ignoreDependencies": ["@types/*"]
+  "ignoreDependencies": [],
+  "ignoreBinaries": ["eslint", "prettier"]
 }

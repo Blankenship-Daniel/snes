@@ -1,0 +1,28 @@
+{
+  "id": "test-recording-1760855180733",
+  "name": "test-recording",
+  "description": "Testing input recording feature",
+  "startFrame": 120,
+  "inputs": [
+    {
+      "frame": 0,
+      "button": "A",
+      "duration": 10
+    },
+    {
+      "frame": 0,
+      "button": "Down",
+      "duration": 5
+    }
+  ],
+  "metadata": {
+    "duration": 5,
+    "success": true,
+    "notes": [
+      "Successfully tested button recording",
+      "Recorded A button and Down inputs"
+    ],
+    "tags": [],
+    "timestamp": 1760855180733
+  }
+}

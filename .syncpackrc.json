@@ -53,7 +53,7 @@
   "source": [
     "package.json",
     "mcp-servers/*/package.json",
-    "snes-modder/package.json",
-    "zelda3-disasm/package.json"
+    "repos/snes-modder/package.json",
+    "repos/zelda3-disasm/package.json"
   ]
 }

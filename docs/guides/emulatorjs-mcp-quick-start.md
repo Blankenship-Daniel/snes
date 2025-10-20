@@ -30,7 +30,7 @@ Use the MCP server via Claude Code or any MCP client:
 ```typescript
 // 1. Start the emulator with your ROM
 await use_mcp_tool("emulatorjs", "start_emulator", {
-  rom_path: "/Users/ship/Documents/code/snes/zelda3.smc"
+  rom_path: "./zelda3.smc"
 });
 
 // 2. Wait for the game to load (about 3 seconds)
@@ -40,7 +40,7 @@ await use_mcp_tool("emulatorjs", "run_frames", {
 
 // 3. Take a screenshot to see what's happening
 await use_mcp_tool("emulatorjs", "take_screenshot", {
-  filepath: "/Users/ship/Documents/code/snes/output/test.png"
+  filepath: "./output/test.png"
 });
 
 // 4. Press Start to begin

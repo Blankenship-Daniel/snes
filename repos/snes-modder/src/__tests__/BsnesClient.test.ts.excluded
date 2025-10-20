@@ -1,0 +1,206 @@
+/**
+ * BsnesClient Integration Test Stub
+ * 
+ * This file provides Morgan with a concrete example of how to integrate
+ * actual MCP function calls with the BsnesClient interface.
+ * 
+ * Architecture: Alex (Senior Engineer)
+ */
+
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { BsnesClient, BsnesClientError } from './BsnesClient';
+
+describe('BsnesClient Integration', () => {
+  let client: BsnesClient;
+
+  beforeEach(() => {
+    client = new BsnesClient();
+  });
+
+  afterEach(async () => {
+    if (client.isActive) {
+      await client.terminateSession();
+    }
+  });
+
+  describe('Session Management', () => {
+    it('should initialize debug session with valid ROM', async () => {
+      // This test will pass once Morgan implements actual MCP calls
+      const session = await client.initSession('./test-roms/zelda3.smc');
+      
+      expect(session).toBeDefined();
+      expect(session.romPath).toBe('./test-roms/zelda3.smc');
+      expect(session.status).toBe('running');
+      expect(client.isActive).toBe(true);
+    });
+
+    it('should throw error for invalid ROM path', async () => {
+      await expect(client.initSession('./invalid/path.smc')).rejects.toThrow(BsnesClientError);
+    });
+
+    it('should properly terminate session', async () => {
+      await client.initSession('./test-roms/zelda3.smc');
+      await client.terminateSession();
+      
+      expect(client.isActive).toBe(false);
+      expect(client.session).toBeNull();
+    });
+  });
+
+  describe('Breakpoint Management', () => {
+    beforeEach(async () => {
+      await client.initSession('./test-roms/zelda3.smc');
+    });
+
+    it('should set execution breakpoint', async () => {
+      const breakpoint = await client.setBreakpoint(0x8000);
+      
+      expect(breakpoint).toBeDefined();
+      expect(breakpoint.address).toBe(0x8000);
+      expect(breakpoint.type).toBe('execution');
+      expect(breakpoint.enabled).toBe(true);
+      expect(breakpoint.hitCount).toBe(0);
+    });
+
+    it('should set conditional breakpoint', async () => {
+      const breakpoint = await client.setBreakpoint(0x8000, 'A == 0x01');
+      
+      expect(breakpoint.condition).toBe('A == 0x01');
+    });
+
+    it('should throw error when setting breakpoint without session', async () => {
+      await client.terminateSession();
+      
+      await expect(client.setBreakpoint(0x8000)).rejects.toThrow(BsnesClientError);
+    });
+  });
+
+  describe('Memory Operations', () => {
+    beforeEach(async () => {
+      await client.initSession('./test-roms/zelda3.smc');
+    });
+
+    it('should read single byte from memory', async () => {
+      const data = await client.readMemory(0x7E0000, 1);
+      
+      expect(data).toHaveLength(1);
+      expect(data[0]).toBeGreaterThanOrEqual(0);
+      expect(data[0]).toBeLessThanOrEqual(0xFF);
+    });
+
+    it('should read memory range', async () => {
+      const data = await client.readMemory(0x7E0000, 16);
+      
+      expect(data).toHaveLength(16);
+      data.forEach(byte => {
+        expect(byte).toBeGreaterThanOrEqual(0);
+        expect(byte).toBeLessThanOrEqual(0xFF);
+      });
+    });
+
+    it('should validate memory read size', async () => {
+      await expect(client.readMemory(0x7E0000, 0)).rejects.toThrow(BsnesClientError);
+      await expect(client.readMemory(0x7E0000, 0x20000)).rejects.toThrow(BsnesClientError);
+    });
+  });
+
+  describe('Disassembly', () => {
+    beforeEach(async () => {
+      await client.initSession('./test-roms/zelda3.smc');
+    });
+
+    it('should disassemble memory region', async () => {
+      const lines = await client.disassemble(0x8000, 10);
+      
+      expect(lines).toHaveLength(10);
+      lines.forEach(line => {
+        expect(line.address).toBeGreaterThanOrEqual(0x8000);
+        expect(line.instruction).toBeDefined();
+        expect(line.opcode).toBeDefined();
+      });
+    });
+
+    it('should handle disassembly with default line count', async () => {
+      const lines = await client.disassemble(0x8000);
+      
+      expect(lines).toHaveLength(20); // Default line count
+    });
+  });
+
+  describe('Stepping and Tracing', () => {
+    beforeEach(async () => {
+      await client.initSession('./test-roms/zelda3.smc');
+    });
+
+    it('should step single instruction', async () => {
+      const state = await client.stepInstruction();
+      
+      expect(state).toBeDefined();
+      expect(state.pc).toBeGreaterThan(0);
+      expect(typeof state.a).toBe('number');
+      expect(typeof state.x).toBe('number');
+      expect(typeof state.y).toBe('number');
+    });
+
+    it('should start and get trace entries', async () => {
+      await client.startTrace(100);
+      
+      // Execute some instructions
+      await client.stepInstruction();
+      await client.stepInstruction();
+      
+      const entries = await client.getTraceEntries();
+      
+      expect(Array.isArray(entries)).toBe(true);
+      entries.forEach(entry => {
+        expect(entry.timestamp).toBeDefined();
+        expect(entry.address).toBeDefined();
+        expect(entry.instruction).toBeDefined();
+        expect(entry.registers).toBeDefined();
+      });
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('should handle MCP validation errors properly', async () => {
+      // Test with invalid parameters
+      const client = new BsnesClient();
+      
+      // This should trigger parameter validation error
+      try {
+        // @ts-ignore - Intentionally pass invalid params for testing
+        await client['callMCP']('search_code', { invalid: 'params' });
+      } catch (error) {
+        expect(error).toBeInstanceOf(BsnesClientError);
+        expect((error as BsnesClientError).operation).toBeDefined();
+      }
+    });
+
+    it('should provide detailed error context', async () => {
+      try {
+        await client.initSession('./nonexistent/rom.smc');
+      } catch (error) {
+        expect(error).toBeInstanceOf(BsnesClientError);
+        expect((error as BsnesClientError).message).toContain('Failed to initialize debug session');
+        expect((error as BsnesClientError).operation).toBe('initSession');
+      }
+    });
+  });
+});
+
+/**
+ * Integration Notes for Morgan:
+ * 
+ * 1. Replace simulateMcpCall() with actual MCP function calls
+ * 2. The function mapping in mapToMcpFunction() is ready for your MCP integration
+ * 3. Parameter validation schemas are complete - just replace the simulation
+ * 4. All error handling is in place - MCP errors will be wrapped properly
+ * 5. Response parsing is stubbed out - you'll need to adjust based on actual MCP response format
+ * 
+ * Key integration points:
+ * - Line 264: Replace simulateMcpCall with actual MCP call mechanism
+ * - Response parsers: Update based on actual MCP response structure
+ * - Error handling: MCP-specific error codes should be mapped to BsnesClientError
+ * 
+ * This test suite will validate the complete integration once implemented.
+ */

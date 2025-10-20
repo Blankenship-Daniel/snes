@@ -13,7 +13,7 @@ A complete, working reverse engineering workflow for The Legend of Zelda: A Link
 ## ✅ Verified Working Components
 
 ### 1. **Headless Emulator** (bsnes-cli)
-- ✅ Built and tested: `bsnes-plus/bsnes/cli-headless/bsnes-cli`
+- ✅ Built and tested: `repos/bsnes-plus/bsnes/cli-headless/bsnes-cli`
 - ✅ Version: v04 (October 2025)
 - ✅ Performance: 600+ fps (10x real-time)
 - ✅ Zero Qt dependency
@@ -70,7 +70,7 @@ A complete, working reverse engineering workflow for The Legend of Zelda: A Link
 #### 1. Memory State Capture
 ```bash
 # Capture full WRAM at any frame
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 180 \
   --dump-wram 0:131072:wram.bin
 ```
@@ -84,7 +84,7 @@ cmp -l wram_before.bin wram_after.bin | head -20
 #### 3. Variable Extraction
 ```bash
 # Extract specific variable (e.g., magic meter at offset $F36E)
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 180 \
   --dump-wram 62318:2:magic.bin
 ```
@@ -93,7 +93,7 @@ bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
 ```bash
 # Time-series analysis
 for frames in 60 120 180 240 300; do
-  bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+  repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
     --run-frames $frames \
     --dump-wram 0:131072:wram_${frames}.bin
 done
@@ -150,17 +150,17 @@ Here's a real, working example that was tested:
 # Magic Meter Analysis - Real Working Example
 
 # Step 1: Capture baseline
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 180 \
   --dump-wram 62318:2:magic_baseline.bin
 
 # Step 2: After gameplay
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 600 \
   --dump-wram 62318:2:magic_after.bin
 
 # Step 3: Full WRAM for context
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 600 \
   --dump-wram 0:131072:wram_full.bin
 
@@ -222,7 +222,7 @@ npm run test:validation
 ### 1. Quick Test (30 seconds)
 ```bash
 # Ensure ROM exists
-ln -sf snes-modder/.rom-backups/zelda3-original.smc zelda3.smc
+ln -sf repos/snes-modder/.rom-backups/zelda3-original.smc zelda3.smc
 
 # Run analysis
 ./scripts/reverse-engineering/zelda3-memory-analysis.sh
@@ -243,11 +243,11 @@ cat docs/guides/reverse-engineering/WORKING_EXAMPLES.md
 ### 3. Run Your First Analysis (10 minutes)
 ```bash
 # Capture memory at two different states
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 60 \
   --dump-wram 0:131072:state1.bin
 
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 300 \
   --dump-wram 0:131072:state2.bin
 

@@ -5,7 +5,7 @@
 set -e
 
 # Configuration
-BSNES_CLI="bsnes-plus/bsnes/cli-headless/bsnes-cli"
+BSNES_CLI="repos/bsnes-plus/bsnes/cli-headless/bsnes-cli"
 ROM="zelda3.smc"
 OUTPUT_DIR="output/memory-analysis"
 
@@ -27,7 +27,7 @@ echo
 if [ ! -e "$ROM" ]; then
     echo -e "${YELLOW}Error: ROM file not found: $ROM${NC}"
     echo "Please ensure zelda3.smc exists or create symlink:"
-    echo "  ln -s snes-modder/.rom-backups/zelda3-original.smc zelda3.smc"
+    echo "  ln -s repos/snes-modder/.rom-backups/zelda3-original.smc zelda3.smc"
     exit 1
 fi
 

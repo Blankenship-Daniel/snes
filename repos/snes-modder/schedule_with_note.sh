@@ -1,0 +1,1 @@
+/Users/ship/.local/bin/schedule_with_note.sh

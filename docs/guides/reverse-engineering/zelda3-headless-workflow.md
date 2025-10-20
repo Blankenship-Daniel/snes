@@ -44,7 +44,7 @@ The bsnes-cli headless emulator provides:
 
 ### Required
 
-- **bsnes-cli**: Headless emulator (`bsnes-plus/bsnes/cli-headless/bsnes-cli`)
+- **bsnes-cli**: Headless emulator (`repos/bsnes-plus/bsnes/cli-headless/bsnes-cli`)
 - **Zelda 3 ROM**: `zelda3.smc` (US version)
 - **Bash**: Shell scripting environment
 
@@ -170,11 +170,11 @@ cat output/magic-meter-analysis/FINDINGS.md
 
 ```bash
 # Step 1: Dump memory with known bomb count (e.g., 10 bombs)
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 300 \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 300 \
   --dump-memory cpu-bus:7E0000:20000:wram_10bombs.bin
 
 # Step 2: Use a bomb in-game (simulated with more frames)
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 600 \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 600 \
   --dump-memory cpu-bus:7E0000:20000:wram_9bombs.bin
 
 # Step 3: Compare and find byte that changed from 10 to 9
@@ -190,11 +190,11 @@ cmp -l wram_10bombs.bin wram_9bombs.bin | awk '{
 
 ```bash
 # Step 1: Trace without event
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 300 \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 300 \
   --trace-cpu --trace-output trace_no_event.log
 
 # Step 2: Trace with event (button press)
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 300 \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 300 \
   --ai-controller --input-command p1_press_a \
   --trace-cpu --trace-output trace_with_event.log
 
@@ -210,7 +210,7 @@ comm -13 <(grep -o '\$[0-9A-F]\{6\}' trace_no_event.log | sort -u) \
 
 ```bash
 # Dump a specific region (e.g., sprite table at $7E0D00)
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 300 \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 300 \
   --dump-memory cpu-bus:7E0D00:200:sprite_table.bin
 
 # View as hex dump with ASCII
@@ -285,7 +285,7 @@ Find when a variable reaches a specific value:
 ```bash
 # Trace and dump memory every 60 frames
 for frame in 60 120 180 240 300; do
-  bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames $frame \
+  repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames $frame \
     --dump-memory cpu-bus:7EF36E:2:magic_frame_${frame}.bin
 done
 
@@ -304,7 +304,7 @@ Find code paths specific to certain conditions:
 # Generate multiple traces with different inputs
 inputs=("p1_press_a" "p1_press_b" "p1_press_x" "p1_press_y")
 for input in "${inputs[@]}"; do
-  bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 120 \
+  repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 120 \
     --ai-controller --input-command "$input" \
     --trace-cpu --trace-output "trace_${input}.log"
 done
@@ -323,7 +323,7 @@ Find which code reads/writes a region:
 
 ```bash
 # Trace with focus on memory access
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 300 \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 300 \
   --trace-cpu --trace-output full_trace.log
 
 # Extract all reads from WRAM $7E0000-$7E1FFF
@@ -358,11 +358,11 @@ See `scripts/reverse-engineering/zelda3-magic-meter-re.sh` for full workflow.
 **Solution**:
 ```bash
 # Step 1: Dump at different positions
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 180 \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 180 \
   --dump-memory cpu-bus:7E0000:2000:position1.bin
 
 # (Simulate movement with more frames)
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 600 \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 600 \
   --dump-memory cpu-bus:7E0000:2000:position2.bin
 
 # Step 2: Compare to find changed 16-bit values
@@ -386,7 +386,7 @@ EOF
 **Solution**:
 ```bash
 # Trace and find most-called address
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 60 \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --headless --run-frames 60 \
   --trace-cpu --trace-mask --trace-output nmi_search.log
 
 # NMI runs every frame (60 times in 60 frames)
@@ -503,10 +503,10 @@ comm -13 trace_without.log trace_with.log
 ## Resources
 
 ### Internal
-- bsnes-cli guide: `bsnes-plus/bsnes/cli-headless/HEADLESS_EMULATOR_GUIDE.md`
-- snes-modder: `snes-modder/README.md`
-- zelda3 C source: `zelda3/src/`
-- zelda3-disasm: `zelda3-disasm/`
+- bsnes-cli guide: `repos/bsnes-plus/bsnes/cli-headless/HEADLESS_EMULATOR_GUIDE.md`
+- snes-modder: `repos/snes-modder/README.md`
+- zelda3 C source: `repos/zelda3/src/`
+- zelda3-disasm: `repos/zelda3-disasm/`
 
 ### External
 - SNES Dev Manual: https://problemkaputt.de/fullsnes.htm

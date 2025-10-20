@@ -1,0 +1,12 @@
+{
+  "id": "file-select-screen-1760855378284",
+  "name": "file-select-screen",
+  "timestamp": 1760855378284,
+  "frameCount": 300,
+  "gameState": {
+    "romName": "zelda3",
+    "location": "File selection / name entry screen",
+    "notes": "Clean state before starting new game file"
+  },
+  "stateData": "{\"success\":true}"
+}

@@ -297,7 +297,7 @@ src/mods/RichStartMod.ts
 ### ROM Artifacts
 
 ```
-snes-modder/
+repos/snes-modder/
 ├── zelda3-rich-start-500.smc   (Comfortable)
 ├── zelda3-rich-start-777.smc   (Wealthy)
 └── zelda3-rich-start-999.smc   (Millionaire)

@@ -19,7 +19,7 @@ Based on testing with bsnes-cli v04 (October 2025):
 **Goal**: Capture WRAM state when game starts
 
 ```bash
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 60 \
   --dump-wram 0:131072:wram_startup.bin
 ```
@@ -37,11 +37,11 @@ bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
 
 ```bash
 # Capture at two different times
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 60 \
   --dump-wram 0:131072:state1.bin
 
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 300 \
   --dump-wram 0:131072:state2.bin
 
@@ -61,7 +61,7 @@ cmp -l state1.bin state2.bin | head -20
 
 ```bash
 # Magic meter at WRAM offset $F36E = decimal 62318
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 180 \
   --dump-wram 62318:2:magic.bin
 
@@ -84,7 +84,7 @@ hexdump -v -e '2/1 "%02X " "\n"' magic.bin
 #!/bin/bash
 for frames in 60 120 180 240 300; do
   echo "Capturing at frame $frames..."
-  bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+  repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
     --run-frames $frames \
     --dump-wram 0:131072:wram_${frames}.bin
 done
@@ -105,7 +105,7 @@ ls -lh wram_*.bin
 **Goal**: Dump several memory regions at once
 
 ```bash
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 180 \
   --dump-wram 0:131072:full_wram.bin \
   --dump-vram 0:65536:vram.bin \
@@ -128,12 +128,12 @@ bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
 ```bash
 #!/bin/bash
 # Step 1: Play with 10 bombs (simulated by time)
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 300 \
   --dump-wram 0:131072:before_bomb.bin
 
 # Step 2: Use a bomb (more gameplay time)
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 600 \
   --dump-wram 0:131072:after_bomb.bin
 
@@ -161,7 +161,7 @@ PYTHON
 ```bash
 #!/bin/bash
 echo "Running 1800 frames (30 seconds of gameplay)..."
-time bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+time repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 1800 \
   --dump-wram 0:131072:final_state.bin
 ```
@@ -187,7 +187,7 @@ echo "=== Magic Meter Reverse Engineering ==="
 
 # Step 1: Baseline
 echo "[1] Capturing baseline..."
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 180 \
   --dump-wram 62318:2:magic_baseline.bin
 
@@ -196,7 +196,7 @@ echo "    Baseline: 0x$baseline"
 
 # Step 2: After extended gameplay
 echo "[2] After gameplay..."
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 600 \
   --dump-wram 62318:2:magic_after.bin
 
@@ -205,7 +205,7 @@ echo "    After: 0x$after"
 
 # Step 3: Dump full WRAM to find writes
 echo "[3] Dumping full WRAM for analysis..."
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc \
   --run-frames 600 \
   --dump-wram 0:131072:wram_full.bin
 
@@ -243,10 +243,10 @@ echo "3. Create infinite magic mod in snes-modder"
 
 ```bash
 # Good: Reproducible
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --run-frames 180
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --run-frames 180
 
 # Avoid: Variable results
-bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --run-frames $RANDOM
+repos/bsnes-plus/bsnes/cli-headless/bsnes-cli zelda3.smc --run-frames $RANDOM
 ```
 
 ### Tip 2: Name Outputs Descriptively

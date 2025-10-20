@@ -1,0 +1,187 @@
+/**
+ * Discovery Tracker Tests
+ */
+
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { existsSync, unlinkSync } from 'node:fs';
+import { DiscoveryTracker } from './DiscoveryTracker';
+
+describe('DiscoveryTracker', () => {
+  const testFile = 'test-discoveries.json';
+  let tracker: DiscoveryTracker;
+
+  beforeEach(() => {
+    // Clean up any existing test file
+    if (existsSync(testFile)) {
+      unlinkSync(testFile);
+    }
+    tracker = new DiscoveryTracker(testFile);
+  });
+
+  afterEach(() => {
+    // Clean up test file
+    if (existsSync(testFile)) {
+      unlinkSync(testFile);
+    }
+  });
+
+  describe('add', () => {
+    it('should add a discovery with minimal data', () => {
+      const id = tracker.add({
+        type: 'item',
+        description: 'Test item'
+      });
+
+      expect(id).toBe('item_0000');
+      
+      const discovery = tracker.get(id);
+      expect(discovery).toBeDefined();
+      expect(discovery?.type).toBe('item');
+      expect(discovery?.description).toBe('Test item');
+    });
+
+    it('should add a discovery with full data', () => {
+      const id = tracker.add({
+        type: 'sprite',
+        description: 'Enemy sprite',
+        offset: 0x12345,
+        address: '$02:3456',
+        size: 32,
+        data: { hp: 10, damage: 5 },
+        relationships: ['related:boss_0001']
+      });
+
+      const discovery = tracker.get(id);
+      expect(discovery?.offset).toBe(0x12345);
+      expect(discovery?.address).toBe('$02:3456');
+      expect(discovery?.size).toBe(32);
+      expect(discovery?.data).toEqual({ hp: 10, damage: 5 });
+      expect(discovery?.relationships).toContain('related:boss_0001');
+    });
+  });
+
+  describe('findByType', () => {
+    it('should find all discoveries of a given type', () => {
+      tracker.add({ type: 'item', description: 'Sword' });
+      tracker.add({ type: 'item', description: 'Shield' });
+      tracker.add({ type: 'sprite', description: 'Enemy' });
+
+      const items = tracker.findByType('item');
+      expect(items).toHaveLength(2);
+      expect(items[0].description).toBe('Sword');
+      expect(items[1].description).toBe('Shield');
+    });
+
+    it('should return empty array for non-existent type', () => {
+      const results = tracker.findByType('music');
+      expect(results).toHaveLength(0);
+    });
+  });
+
+  describe('findByOffset', () => {
+    it('should find discoveries at exact offset', () => {
+      tracker.add({ 
+        type: 'item', 
+        description: 'Sword',
+        offset: 0x1000 
+      });
+
+      const results = tracker.findByOffset(0x1000);
+      expect(results).toHaveLength(1);
+      expect(results[0].description).toBe('Sword');
+    });
+
+    it('should find discoveries within range', () => {
+      tracker.add({ type: 'item', description: 'Item1', offset: 0x1000 });
+      tracker.add({ type: 'item', description: 'Item2', offset: 0x1010 });
+      tracker.add({ type: 'item', description: 'Item3', offset: 0x1100 });
+
+      const results = tracker.findByOffset(0x1000, 0x20);
+      expect(results).toHaveLength(2);
+      expect(results.map(r => r.description)).toContain('Item1');
+      expect(results.map(r => r.description)).toContain('Item2');
+    });
+  });
+
+  describe('search', () => {
+    it('should search in descriptions', () => {
+      tracker.add({ type: 'item', description: 'Master Sword' });
+      tracker.add({ type: 'item', description: 'Wooden Shield' });
+      tracker.add({ type: 'sprite', description: 'Sword Knight' });
+
+      const results = tracker.search('sword');
+      expect(results).toHaveLength(2);
+    });
+
+    it('should search in type', () => {
+      tracker.add({ type: 'sprite', description: 'Enemy A' });
+      tracker.add({ type: 'sprite', description: 'Enemy B' });
+      tracker.add({ type: 'item', description: 'Potion' });
+
+      const results = tracker.search('sprite');
+      expect(results).toHaveLength(2);
+    });
+  });
+
+  describe('link', () => {
+    it('should create bidirectional links', () => {
+      const id1 = tracker.add({ type: 'stat', description: 'Current Health' });
+      const id2 = tracker.add({ type: 'stat', description: 'Max Health' });
+
+      const success = tracker.link(id1, id2, 'paired');
+      expect(success).toBe(true);
+
+      const disc1 = tracker.get(id1);
+      const disc2 = tracker.get(id2);
+
+      expect(disc1?.relationships).toContain(`paired:${id2}`);
+      expect(disc2?.relationships).toContain(`paired:${id1}`);
+    });
+
+    it('should return false for invalid IDs', () => {
+      const id1 = tracker.add({ type: 'item', description: 'Item' });
+      const success = tracker.link(id1, 'invalid_id', 'related');
+      expect(success).toBe(false);
+    });
+  });
+
+  describe('getStats', () => {
+    it('should calculate correct statistics', () => {
+      tracker.add({ type: 'item', description: 'Item1', offset: 0x100 });
+      tracker.add({ type: 'item', description: 'Item2', address: '$01:2000' });
+      tracker.add({ type: 'sprite', description: 'Sprite1' });
+      
+      const id1 = tracker.add({ type: 'stat', description: 'Stat1' });
+      const id2 = tracker.add({ type: 'stat', description: 'Stat2' });
+      tracker.link(id1, id2);
+
+      const stats = tracker.getStats();
+      
+      expect(stats.total).toBe(5);
+      expect(stats.byType.item).toBe(2);
+      expect(stats.byType.sprite).toBe(1);
+      expect(stats.byType.stat).toBe(2);
+      expect(stats.withOffsets).toBe(1);
+      expect(stats.withAddresses).toBe(1);
+      expect(stats.withRelationships).toBe(2);
+    });
+  });
+
+  describe('persistence', () => {
+    it('should save and load discoveries', () => {
+      const id = tracker.add({
+        type: 'item',
+        description: 'Persistent item',
+        offset: 0x5000
+      });
+
+      // Create new tracker instance (simulates reload)
+      const tracker2 = new DiscoveryTracker(testFile);
+      
+      const discovery = tracker2.get(id);
+      expect(discovery).toBeDefined();
+      expect(discovery?.description).toBe('Persistent item');
+      expect(discovery?.offset).toBe(0x5000);
+    });
+  });
+});

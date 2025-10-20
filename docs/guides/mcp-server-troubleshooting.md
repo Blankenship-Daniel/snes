@@ -134,10 +134,10 @@ After applying the fix, all servers should start successfully:
 cd /path/to/your/snes-repo
 
 node ./snes-mcp-server/dist/index.js    # Should start without errors
-node ./bsnes-plus/mcp-server/index.js   # Should print "bsnes-plus MCP server running on stdio"
-node ./zelda3/mcp-server/index.js       # Should print "Zelda3 MCP server running on stdio"
-node ./SNES_MiSTer/mcp-server/index.js  # Should print "SNES MiSTer MCP server running on stdio"
-node ./snes9x/mcp-server/index.js       # Should print "SNES9x MCP server running on stdio"
+node ./repos/bsnes-plus/mcp-server/index.js   # Should print "bsnes-plus MCP server running on stdio"
+node ./repos/zelda3/mcp-server/index.js       # Should print "Zelda3 MCP server running on stdio"
+node ./repos/SNES_MiSTer/mcp-server/index.js  # Should print "SNES MiSTer MCP server running on stdio"
+node ./repos/snes9x/mcp-server/index.js       # Should print "SNES9x MCP server running on stdio"
 ```
 
 ## Verifying in Claude Code/Codex

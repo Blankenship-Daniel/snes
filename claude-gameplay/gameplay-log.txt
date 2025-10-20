@@ -1,0 +1,35 @@
+CLAUDE'S ZELDA 3 GAMEPLAY LOG
+============================================================
+
+180: Waiting
+240: Pressing start
+300: Waiting
+330: Pressing a
+930: Waiting
+1230: Waiting
+1250: Pressing down
+1260: Waiting
+1280: Pressing down
+1290: Waiting
+1310: Pressing down
+1320: Waiting
+1340: Pressing right
+1350: Waiting
+1370: Pressing right
+1380: Waiting
+1400: Pressing right
+1410: Waiting
+1430: Pressing up
+1440: Waiting
+1460: Pressing up
+1470: Waiting
+1490: Pressing up
+1500: Waiting
+1520: Pressing left
+1530: Waiting
+1550: Pressing left
+1560: Waiting
+1580: Pressing left
+1590: Waiting
+1600: Pressing a
+1660: Waiting

@@ -11,9 +11,9 @@ This repo ships a fast, script‑driven SNES modding workflow for Zelda 3. Keep 
 - `scripts/zelda3-modder-demo.sh` — main entry; produces prebuilt mod ROMs fast.
 - `scripts/validate-mods.sh` — binary‑level sanity checks on produced ROMs.
 - `scripts/ultimate-runtime-validation.sh` — emulator runtime verification (bsnes).
-- `snes-modder/` — prebuilt mod ROM assets used by the demo.
+- `repos/snes-modder/` — prebuilt mod ROM assets used by the demo.
 - `zelda3*.smc` — base and generated ROMs (do not commit third‑party ROMs).
-- `bsnes-plus`, `snes9x`, `SNES_MiSTer/` — emulator/tooling sources or integrations.
+- `repos/bsnes-plus`, `repos/snes9x`, `repos/SNES_MiSTer/` — emulator/tooling sources or integrations.
 - `package.json` — npm scripts that wrap the shell tooling.
 
 ## Build, Test, and Development Commands

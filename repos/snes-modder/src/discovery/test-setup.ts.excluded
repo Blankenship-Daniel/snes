@@ -1,0 +1,412 @@
+/**
+ * Test Setup for Discovery Module
+ * Sam's test utilities: Factories, mocks, global setup
+ */
+
+import { beforeAll, afterAll, beforeEach, afterEach, vi } from 'vitest';
+import type {
+  Discovery,
+  ItemDiscovery,
+  SpriteDiscovery,
+  MemoryDiscovery,
+  RoutineDiscovery,
+  ConfidenceLevel
+} from './types/core.types';
+import { DiscoveryCategory } from './types/core.types';
+
+// ============================================
+// GLOBAL TEST SETUP
+// ============================================
+
+beforeAll(() => {
+  // Mock console methods to reduce noise in tests
+  vi.spyOn(console, 'log').mockImplementation(() => {});
+  vi.spyOn(console, 'warn').mockImplementation(() => {});
+  vi.spyOn(console, 'info').mockImplementation(() => {});
+  
+  // Mock crypto.randomUUID for consistent IDs in tests
+  Object.defineProperty(global, 'crypto', {
+    value: {
+      randomUUID: vi.fn(() => 'test-uuid-' + Math.random().toString(36).substr(2, 9))
+    }
+  });
+  
+  // Mock performance for timing tests
+  Object.defineProperty(global, 'performance', {
+    value: {
+      now: vi.fn(() => Date.now())
+    }
+  });
+});
+
+afterAll(() => {
+  vi.restoreAllMocks();
+});
+
+beforeEach(() => {
+  // Reset all mocks before each test
+  vi.clearAllMocks();
+  
+  // Reset timers
+  vi.clearAllTimers();
+});
+
+afterEach(() => {
+  // Cleanup after each test
+  vi.useRealTimers();
+});
+
+// ============================================
+// TEST FACTORIES - Consistent test data
+// ============================================
+
+export class DiscoveryFactory {
+  private static counter = 0;
+  
+  /**
+   * Create a valid base discovery
+   */
+  static createBase(overrides: Partial<Discovery> = {}): Discovery {
+    const id = `test-discovery-${++this.counter}`;
+    
+    return {
+      id,
+      name: `Test Discovery ${this.counter}`,
+      description: `A test discovery for testing purposes`,
+      category: 'item' as DiscoveryCategory,
+      confidence: 'high' as ConfidenceLevel,
+      discoveredAt: new Date('2024-01-01T00:00:00.000Z'),
+      discoveredBy: 'test-user',
+      validated: true,
+      version: { major: 1, minor: 0, patch: 0 },
+      ...overrides
+    };
+  }
+  
+  /**
+   * Create a valid item discovery
+   */
+  static createItem(overrides: Partial<ItemDiscovery> = {}): ItemDiscovery {
+    return {
+      ...this.createBase({ category: DiscoveryCategory.Item }),
+      itemId: Math.floor(Math.random() * 255),
+      address: {
+        rom: 0x123456 + this.counter
+      },
+      properties: {
+        stackable: true,
+        maxQuantity: 99,
+        value: 100
+      },
+      ...overrides
+    } as ItemDiscovery;
+  }
+  
+  /**
+   * Create a valid sprite discovery
+   */
+  static createSprite(overrides: Partial<SpriteDiscovery> = {}): SpriteDiscovery {
+    return {
+      ...this.createBase({ category: DiscoveryCategory.Sprite }),
+      spriteId: Math.floor(Math.random() * 511),
+      dimensions: {
+        width: 16,
+        height: 16
+      },
+      palette: [0x00, 0x01, 0x02, 0x03],
+      ...overrides
+    } as SpriteDiscovery;
+  }
+  
+  /**
+   * Create a valid memory discovery
+   */
+  static createMemory(overrides: Partial<MemoryDiscovery> = {}): MemoryDiscovery {
+    return {
+      ...this.createBase({ category: DiscoveryCategory.Memory }),
+      address: {
+        bank: 0x7E,
+        offset: 0x0000 + this.counter
+      },
+      size: 2,
+      dataType: 'word' as const,
+      access: 'read-write' as const,
+      ...overrides
+    } as MemoryDiscovery;
+  }
+  
+  /**
+   * Create a valid routine discovery
+   */
+  static createRoutine(overrides: Partial<RoutineDiscovery> = {}): RoutineDiscovery {
+    return {
+      ...this.createBase({ category: DiscoveryCategory.Routine }),
+      address: {
+        start: 0x8000 + this.counter * 100,
+        end: 0x8000 + this.counter * 100 + 50
+      },
+      signature: `TestRoutine${this.counter}`,
+      parameters: [
+        {
+          name: 'input',
+          type: 'byte' as const,
+          register: 'A' as const,
+          description: 'Input value'
+        }
+      ],
+      returns: {
+        type: 'byte' as const,
+        register: 'A' as const,
+        description: 'Result value'
+      },
+      preserves: ['X', 'Y'] as const,
+      ...overrides
+    } as RoutineDiscovery;
+  }
+  
+  /**
+   * Create multiple discoveries of mixed types
+   */
+  static createMixed(count: number): Discovery[] {
+    const discoveries: Discovery[] = [];
+    
+    for (let i = 0; i < count; i++) {
+      const type = ['item', 'sprite', 'memory', 'routine'][i % 4];
+      
+      switch (type) {
+        case 'item':
+          discoveries.push(this.createItem());
+          break;
+        case 'sprite':
+          discoveries.push(this.createSprite());
+          break;
+        case 'memory':
+          discoveries.push(this.createMemory());
+          break;
+        case 'routine':
+          discoveries.push(this.createRoutine());
+          break;
+      }
+    }
+    
+    return discoveries;
+  }
+  
+  /**
+   * Reset the counter for predictable IDs
+   */
+  static reset(): void {
+    this.counter = 0;
+  }
+}
+
+// ============================================
+// MOCK BUILDERS - Complex mock objects
+// ============================================
+
+export class MockBuilder {
+  /**
+   * Create a mock storage that simulates different behaviors
+   */
+  static createMockStorage(behavior: 'success' | 'failure' | 'slow' = 'success') {
+    const storage = {
+      initialize: vi.fn(),
+      add: vi.fn(),
+      get: vi.fn(),
+      query: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn()
+    };
+    
+    switch (behavior) {
+      case 'success':
+        storage.initialize.mockResolvedValue(undefined);
+        storage.add.mockResolvedValue(undefined);
+        storage.get.mockResolvedValue(DiscoveryFactory.createBase());
+        storage.query.mockResolvedValue([DiscoveryFactory.createBase()]);
+        break;
+        
+      case 'failure':
+        const error = new Error('Storage error');
+        storage.initialize.mockRejectedValue(error);
+        storage.add.mockRejectedValue(error);
+        storage.get.mockRejectedValue(error);
+        storage.query.mockRejectedValue(error);
+        break;
+        
+      case 'slow':
+        const slowResolve = (value: any) => 
+          new Promise(resolve => setTimeout(() => resolve(value), 1000));
+        storage.initialize.mockImplementation(() => slowResolve(undefined));
+        storage.add.mockImplementation(() => slowResolve(undefined));
+        storage.get.mockImplementation(() => slowResolve(DiscoveryFactory.createBase()));
+        storage.query.mockImplementation(() => slowResolve([DiscoveryFactory.createBase()]));
+        break;
+    }
+    
+    return storage;
+  }
+  
+  /**
+   * Create a mock validator that can be configured to pass/fail
+   */
+  static createMockValidator(shouldPass = true) {
+    return {
+      validate: vi.fn().mockImplementation((discovery: Discovery) => {
+        if (!shouldPass) {
+          throw new Error('Validation failed');
+        }
+        return true;
+      }),
+      validateCategory: vi.fn().mockReturnValue(shouldPass),
+      validateCustomRules: vi.fn().mockReturnValue(shouldPass)
+    };
+  }
+}
+
+// ============================================
+// TEST UTILITIES - Helper functions
+// ============================================
+
+export class TestUtils {
+  /**
+   * Create a promise that resolves after a delay
+   */
+  static delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+  
+  /**
+   * Create a function that fails N times then succeeds
+   */
+  static createFlakeFunction<T>(failCount: number, successValue: T): () => Promise<T> {
+    let attempts = 0;
+    
+    return async () => {
+      attempts++;
+      if (attempts <= failCount) {
+        throw new Error(`Attempt ${attempts} failed`);
+      }
+      return successValue;
+    };
+  }
+  
+  /**
+   * Capture console output for testing
+   */
+  static captureConsole() {
+    const logs: string[] = [];
+    const originalLog = console.log;
+    const originalError = console.error;
+    
+    console.log = vi.fn((message: string) => logs.push(`LOG: ${message}`));
+    console.error = vi.fn((message: string) => logs.push(`ERROR: ${message}`));
+    
+    return {
+      logs,
+      restore: () => {
+        console.log = originalLog;
+        console.error = originalError;
+      }
+    };
+  }
+  
+  /**
+   * Assert that a value has a specific type (for TypeScript testing)
+   */
+  static assertType<T>(value: any): asserts value is T {
+    // This is a compile-time check, no runtime logic needed
+  }
+  
+  /**
+   * Create deterministic random values for testing
+   */
+  static createSeededRandom(seed: number) {
+    let state = seed;
+    
+    return () => {
+      state = (state * 1664525 + 1013904223) % Math.pow(2, 32);
+      return state / Math.pow(2, 32);
+    };
+  }
+}
+
+// ============================================
+// TYPE TESTING HELPERS
+// ============================================
+
+/**
+ * Helper to test that a type guard properly narrows types
+ */
+export function expectTypeGuard<T>(
+  guard: (value: unknown) => value is T,
+  validValue: unknown,
+  invalidValue: unknown
+): void {
+  expect(guard(validValue)).toBe(true);
+  expect(guard(invalidValue)).toBe(false);
+  
+  // Type checking (compile-time)
+  if (guard(validValue)) {
+    TestUtils.assertType<T>(validValue);
+  }
+}
+
+/**
+ * Helper to test error throwing functions
+ */
+export function expectErrorThrow(
+  fn: () => any,
+  errorType: new (...args: any[]) => Error,
+  expectedMessage?: string
+): void {
+  expect(fn).toThrow();
+  expect(fn).toThrow(errorType);
+  
+  if (expectedMessage) {
+    expect(fn).toThrow(expectedMessage);
+  }
+}
+
+// ============================================
+// GLOBAL TYPE AUGMENTATION
+// ============================================
+
+declare global {
+  namespace Vi {
+    interface JestAssertion<T = any> {
+      toBeValidDiscovery(): T;
+      toBeValidItemDiscovery(): T;
+      toMatchDiscoverySchema(): T;
+    }
+  }
+}
+
+// Custom matchers
+expect.extend({
+  toBeValidDiscovery(received: unknown) {
+    const isValid = received !== null &&
+      typeof received === 'object' &&
+      'id' in received! &&
+      'name' in received! &&
+      'category' in received!;
+    
+    return {
+      message: () => `expected ${received} to be a valid Discovery`,
+      pass: isValid
+    };
+  },
+  
+  toBeValidItemDiscovery(received: unknown) {
+    const isValid = received !== null &&
+      typeof received === 'object' &&
+      'itemId' in received! &&
+      'address' in received! &&
+      'properties' in received!;
+    
+    return {
+      message: () => `expected ${received} to be a valid ItemDiscovery`,
+      pass: isValid
+    };
+  }
+});

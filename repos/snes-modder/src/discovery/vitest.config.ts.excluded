@@ -1,0 +1,114 @@
+/**
+ * Vitest Configuration for Discovery Module
+ * Sam's testing setup: Fast, focused, comprehensive coverage
+ */
+
+import { defineConfig } from 'vitest/config';
+import path from 'node:path';
+
+export default defineConfig({
+  test: {
+    // Test environment
+    environment: 'node',
+    
+    // Test file patterns
+    include: [
+      '**/__tests__/**/*.test.ts',
+      '**/*.test.ts',
+      '**/*.spec.ts'
+    ],
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/coverage/**'
+    ],
+    
+    // Coverage configuration
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        '**/__tests__/**',
+        '**/*.test.ts',
+        '**/*.spec.ts',
+        '**/types/**', // Type-only files
+        '**/*.d.ts',
+        '**/index.ts' // Barrel exports
+      ],
+      thresholds: {
+        global: {
+          branches: 90,
+          functions: 95,
+          lines: 95,
+          statements: 95
+        },
+        // Stricter thresholds for core files
+        './types/guards.ts': {
+          branches: 95,
+          functions: 100,
+          lines: 98,
+          statements: 98
+        },
+        './errors/boundaries.ts': {
+          branches: 95,
+          functions: 100,
+          lines: 95,
+          statements: 95
+        }
+      }
+    },
+    
+    // Globals for testing
+    globals: true,
+    
+    // Setup files
+    setupFiles: ['./test-setup.ts'],
+    
+    // Timeout settings
+    testTimeout: 10000,
+    hookTimeout: 10000,
+    
+    // Reporter configuration
+    reporter: ['verbose', 'junit'],
+    outputFile: {
+      junit: './test-results.xml'
+    },
+    
+    // Watch mode settings
+    watch: false,
+    
+    // Pool settings for performance
+    pool: 'forks',
+    poolOptions: {
+      forks: {
+        singleFork: true
+      }
+    },
+    
+    // Benchmarking
+    benchmark: {
+      include: ['**/*.bench.ts'],
+      exclude: ['**/node_modules/**']
+    }
+  },
+  
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './'),
+      '@discovery': path.resolve(__dirname, './'),
+      '@types': path.resolve(__dirname, './types'),
+      '@errors': path.resolve(__dirname, './errors')
+    }
+  },
+  
+  // TypeScript configuration
+  esbuild: {
+    target: 'node18'
+  },
+  
+  define: {
+    // Test environment variables
+    'process.env.NODE_ENV': '"test"',
+    'process.env.DISCOVERY_TEST_MODE': 'true'
+  }
+});

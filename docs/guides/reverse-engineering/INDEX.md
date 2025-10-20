@@ -72,8 +72,8 @@ Located in: `scripts/reverse-engineering/`
 ## 🔗 External Resources
 
 ### bsnes-cli Documentation
-- Built-in help: `bsnes-plus/bsnes/cli-headless/bsnes-cli --help`
-- Full guide: `bsnes-plus/bsnes/cli-headless/HEADLESS_EMULATOR_GUIDE.md`
+- Built-in help: `repos/bsnes-plus/bsnes/cli-headless/bsnes-cli --help`
+- Full guide: `repos/bsnes-plus/bsnes/cli-headless/HEADLESS_EMULATOR_GUIDE.md`
 
 ### MCP Servers
 - zelda3-disasm: Assembly code search
@@ -135,7 +135,7 @@ cmp -l file1.bin file2.bin | head -20
 
 ### Tool Issues
 - Run: `bsnes-cli --help`
-- Check: `bsnes-plus/bsnes/cli-headless/HEADLESS_EMULATOR_GUIDE.md`
+- Check: `repos/bsnes-plus/bsnes/cli-headless/HEADLESS_EMULATOR_GUIDE.md`
 
 ### Technique Questions
 - See [zelda3-headless-workflow.md](./zelda3-headless-workflow.md) - Case Studies

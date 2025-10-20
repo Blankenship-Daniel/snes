@@ -1,0 +1,395 @@
+name: 🔗 Bridge Integration Tests
+# Cross-team validation pipeline for SNES Modder + bsnes-plus
+
+on:
+  push:
+    branches: [main, develop, integration/*]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    - cron: '0 */6 * * *' # Every 6 hours
+
+env:
+  NODE_VERSION: '18'
+  INTEGRATION_TIMEOUT: '300000' # 5 minutes
+
+jobs:
+  # ============================================================================
+  # CONTRACT VALIDATION (Always Run)
+  # ============================================================================
+  
+  contract-validation:
+    name: 📋 Cross-Team Contract Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 🔧 Install Dependencies
+        run: |
+          npm ci
+          npm run build
+          
+      - name: 🤝 Run Contract Tests
+        run: |
+          echo "🧪 Running cross-team contract validation..."
+          npm run test:integration:contract
+          
+      - name: 📊 Upload Contract Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: contract-test-results
+          path: |
+            test-results/contract-*.json
+            test-logs/contract-*.log
+
+  # ============================================================================
+  # MOCK INTEGRATION TESTS (No Emulator Required)
+  # ============================================================================
+  
+  mock-integration:
+    name: 🎭 Mock Integration Tests
+    runs-on: ubuntu-latest
+    needs: contract-validation
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 🔧 Install Dependencies
+        run: npm ci
+        
+      - name: 🎯 Generate Test ROM
+        run: |
+          mkdir -p test-roms
+          node scripts/generate-test-rom.js test-roms/zelda3-mock.sfc
+          
+      - name: 🎭 Run Mock Integration Tests
+        env:
+          MOCK_MODE: true
+        run: |
+          echo "🧪 Running integration tests in mock mode..."
+          npm run test:integration:mock
+          
+      - name: 📊 Mock Test Report
+        if: always()
+        run: |
+          npm run report:integration:mock
+          
+      - name: 📤 Upload Mock Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mock-integration-results
+          path: |
+            test-reports/mock-*.html
+            test-logs/mock-*.log
+
+  # ============================================================================
+  # EMULATOR INTEGRATION (Linux Only - Docker Container)
+  # ============================================================================
+  
+  emulator-integration:
+    name: 🎮 Emulator Integration Tests
+    runs-on: ubuntu-latest
+    needs: [contract-validation, mock-integration]
+    if: github.event_name != 'pull_request' || contains(github.event.pull_request.labels.*.name, 'test:emulator')
+    
+    services:
+      # Mock bsnes-plus service for testing
+      mock-emulator:
+        image: ubuntu:22.04
+        ports:
+          - 23074:23074
+        options: >-
+          --name mock-bsnes
+          --health-cmd "nc -z localhost 23074"
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 3
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 🔧 Install Dependencies
+        run: |
+          npm ci
+          sudo apt-get update
+          sudo apt-get install -y netcat
+          
+      - name: 🎮 Setup Mock Emulator
+        run: |
+          # Start mock emulator service
+          docker exec mock-bsnes bash -c "
+            apt-get update && apt-get install -y netcat &&
+            (while true; do echo -e 'HTTP/1.1 200 OK\r\n\r\n{\"status\":\"ok\"}' | nc -l -p 23074; done) &
+          "
+          
+      - name: 🎯 Prepare Test Environment
+        run: |
+          mkdir -p test-roms test-logs
+          node scripts/generate-test-rom.js test-roms/zelda3-test.sfc
+          
+      - name: 🔄 Run Bridge Integration Tests
+        timeout-minutes: 10
+        env:
+          EMULATOR_HOST: localhost
+          EMULATOR_PORT: 23074
+          TEST_TIMEOUT: ${{ env.INTEGRATION_TIMEOUT }}
+        run: |
+          echo "🧪 Running bridge integration tests..."
+          npm run test:integration:bridge
+          
+      - name: ⚡ Run Performance Tests
+        timeout-minutes: 5
+        run: |
+          echo "📊 Running performance validation..."
+          npm run test:integration:performance
+          
+      - name: 📈 Generate Integration Report
+        if: always()
+        run: |
+          npm run report:integration:full
+          
+      - name: 📤 Upload Integration Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: emulator-integration-results
+          path: |
+            test-reports/integration-*.html
+            test-logs/bridge-*.log
+            test-logs/performance-*.log
+
+  # ============================================================================
+  # CROSS-PLATFORM COMPATIBILITY
+  # ============================================================================
+  
+  cross-platform:
+    name: 🌐 Cross-Platform Tests
+    runs-on: ${{ matrix.os }}
+    needs: contract-validation
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 🔧 Install Dependencies
+        run: npm ci
+        
+      - name: 🌐 Platform-Specific Integration Tests
+        run: |
+          echo "🧪 Running platform tests on ${{ matrix.os }}..."
+          npm run test:integration:platform
+          
+      - name: 📊 Platform Test Report
+        if: always()
+        run: |
+          npm run report:platform:${{ matrix.os }}
+          
+      - name: 📤 Upload Platform Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: platform-${{ matrix.os }}-results
+          path: |
+            test-reports/platform-*.html
+            test-logs/platform-*.log
+
+  # ============================================================================
+  # PERFORMANCE BENCHMARKING
+  # ============================================================================
+  
+  performance-benchmarks:
+    name: 📊 Performance Benchmarks
+    runs-on: ubuntu-latest
+    needs: [contract-validation, mock-integration]
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+        
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: 🔧 Install Dependencies
+        run: npm ci
+        
+      - name: ⚡ Run Performance Benchmarks
+        run: |
+          echo "📊 Running comprehensive performance tests..."
+          npm run test:performance:comprehensive
+          
+      - name: 📈 Performance Analysis
+        run: |
+          npm run analyze:performance
+          
+      - name: 📊 Generate Performance Report
+        run: |
+          npm run report:performance
+          
+      - name: 📤 Upload Performance Data
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-benchmarks
+          path: |
+            test-reports/performance-*.html
+            performance-data/*.json
+
+  # ============================================================================
+  # INTEGRATION REPORT CONSOLIDATION
+  # ============================================================================
+  
+  consolidate-results:
+    name: 📋 Consolidate Integration Results
+    runs-on: ubuntu-latest
+    needs: [contract-validation, mock-integration, emulator-integration, cross-platform, performance-benchmarks]
+    if: always()
+    
+    steps:
+      - name: 📥 Download All Artifacts
+        uses: actions/download-artifact@v4
+        
+      - name: 📊 Generate Unified Report
+        run: |
+          echo "📋 Consolidating integration test results..."
+          
+          # Count total tests
+          TOTAL_TESTS=0
+          PASSED_TESTS=0
+          
+          # Analyze results
+          for dir in */; do
+            if [[ -f "$dir"/*.json ]]; then
+              echo "Processing $dir..."
+              # Extract test counts (simplified)
+              TOTAL_TESTS=$((TOTAL_TESTS + 1))
+              if [[ -f "$dir"/success.marker ]]; then
+                PASSED_TESTS=$((PASSED_TESTS + 1))
+              fi
+            fi
+          done
+          
+          # Calculate success rate
+          if [ $TOTAL_TESTS -gt 0 ]; then
+            SUCCESS_RATE=$((PASSED_TESTS * 100 / TOTAL_TESTS))
+          else
+            SUCCESS_RATE=0
+          fi
+          
+          echo "📊 Integration Test Summary:"
+          echo "Total Test Suites: $TOTAL_TESTS"
+          echo "Passed: $PASSED_TESTS"
+          echo "Success Rate: $SUCCESS_RATE%"
+          
+          # Set outputs for badges
+          echo "total-tests=$TOTAL_TESTS" >> $GITHUB_OUTPUT
+          echo "passed-tests=$PASSED_TESTS" >> $GITHUB_OUTPUT
+          echo "success-rate=$SUCCESS_RATE" >> $GITHUB_OUTPUT
+          
+      - name: 📈 Create Integration Badge
+        run: |
+          SUCCESS_RATE=${{ steps.consolidate.outputs.success-rate || '0' }}
+          
+          if [ $SUCCESS_RATE -ge 90 ]; then
+            BADGE_COLOR="brightgreen"
+          elif [ $SUCCESS_RATE -ge 75 ]; then
+            BADGE_COLOR="yellow"
+          else
+            BADGE_COLOR="red"
+          fi
+          
+          echo "Integration badge: $SUCCESS_RATE% ($BADGE_COLOR)"
+          
+      - name: 💬 Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const totalTests = ${{ steps.consolidate.outputs.total-tests || 0 }};
+            const passedTests = ${{ steps.consolidate.outputs.passed-tests || 0 }};
+            const successRate = ${{ steps.consolidate.outputs.success-rate || 0 }};
+            
+            const comment = `
+            ## 🔗 Bridge Integration Test Results
+            
+            | Metric | Value |
+            |--------|-------|
+            | **Total Test Suites** | ${totalTests} |
+            | **Passed** | ${passedTests} |
+            | **Success Rate** | ${successRate}% |
+            
+            ${successRate >= 90 ? '✅ **All systems operational!**' : 
+              successRate >= 75 ? '⚠️ **Some issues detected**' : 
+              '❌ **Integration issues found**'}
+            
+            Bridge between SNES Modder and bsnes-plus is ${successRate >= 90 ? 'stable' : 'needs attention'}.
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+# ============================================================================
+# JOB FAILURE NOTIFICATIONS
+# ============================================================================
+
+  notify-on-failure:
+    name: 🚨 Failure Notification
+    runs-on: ubuntu-latest
+    needs: [contract-validation, mock-integration, emulator-integration]
+    if: failure()
+    
+    steps:
+      - name: 🚨 Bridge Integration Failure Alert
+        run: |
+          echo "🚨 BRIDGE INTEGRATION FAILURE DETECTED!"
+          echo "One or more integration test suites failed."
+          echo "This indicates potential compatibility issues between teams."
+          echo ""
+          echo "📋 Failed Jobs:"
+          echo "- Contract Validation: ${{ needs.contract-validation.result }}"
+          echo "- Mock Integration: ${{ needs.mock-integration.result }}"
+          echo "- Emulator Integration: ${{ needs.emulator-integration.result }}"
+          echo ""
+          echo "🔧 Next Steps:"
+          echo "1. Check individual job logs for specific failures"
+          echo "2. Verify contract compliance"
+          echo "3. Test with local emulator setup"
+          echo "4. Coordinate with bsnes-plus team if needed"

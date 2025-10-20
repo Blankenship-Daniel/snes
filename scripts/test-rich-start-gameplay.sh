@@ -11,9 +11,9 @@ echo ""
 
 # Configuration
 BSNES_PATH="${BSNES_PATH:-bsnes}"
-ROM_999="${1:-snes-modder/zelda3-rich-start-999.smc}"
-ROM_500="${2:-snes-modder/zelda3-rich-start-500.smc}"
-ROM_777="${3:-snes-modder/zelda3-rich-start-777.smc}"
+ROM_999="${1:-repos/snes-modder/zelda3-rich-start-999.smc}"
+ROM_500="${2:-repos/snes-modder/zelda3-rich-start-500.smc}"
+ROM_777="${3:-repos/snes-modder/zelda3-rich-start-777.smc}"
 OUTPUT_DIR="${OUTPUT_DIR:-.}"
 
 # WRAM addresses (from zelda3 C source variables.h)
