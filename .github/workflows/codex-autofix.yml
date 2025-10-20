@@ -1,0 +1,78 @@
+name: Codex Auto-Fix on Failure
+
+on:
+  workflow_run:
+    # Trigger this job after any run of the primary CI workflow completes
+    workflows: ["ci"]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-fix:
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      FAILED_WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
+      FAILED_RUN_URL: ${{ github.event.workflow_run.html_url }}
+      FAILED_HEAD_BRANCH: ${{ github.event.workflow_run.head_branch }}
+      FAILED_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+    steps:
+      - name: Check OpenAI API Key Set
+        run: |
+          if [ -z "${OPENAI_API_KEY}" ]; then
+            echo "OPENAI_API_KEY secret is not set. Skipping auto-fix." >&2
+            exit 1
+          fi
+
+      - name: Checkout failing ref
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.FAILED_HEAD_SHA }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "yarn"
+
+      - name: Install workspace dependencies
+        run: |
+          corepack enable
+          YARN_ENABLE_SCRIPTS=false yarn install --mode skip-build
+
+      - name: Run Codex auto-fix
+        uses: openai/codex-action@main
+        id: codex
+        with:
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+          prompt: >
+            You are assisting with a Zelda 3 SNES modding monorepo. Investigate the CI
+            failure referenced in ${{ env.FAILED_WORKFLOW_NAME }}, run only the commands
+            necessary to reproduce it, implement the minimal change required to make the
+            workflow succeed, keep edits small and targeted, and stop.
+          codex_args: '["--config","sandbox_mode=\"workspace-write\""]'
+
+      - name: Re-run workspace checks
+        run: |
+          corepack enable
+          yarn ws:ci:build
+          yarn ws:ci:test
+
+      - name: Create pull request with Codex fixes
+        if: success()
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "fix(ci): auto-fix failing tests via Codex"
+          branch: codex/auto-fix-${{ github.event.workflow_run.run_id }}
+          base: ${{ env.FAILED_HEAD_BRANCH }}
+          title: "Auto-fix CI failure via Codex"
+          body: |
+            Codex generated this PR after a failure in workflow `${{ env.FAILED_WORKFLOW_NAME }}`.
+            Failed run: ${{ env.FAILED_RUN_URL }}
+            Head branch: `${{ env.FAILED_HEAD_BRANCH }}`
+            This PR contains the minimal changes Codex applied to restore a passing CI pipeline.
