@@ -19,7 +19,7 @@
     "prepublishOnly": "npm run build && npm run build:validation-data",
     "quality:report": "node scripts/generate-quality-report.js",
     "show-validation": "node dist/cli/zelda3-modder.js show-validation",
-    "test": "vitest",
+    "test": "vitest run --passWithNoTests",
     "test:coverage": "vitest --coverage",
     "test:validation": "vitest --run src/tests/validation/",
     "typecheck": "tsc --noEmit",
