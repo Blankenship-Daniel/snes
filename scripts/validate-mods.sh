@@ -6,7 +6,8 @@
 echo "🔬 ROM Mod Validation - GROUND TRUTH TESTING"
 echo "═══════════════════════════════════════════"
 
-BASE_ROM="zelda3.smc"
+BASE_ROM_DEFAULT="zelda3.smc"
+BASE_ROM="${BASE_ROM:-$BASE_ROM_DEFAULT}"
 OUTPUT_DIR="${OUTPUT_DIR:-.}"
 FAILED=0
 PASSED=0
@@ -101,8 +102,8 @@ shopt -u nullglob
 
 echo ""
 echo "🔬 Testing Source ROMs (Pre-built mods):"
-validate_rom "repos/snes-modder/zelda3-infinite-magic.smc" "source-infinite-magic" "Source infinite magic mod"
-validate_rom "repos/snes-modder/zelda3-2x-speed.smc" "source-2x-speed" "Source 2x speed mod"
+validate_rom "repos/snes-modder/zelda3-infinite-magic.smc" "source-infinite-magic" "Source infinite magic mod" 1
+validate_rom "repos/snes-modder/zelda3-2x-speed.smc" "source-2x-speed" "Source 2x speed mod" 1
 
 echo ""
 echo "📊 VALIDATION SUMMARY"
