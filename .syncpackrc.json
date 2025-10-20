@@ -1,0 +1,59 @@
+{
+  "$schema": "https://unpkg.com/syncpack@latest/dist/schema.json",
+  "versionGroups": [
+    {
+      "label": "Keep shared dependencies in sync",
+      "dependencies": [
+        "@modelcontextprotocol/sdk",
+        "@types/node",
+        "typescript",
+        "vitest",
+        "@vitest/coverage-v8",
+        "prettier",
+        "eslint",
+        "knip",
+        "husky"
+      ],
+      "dependencyTypes": ["prod", "dev"],
+      "packages": ["**"]
+    }
+  ],
+  "semverGroups": [
+    {
+      "range": "",
+      "dependencyTypes": ["prod", "dev"],
+      "packages": ["**"]
+    }
+  ],
+  "sortAz": [
+    "contributors",
+    "dependencies",
+    "devDependencies",
+    "keywords",
+    "peerDependencies",
+    "resolutions",
+    "scripts"
+  ],
+  "sortFirst": [
+    "name",
+    "version",
+    "description",
+    "private",
+    "type",
+    "main",
+    "module",
+    "types",
+    "exports",
+    "bin",
+    "scripts",
+    "dependencies",
+    "devDependencies",
+    "peerDependencies"
+  ],
+  "source": [
+    "package.json",
+    "mcp-servers/*/package.json",
+    "snes-modder/package.json",
+    "zelda3-disasm/package.json"
+  ]
+}

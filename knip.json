@@ -1,0 +1,57 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/**/*.{js,sh}", "*.config.{js,ts}"],
+      "project": ["**/*.{js,ts}"],
+      "ignore": [
+        "**/dist/**",
+        "**/build/**",
+        "**/node_modules/**",
+        "**/.next/**",
+        "**/.cache/**",
+        "**/coverage/**",
+        "**/__tests__/**",
+        "**/*.test.{js,ts}",
+        "**/*.spec.{js,ts}",
+        "zelda3/**",
+        "bsnes-plus/**",
+        "SNES_MiSTer/**",
+        "snes9x/**",
+        "snes2asm/**",
+        "repos/**",
+        "**/EmulatorJS-*/**",
+        "mcp-servers/snes-mcp-server/src/parser/**",
+        "mcp-servers/snes-mcp-server/src/scripts/**",
+        "mcp-servers/snes-mcp-server/src/data/binary-format.ts",
+        "mcp-servers/snes-mcp-server/src/data/optimized-indexes.ts"
+      ]
+    },
+    "mcp-servers/snes-mcp-server": {
+      "entry": "src/index.ts",
+      "project": "src/**/*.ts"
+    },
+    "mcp-servers/emulatorjs-mcp-server": {
+      "entry": "src/index.ts",
+      "project": "src/**/*.ts"
+    },
+    "mcp-servers/bsnes-gamer": {
+      "entry": "src/index.ts",
+      "project": "src/**/*.ts"
+    },
+    "mcp-servers/bsnes": {
+      "entry": "src/index.ts",
+      "project": "src/**/*.ts"
+    },
+    "snes-modder": {
+      "entry": "src/index.ts",
+      "project": "src/**/*.ts"
+    },
+    "zelda3-disasm": {
+      "entry": "src/index.ts",
+      "project": "src/**/*.ts"
+    }
+  },
+  "ignoreExportsUsedInFile": true,
+  "ignoreDependencies": ["@types/*"]
+}
