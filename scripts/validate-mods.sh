@@ -14,6 +14,7 @@ SKIPPED=0
 SKIPPED_COMPARISONS=0
 BASE_ROM_AVAILABLE=1
 
+BASE_ROM_AVAILABLE=1
 if [ ! -f "$BASE_ROM" ]; then
   echo "⚠️  Base ROM not found: $BASE_ROM"
   echo "   Binary comparison checks will be skipped. Place the ROM in the repository root to restore full coverage."
@@ -133,4 +134,9 @@ if [ $FAILED -eq 0 ]; then
 else
   echo "⚠️  Some validations failed - investigate before shipping"
   exit 1
+fi
+
+if [ "$BASE_ROM_AVAILABLE" -eq 0 ]; then
+    echo ""
+    echo "ℹ️  Supply zelda3.smc to restore binary validation coverage."
 fi
