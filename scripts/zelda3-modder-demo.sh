@@ -1,7 +1,11 @@
 #!/bin/bash
+set -euo pipefail
 
 # Zelda 3 Modder - 30 Second ROM Mod Demo
 # The WORKING version that SHIPS TODAY!
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+source "$SCRIPT_DIR/mod-manifest.sh"
 
 echo "🎮 Zelda 3 Modder - 30 Second Mods (MVP Demo)"
 echo "═══════════════════════════════════════════════"
@@ -12,25 +16,24 @@ OUTPUT_DIR="${OUTPUT_DIR:-.}"
 print_mod_list() {
     echo "📦 Available Pre-Built Mods (Ready in 30 seconds):"
     echo ""
-    echo "  🎭 MAGIC & POWER:"
-    echo "    • infinite-magic    - Never run out of magic power"
-    echo "    • max-hearts        - Start with maximum health (20 hearts)"
-    echo ""
-    echo "  💰 MONEY & RESOURCES:"
-    echo "    • rich-start        - Start with 999 rupees (millionaire!)"
-    echo "    • rich-start-500    - Start with 500 rupees (comfortable)"
-    echo "    • rich-start-777    - Start with 777 rupees (lucky!)"
-    echo ""
-    echo "  🏃 SPEED & FLOW:"
-    echo "    • 2x-speed          - Move at double speed"
-    echo "    • intro-skip        - Skip opening cutscene instantly"
-    echo "    • quick-start       - Start with better equipment"
-    echo ""
-    echo "  🎯 COMPLETE PACKAGES:"
-    echo "    • team-solution     - Balanced combo (recommended)"
-    echo "    • ultimate          - Everything enabled (overpowered!)"
-    echo "    • safe-start        - Beginner friendly experience"
-    echo ""
+    local group_entry group_key group_label key description category default_label
+    for group_entry in "${MOD_MANIFEST_GROUPS[@]}"; do
+        IFS='|' read -r group_key group_label <<<"$group_entry"
+        default_label="$group_label"
+        if ! group_label="$(mod_manifest_group_label "$group_key")"; then
+            group_label="$default_label"
+        fi
+        echo "  $group_label:"
+        while IFS= read -r key; do
+            category=$(mod_manifest_field "$key" category)
+            if [[ "$category" != "$group_key" ]]; then
+                continue
+            fi
+            description=$(mod_manifest_field "$key" description)
+            printf "    • %-16s - %s\n" "$key" "$description"
+        done < <(mod_manifest_keys)
+        echo ""
+    done
 }
 
 # Support a non-interactive 'list' command without requiring the base ROM
@@ -92,71 +95,17 @@ if [ -z "$MOD_TYPE" ]; then
   print_usage; exit 1
 fi
 
-# Map mod types to existing ROMs
-case "$MOD_TYPE" in
-    "infinite-magic"|"unlimited-magic"|"never-run-out-of-magic")
-        SOURCE_ROM="repos/snes-modder/zelda3-infinite-magic.smc"
-        OUTPUT_NAME="zelda3-infinite-magic-$(date +%Y%m%d).smc"
-        DESCRIPTION="Infinite Magic Mod"
-        ;;
-    "intro-skip"|"skip-intro"|"no-intro")
-        SOURCE_ROM="repos/snes-modder/zelda3-intro-skip.smc"
-        OUTPUT_NAME="zelda3-intro-skip-$(date +%Y%m%d).smc"
-        DESCRIPTION="Intro Skip Mod"
-        ;;
-    "quick-start"|"speedrun-start")
-        SOURCE_ROM="repos/snes-modder/zelda3-quickstart-final.smc"
-        OUTPUT_NAME="zelda3-quickstart-$(date +%Y%m%d).smc"
-        DESCRIPTION="Quick Start Mod"
-        ;;
-    "2x-speed"|"double-speed"|"faster")
-        SOURCE_ROM="repos/snes-modder/zelda3-2x-speed.smc"
-        OUTPUT_NAME="zelda3-2x-speed-$(date +%Y%m%d).smc"
-        DESCRIPTION="2x Speed Mod"
-        ;;
-    "max-hearts"|"full-health"|"20-hearts")
-        SOURCE_ROM="repos/snes-modder/zelda3-health-v2-fixed.smc"
-        OUTPUT_NAME="zelda3-max-health-$(date +%Y%m%d).smc"
-        DESCRIPTION="Maximum Health Mod"
-        ;;
-    "team-solution"|"best-combo")
-        SOURCE_ROM="repos/snes-modder/zelda3-team-solution.smc"
-        OUTPUT_NAME="zelda3-team-solution-$(date +%Y%m%d).smc"
-        DESCRIPTION="Team Solution (Balanced Combo)"
-        ;;
-    "ultimate"|"ultimate-combo"|"everything")
-        SOURCE_ROM="repos/snes-modder/zelda3-ultimate-test.smc"
-        OUTPUT_NAME="zelda3-ultimate-$(date +%Y%m%d).smc"
-        DESCRIPTION="Ultimate Combo (All Mods)"
-        ;;
-    "safe-start"|"beginner")
-        SOURCE_ROM="repos/snes-modder/zelda3-safe-start.smc"
-        OUTPUT_NAME="zelda3-safe-start-$(date +%Y%m%d).smc"
-        DESCRIPTION="Safe Start (Beginner Friendly)"
-        ;;
-    "rich-start"|"rich"|"999-rupees"|"millionaire")
-        SOURCE_ROM="repos/snes-modder/zelda3-rich-start-999.smc"
-        OUTPUT_NAME="zelda3-rich-start-999-$(date +%Y%m%d).smc"
-        DESCRIPTION="Rich Start (999 Rupees)"
-        ;;
-    "rich-start-500"|"comfortable"|"500-rupees")
-        SOURCE_ROM="repos/snes-modder/zelda3-rich-start-500.smc"
-        OUTPUT_NAME="zelda3-rich-start-500-$(date +%Y%m%d).smc"
-        DESCRIPTION="Rich Start Comfortable (500 Rupees)"
-        ;;
-    "rich-start-777"|"wealthy"|"777-rupees"|"lucky")
-        SOURCE_ROM="repos/snes-modder/zelda3-rich-start-777.smc"
-        OUTPUT_NAME="zelda3-rich-start-777-$(date +%Y%m%d).smc"
-        DESCRIPTION="Rich Start Wealthy (777 Rupees)"
-        ;;
-    *)
-        echo "❌ Unknown mod type: $MOD_TYPE"
-        echo "Available: infinite-magic, intro-skip, quick-start, 2x-speed, max-hearts,"
-        echo "           rich-start, rich-start-500, rich-start-777,"
-        echo "           team-solution, ultimate, safe-start"
-        exit 1
-        ;;
-esac
+if ! MOD_KEY="$(mod_manifest_resolve_key "$MOD_TYPE")"; then
+  echo "❌ Unknown mod type: $MOD_TYPE"
+  echo ""
+  print_mod_list
+  exit 1
+fi
+
+SOURCE_ROM="$(mod_manifest_field "$MOD_KEY" source)"
+OUTPUT_PREFIX="$(mod_manifest_field "$MOD_KEY" output_prefix)"
+DESCRIPTION="$(mod_manifest_field "$MOD_KEY" description)"
+OUTPUT_NAME="${OUTPUT_PREFIX}-$(date +%Y%m%d).smc"
 
 START_TIME=$(date +%s)
 
@@ -176,7 +125,15 @@ mkdir -p "$OUTPUT_DIR"
 # Copy the pre-built mod
 echo "📋 Applying modifications..."
 OUTPUT_PATH="$OUTPUT_DIR/$OUTPUT_NAME"
-cp "$SOURCE_ROM" "$OUTPUT_PATH"
+if ! cp "$SOURCE_ROM" "$OUTPUT_PATH"; then
+    echo "❌ Failed to copy mod ROM to $OUTPUT_PATH"
+    exit 1
+fi
+
+if [ ! -f "$OUTPUT_PATH" ]; then
+    echo "❌ Copy operation did not produce $OUTPUT_PATH"
+    exit 1
+fi
 
 # Calculate elapsed time
 END_TIME=$(date +%s)

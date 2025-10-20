@@ -1,7 +1,11 @@
 #!/bin/bash
+set -euo pipefail
 
 # ROM Mod Validation Tool
 # PROOF that our mods actually work!
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+source "$SCRIPT_DIR/mod-manifest.sh"
 
 echo "🔬 ROM Mod Validation - GROUND TRUTH TESTING"
 echo "═══════════════════════════════════════════"
@@ -15,7 +19,6 @@ SKIPPED=0
 SKIPPED_COMPARISONS=0
 BASE_ROM_AVAILABLE=1
 
-BASE_ROM_AVAILABLE=1
 if [ ! -f "$BASE_ROM" ]; then
   echo "⚠️  Base ROM not found: $BASE_ROM"
   echo "   Binary comparison checks will be skipped. Place the ROM in the repository root to restore full coverage."
@@ -26,6 +29,7 @@ validate_rom() {
   local rom_file="$1"
   local mod_name="$2"
   local description="$3"
+  local allow_identical="${4:-0}"
 
   echo ""
   echo "🧪 Testing: $mod_name"
@@ -49,13 +53,18 @@ validate_rom() {
 
   if [ "$BASE_ROM_AVAILABLE" -eq 1 ]; then
     if cmp -s "$BASE_ROM" "$rom_file"; then
+      if [ "$allow_identical" -eq 1 ]; then
+        echo "🟡 ROM matches base (allowed for $mod_name)"
+        ((SKIPPED++))
+        return 0
+      fi
       echo "❌ ROM identical to base - no modifications applied!"
       ((FAILED++))
       return 1
     fi
 
     local changes
-    changes=$(cmp -l "$BASE_ROM" "$rom_file" | wc -l)
+    changes=$({ cmp -l "$BASE_ROM" "$rom_file" || true; } | wc -l | tr -d ' ')
     echo "✅ ROM validation passed"
     echo "📊 Binary differences: $changes bytes changed"
 
@@ -93,17 +102,33 @@ fi
 
 shopt -s nullglob
 for dir in "${SEARCH_DIRS[@]}"; do
-  for f in "$dir"/zelda3-infinite-magic-*.smc; do validate_rom "$f" "infinite-magic" "Magic never depletes"; done
-  for f in "$dir"/zelda3-2x-speed-*.smc; do validate_rom "$f" "2x-speed" "Link moves at double speed"; done
-  for f in "$dir"/zelda3-max-health-*.smc; do validate_rom "$f" "max-health" "Start with 20 hearts"; done
-  for f in "$dir"/zelda3-team-solution-*.smc; do validate_rom "$f" "team-solution" "Balanced combination mod"; done
+  while IFS= read -r key; do
+    prefix="$(mod_manifest_field "$key" output_prefix)"
+    description="$(mod_manifest_field "$key" description)"
+    for f in "$dir"/"$prefix"-*.smc; do
+      validate_rom "$f" "$key" "$description"
+    done
+  done < <(mod_manifest_keys)
 done
 shopt -u nullglob
 
 echo ""
 echo "🔬 Testing Source ROMs (Pre-built mods):"
-validate_rom "repos/snes-modder/zelda3-infinite-magic.smc" "source-infinite-magic" "Source infinite magic mod" 1
-validate_rom "repos/snes-modder/zelda3-2x-speed.smc" "source-2x-speed" "Source 2x speed mod" 1
+checked_sources=""
+while IFS= read -r key; do
+  source_rom="$(mod_manifest_field "$key" source)"
+  description="$(mod_manifest_field "$key" description)"
+  flags="$(mod_manifest_field "$key" flags)"
+  case " $checked_sources " in
+    *" $source_rom "*) continue ;;
+  esac
+  checked_sources+=" $source_rom"
+  allow_identical=0
+  if [[ " $flags " == *" allow-identical "* ]]; then
+    allow_identical=1
+  fi
+  validate_rom "$source_rom" "source-$key" "Source $description" "$allow_identical"
+done < <(mod_manifest_keys)
 
 echo ""
 echo "📊 VALIDATION SUMMARY"
@@ -131,13 +156,19 @@ if [ $FAILED -eq 0 ]; then
     echo "⚠️  Some ROMs were skipped. Generate the missing files or restore repository assets to expand coverage."
   fi
 
+  if [ "$BASE_ROM_AVAILABLE" -eq 0 ]; then
+    echo ""
+    echo "ℹ️  Supply $BASE_ROM to restore binary validation coverage."
+  fi
+
   exit 0
 else
   echo "⚠️  Some validations failed - investigate before shipping"
-  exit 1
-fi
 
-if [ "$BASE_ROM_AVAILABLE" -eq 0 ]; then
+  if [ "$BASE_ROM_AVAILABLE" -eq 0 ]; then
     echo ""
-    echo "ℹ️  Supply zelda3.smc to restore binary validation coverage."
+    echo "ℹ️  Supply $BASE_ROM to restore binary validation coverage."
+  fi
+
+  exit 1
 fi
