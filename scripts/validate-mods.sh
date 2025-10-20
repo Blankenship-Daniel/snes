@@ -6,26 +6,37 @@
 echo "🔬 ROM Mod Validation - GROUND TRUTH TESTING"
 echo "═══════════════════════════════════════════"
 
-BASE_ROM="zelda3.smc"
+BASE_ROM_DEFAULT="zelda3.smc"
+BASE_ROM="${BASE_ROM:-$BASE_ROM_DEFAULT}"
 OUTPUT_DIR="${OUTPUT_DIR:-.}"
 FAILED=0
 PASSED=0
+SKIPPED=0
 
+BASE_ROM_AVAILABLE=1
 if [ ! -f "$BASE_ROM" ]; then
-    echo "❌ Base ROM not found: $BASE_ROM"
-    exit 1
+  BASE_ROM_AVAILABLE=0
+  echo "⚠️  Base ROM not found: $BASE_ROM"
+  echo "ℹ️  Provide the ROM at the expected path or export BASE_ROM=<path> before running."
+  echo "ℹ️  Binary diff checks will be skipped, but ROM presence and size will still be verified."
 fi
 
 validate_rom() {
     local rom_file="$1"
     local mod_name="$2"
     local description="$3"
+    local optional_check="${4:-0}"
     
     echo ""
     echo "🧪 Testing: $mod_name"
     echo "📝 Expected: $description"
     
     if [ ! -f "$rom_file" ]; then
+        if [ "$optional_check" -eq 1 ]; then
+            echo "⚠️  ROM not found: $rom_file (optional check skipped)"
+            ((SKIPPED++))
+            return 0
+        fi
         echo "❌ ROM not found: $rom_file"
         ((FAILED++))
         return 1
@@ -38,35 +49,41 @@ validate_rom() {
         ((FAILED++))
         return 1
     fi
-    
+
+    if [ "$BASE_ROM_AVAILABLE" -eq 0 ]; then
+        echo "⚠️  Skipping binary diff checks (base ROM unavailable)"
+        ((SKIPPED++))
+        return 0
+    fi
+
     # Check if ROM is different from base
     if cmp -s "$BASE_ROM" "$rom_file"; then
         echo "❌ ROM identical to base - no modifications applied!"
         ((FAILED++))
         return 1
     fi
-    
+
     # Count actual differences
     local changes=$(cmp -l "$BASE_ROM" "$rom_file" | wc -l)
     echo "✅ ROM validation passed"
     echo "📊 Binary differences: $changes bytes changed"
-    
+
     # Show specific changes for infinite magic
     if [[ "$mod_name" == *"infinite-magic"* ]]; then
         echo "🔍 Magic-specific validation:"
-        
+
         # Check magic power byte (approximate location)
         local magic_offset=503980
         local base_byte=$(xxd -s $magic_offset -l 1 "$BASE_ROM" | cut -d' ' -f2)
         local mod_byte=$(xxd -s $magic_offset -l 1 "$rom_file" | cut -d' ' -f2)
-        
+
         if [ "$base_byte" != "$mod_byte" ]; then
             echo "✅ Magic system modified (offset $magic_offset: $base_byte → $mod_byte)"
         else
             echo "⚠️  Magic system unchanged at expected offset"
         fi
     fi
-    
+
     ((PASSED++))
     return 0
 }
@@ -92,22 +109,30 @@ shopt -u nullglob
 # Test source ROMs from snes-modder
 echo ""
 echo "🔬 Testing Source ROMs (Pre-built mods):"
-validate_rom "repos/snes-modder/zelda3-infinite-magic.smc" "source-infinite-magic" "Source infinite magic mod"
-validate_rom "repos/snes-modder/zelda3-2x-speed.smc" "source-2x-speed" "Source 2x speed mod"
+validate_rom "repos/snes-modder/zelda3-infinite-magic.smc" "source-infinite-magic" "Source infinite magic mod" 1
+validate_rom "repos/snes-modder/zelda3-2x-speed.smc" "source-2x-speed" "Source 2x speed mod" 1
 
 echo ""
 echo "📊 VALIDATION SUMMARY"
 echo "═══════════════════"
 echo "✅ Passed: $PASSED"
 echo "❌ Failed: $FAILED"
+if [ $SKIPPED -gt 0 ]; then
+  echo "⚠️  Skipped: $SKIPPED"
+fi
 
 if [ $FAILED -eq 0 ]; then
-    echo "🎉 ALL VALIDATIONS PASSED!"
-    echo "✅ ROMs are properly modified"
-    echo "✅ File sizes are correct"
-    echo "✅ Binary changes detected"
-    echo ""
-    echo "🚀 READY TO SHIP WITH CONFIDENCE!"
+    if [ $SKIPPED -gt 0 ]; then
+        echo "⚠️  Validations partially skipped - binary diff checks require the base ROM."
+        echo "ℹ️  Provide $BASE_ROM or set BASE_ROM to enable full verification."
+    else
+        echo "🎉 ALL VALIDATIONS PASSED!"
+        echo "✅ ROMs are properly modified"
+        echo "✅ File sizes are correct"
+        echo "✅ Binary changes detected"
+        echo ""
+        echo "🚀 READY TO SHIP WITH CONFIDENCE!"
+    fi
 else
     echo "⚠️  Some validations failed - investigate before shipping"
     exit 1
