@@ -6066,6 +6066,7 @@ __metadata:
     knip: "npm:5.66.1"
     lint-staged: "npm:16.2.4"
     npm-check-updates: "npm:19.1.1"
+    prettier: "npm:3.3.3"
     syncpack: "npm:13.0.4"
     typescript: "npm:^5.8.3"
   bin:

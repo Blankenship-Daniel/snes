@@ -18,6 +18,29 @@ jobs:
           if [ -f tools/SHIP-NOW.sh ]; then bash -n tools/SHIP-NOW.sh; fi
           if [ -f tools/restore_agent_context.sh ]; then bash -n tools/restore_agent_context.sh; fi
 
+      - name: Path linter (no absolute user paths)
+        run: bash ./tools/check-no-absolute-paths.sh
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Workspace health (Yarn)
+        run: |
+          corepack enable
+          yarn --version
+          YARN_ENABLE_SCRIPTS=false yarn install --mode skip-build
+          yarn ws:list
+
+      - name: Build workspaces (if scripts present)
+        run: |
+          yarn ws:ci:build
+
+      - name: Test workspaces (if scripts present)
+        run: |
+          yarn ws:ci:test
+
       - name: Enforce no ROMs committed outside repos/snes-modder/
         run: |
           set -e
